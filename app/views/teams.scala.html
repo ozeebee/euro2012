@@ -1,0 +1,17 @@
+@(teams: Seq[Team], groups: Set[String])
+
+@layout.main("eu2012") {
+    
+    Hi there
+    
+    <h3>Groups</h3>
+    @groups.map { group =>
+        <div>@group</div>
+    }
+    
+    <h3>Teams</h3>
+    @teams.map { team =>
+        <div>@team.id</div>
+    }
+    
+}

@@ -1,0 +1,85 @@
+<teams>
+	<team>
+		<id>POL</id>
+		<name>Poland</name>
+		<group>A</group>
+	</team>
+	<team>
+		<id>GRE</id>
+		<name>Greece</name>
+		<group>A</group>
+	</team>
+	<team>
+		<id>RUS</id>
+		<name>Russia</name>
+		<group>A</group>
+	</team>
+	<team>
+		<id>CZE</id>
+		<name>Czech Republic</name>
+		<group>A</group>
+	</team>
+
+	<team>
+		<id>NED</id>
+		<name>Netherlands</name>
+		<group>B</group>
+	</team>
+	<team>
+		<id>DEN</id>
+		<name>Denmark</name>
+		<group>B</group>
+	</team>
+	<team>
+		<id>GER</id>
+		<name>Germany</name>
+		<group>B</group>
+	</team>
+	<team>
+		<id>POR</id>
+		<name>Portugal</name>
+		<group>B</group>
+	</team>
+	
+	<team>
+		<id>ESP</id>
+		<name>Spain</name>
+		<group>C</group>
+	</team>
+	<team>
+		<id>ITA</id>
+		<name>Italy</name>
+		<group>C</group>
+	</team>
+	<team>
+		<id>IRL</id>
+		<name>Republic of Ireland</name>
+		<group>C</group>
+	</team>
+	<team>
+		<id>CRO</id>
+		<name>Croatia</name>
+		<group>C</group>
+	</team>
+	
+	<team>
+		<id>UKR</id>
+		<name>Ukraine</name>
+		<group>D</group>
+	</team>
+	<team>
+		<id>SWE</id>
+		<name>Sweden</name>
+		<group>D</group>
+	</team>
+	<team>
+		<id>FRA</id>
+		<name>France</name>
+		<group>D</group>
+	</team>
+	<team>
+		<id>ENG</id>
+		<name>England</name>
+		<group>D</group>
+	</team>	
+</teams>
