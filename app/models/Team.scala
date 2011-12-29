@@ -1,7 +1,10 @@
 package models
 
-import scala.xml.Elem
-import scala.xml.Node
+import play.api.db.DB
+import play.api.Play.current
+
+import anorm._
+import anorm.SqlParser._
 
 case class Team(
 	id: String,
@@ -9,21 +12,30 @@ case class Team(
 	group: String
 )
 
-object Team extends ModelObject[Team] {
+object Team {
 	
-	def findAll(): Seq[Team] = {
-		println("datadir = " + DATA_DIR)
-		val teamsElem = xml.XML.loadFile(DATA_DIR + "/teams.xml")
-		(teamsElem \ "team") map { node =>
-			fromXml(node)
-		}	
+	// Parser
+	val simple = {
+		get[String]("team.id") ~/
+		get[String]("team.name") ~/
+		get[String]("team.group") ^^ {
+			case id~name~group => Team(id, name, group)
+		}
+		
 	}
 	
-	def fromXml(xml: Node): Team = {
-		new Team (
-			id = (xml \ "id").text,
-			name = (xml \ "name").text,
-			group = (xml \ "group").text
-		)
+	def findAll(): Seq[Team] = {
+		DB.withConnection { implicit connection =>
+			SQL("select * from team").as(Team.simple *)
+		}
+	}
+	
+	// ~~~~~~~~~~~~~~~~~ Utilities ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	/**
+	 * @return the teams in the given group
+	 */
+	def getTeams(teams: Seq[Team], group: String): Seq[Team] = {
+		teams filter (_.group == group)
 	}
 }

@@ -1,0 +1,19 @@
+@(values: Set[String])(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("test") {
+    
+    test = @values
+    
+    <h3>Values with map</h3>
+    @values.map { value =>
+    	@println(value)
+        <div>@value</div>
+    }
+
+    <h3>Values with for</h3>
+    @for(value <- values) {
+    	@println(value)
+        <div>@value</div>
+    }
+    
+}

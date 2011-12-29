@@ -1,0 +1,129 @@
+/*
+ * OzB
+ */
+
+@groupA-startColor: #ED1C37; // #F41C37;
+@groupA-stopColor:  #BB1328;
+@groupB-startColor: #ECA315; 
+@groupB-stopColor:  #C1860D;
+@groupC-startColor: #015E9D; 
+@groupC-stopColor:  #014C7E;
+@groupD-startColor: #445F17; 
+@groupD-stopColor:  #314A07;
+
+// adapted from bootstrap
+#font {
+	.shorthand(@weight: normal, @size: 14px, @lineHeight: 20px) {
+		font-size: @size;
+		font-weight: @weight;
+		line-height: @lineHeight;
+	}
+	.sans-serif(@weight: normal, @size: 14px, @lineHeight: 20px) {
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: @size;
+		font-weight: @weight;
+		line-height: @lineHeight;
+	}
+	.serif(@weight: normal, @size: 14px, @lineHeight: 20px) {
+		font-family: "Georgia", Times New Roman, Times, serif;
+		font-size: @size;
+		font-weight: @weight;
+		line-height: @lineHeight;
+	}
+	.monospace(@weight: normal, @size: 12px, @lineHeight: 20px) {
+		font-family: "Monaco", Courier New, monospace;
+		font-size: @size;
+		font-weight: @weight;
+		line-height: @lineHeight;
+	}
+	.verdana(@weight: normal, @size: 14px, @lineHeight: 20px) {
+		font-family: "Verdana", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: @size;
+		font-weight: @weight;
+		line-height: @lineHeight;
+	}	
+}
+
+.linear-gradient (@startColor, @stopColor) {
+	/* generated from http://www.display-inline.fr/projects/css-gradient */
+	background: -webkit-gradient(
+		linear,
+		left top, left bottom,
+		from(@startColor),
+		to(@stopColor)
+	);
+	background: -webkit-linear-gradient(
+		top,
+		@startColor,
+		@stopColor
+	);
+	background: -moz-linear-gradient(
+		top,
+		@startColor,
+		@stopColor
+	);
+	background: -o-linear-gradient(
+		top,
+		@startColor,
+		@stopColor
+	);
+	background: linear-gradient(
+		top,
+		@startColor,
+		@stopColor
+	);
+}
+
+.rounded-corners (@radius: 5px) {
+	border-radius: @radius;
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+body {
+	padding-top: 60px;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~ Groups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+a.group {
+	text-decoration: none; // remove bootstrap media-grid link decorations
+}
+
+div.group {
+	color: white;
+	width: 330px;
+	height: 230px;
+	
+	padding: 10px;
+	
+	&.groupA {
+		.linear-gradient(@groupA-startColor, @groupA-stopColor);
+	}
+	
+	&.groupB {
+		.linear-gradient(@groupB-startColor, @groupB-stopColor);
+	}
+	
+	&.groupC {
+		.linear-gradient(@groupC-startColor, @groupC-stopColor);
+	}
+	
+	&.groupD {
+		.linear-gradient(@groupD-startColor, @groupD-stopColor);
+	}
+	
+	h4 {
+		border-bottom: 1px solid #DDD;
+		margin-bottom: 17px;
+		text-align: center;
+		color: #F0F0F0;
+	}
+	
+	li {
+		color: #F0F0F0;
+		#font > .verdana(normal, 20px, 30px);
+	}
+}

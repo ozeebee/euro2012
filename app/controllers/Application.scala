@@ -2,35 +2,77 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models.Team
+import models._
 
 object Application extends Controller {
 	val logger = Logger(this.getClass())
 
-	def index = Action {
-		Ok(views.html.index("Your new application is ready."))
+	// ~~~~~~~~~~~~~~~~~ Actions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	def index = Action { implicit request =>
+		request.session.get(controllers.Security.USERNAME).map { username =>
+			// user is logged, proceed to index page
+			Ok(views.html.index())
+		}.getOrElse {
+			// user not logged, show login page
+			logger.info("user not logged, redirecting to login page")
+			Redirect(routes.Security.login())
+		}
 	}
 
-	def showTeams = Action {
+	def showTeams = Action { implicit request =>
 		val teams = Team.findAll()
-		
 		val groups = getGroups(teams)
-		
 		Ok(views.html.teams(teams, groups))
 	}
 	
-	def getGroups(teams: Seq[Team]): Set[String] = {
-		//teams map(println(_.group))
-		val rslt = teams.map(_.group)
-		println("rslt = " + rslt)
-		val rslt2 = rslt.toSet
-		println("rslt2 = " + rslt2)
-		//teams map(_.group) toSet
-		
-		rslt2 map { group =>
-			println("group : " + group)
-		}
-		
-		rslt2
+	def showGroups = Action { implicit request =>
+		val teams = Team.findAll()
+		val groups = getGroups(teams)
+		Ok(views.html.groups(teams, groups))
 	}
+
+	def test() = Action { implicit request =>
+		val values = Set("Value1", "Value2", "Value3")
+		
+		Ok(views.html.test(values))
+	} 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	def getGroups(teams: Seq[Team]): Set[String] = {
+		teams map(_.group) toSet
+	}
+	
+}
+
+trait Debuggable {
+	val logger: Logger
+	
+	/**
+	 * An action wrapper that logs the action invocation.
+	 * @ajo implemented for testing composition (see Controller and Action in play.api.mvc for more details)
+	 */
+	def Logged[A](action: Action[A]): Action[A] = {
+		Action(action.parser) { request =>
+			logger.debug("*** before invoke : " + action)
+			val time = System.currentTimeMillis()
+			val result = action(request)
+			val time2 = System.currentTimeMillis()
+			logger.debug("*** after invoke : " + action + " time = " + (time2 - time) + " ms")
+			result
+		}
+	}
+
+	/*
+	def Logged[A](action: Action[A]): Action[A] = {
+		action.compose { (request, originalAction) =>
+			logger.debug("*** before invoke : " + originalAction)
+			val result = originalAction(request)
+			logger.debug("*** after invoke : " + originalAction)
+			result
+		}
+	}
+	*/
+
 }

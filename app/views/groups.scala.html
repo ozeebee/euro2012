@@ -1,0 +1,34 @@
+@(teams: Seq[Team], groups: Set[String])(implicit request: play.api.mvc.RequestHeader)
+
+@groupDiv(group: String) = { 
+	@defining(models.Team.getTeams(teams, group)) { groupTeams => 
+	<div class="group group@group">
+    	<h4>Group @group</h4>
+    	@groupTeams.map { team =>
+    		<ul>
+    			<li>@team.name</li>
+    		</ul>
+		}	
+	</div>
+	}
+}
+
+@layout.main("Groups") {
+    
+    <div class="page-header">
+    	<h1>Groups
+    		<small>Displaying all the groups</small>
+    	</h1>
+    </div>
+    
+    <div class="row">
+    	<ul class="media-grid">
+	    @groups.toSeq.map { group =>
+	    	<li>
+	        	<a href="#" class="group">@groupDiv(group)</a>
+	        <li>
+	    }
+    	</ul>
+    </div>
+    
+}

@@ -8,4 +8,20 @@ GET     /                           controllers.Application.index()
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
+# Security routes
+GET		/login						controllers.Security.login()
+POST	/authenticate				controllers.Security.authenticate()
+GET		/logout						controllers.Security.logout()
+
 GET		/teams						controllers.Application.showTeams()
+GET		/groups						controllers.Application.showGroups()
+
+#############
+# Admin tools
+GET		/admin						controllers.Admin.showAdmin()
+# submit new match
+POST	/admin/matches/new			controllers.Admin.newMatch()
+# update match result				
+POST	/admin/matches/:id/result	controllers.Admin.updateMatchResult(id: Long)
+
+GET 	/test						controllers.Application.test()

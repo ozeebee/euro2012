@@ -1,11 +1,14 @@
-@(teams: Seq[Team], groups: Set[String])
+@(teams: Seq[Team], groups: Set[String])(implicit request: play.api.mvc.RequestHeader)
 
 @layout.main("eu2012") {
     
     Hi there
     
+    test = @groups
+    
     <h3>Groups</h3>
     @groups.map { group =>
+    	@println(group)
         <div>@group</div>
     }
     
