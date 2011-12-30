@@ -14,8 +14,8 @@ package object models {
 		val MD1 = Value // Match Day 1
 		val MD2 = Value // Match Day 2
 		val MD3 = Value // Match Day 3
-		val QUARTERF = Value // Quarter Finals
-		val SEMIF = Value // Semi Finals
+		val QUARTERFINALS = Value // Quarter Finals
+		val SEMIFINALS = Value // Semi Finals
 		val FINAL = Value // Final
 	}
 	

@@ -18,7 +18,7 @@ object Security extends Controller with Debuggable {
 		)
 	)
 	
-	def login = Logged {
+	def login = Logged() {
 		Action { implicit request =>
 			Ok(views.html.login(loginForm))
 		}

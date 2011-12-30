@@ -2,6 +2,7 @@ package controllers
 
 import play.api.data._
 import play.api.data.format._
+import play.api.json._
 import play.api.mvc._
 import play.api.Logger
 import models._
@@ -29,8 +30,10 @@ object Admin extends Controller with Debuggable {
 	val matchForm = Form(
 		of(Match.apply _, Match.unapply _)(
 			"id" -> ignored(NotAssigned),
-			"teamA" -> requiredText,
-			"teamB" -> requiredText,
+			"teamA" -> optional(requiredText),
+			"teamAformula" -> ignored(Option(null)),
+			"teamB" -> optional(requiredText),
+			"teamAformula" -> ignored(Option(null)),
 			"kickoff" -> date("dd/MM/yyyy HH:mm"),
 			"phase" -> of[Phase](phaseFormat),
 			"result" -> ignored(Option(null))
@@ -67,21 +70,35 @@ object Admin extends Controller with Debuggable {
 		)
 	}
 	
-	def updateMatchResult(matchId: Long) = Logged { 
+	def updateMatchResult(matchId: Long) = Logged("updateMatchResult") { 
 		Action { implicit request =>
 			val filledForm = resultForm.bindFromRequest() 
 			filledForm.fold(
 				formWithErrors => {
 					logger.debug("ERROR !")
-					Ok("ok")
+					val rslt = toJson(formWithErrors.errors.map(_.key))
+					logger.debug("  content=" + rslt)
+					BadRequest(rslt)
 				},
 				data => {
 					logger.debug("OK, data = " + data)
-					logger.debug("  scoreA = " + filledForm("scoreA").value)
-					logger.debug("  scoreB = " + filledForm("scoreB").value)
-					Ok("ok")
+					val scoreA = filledForm.get._1.toInt
+					val scoreB = filledForm.get._2.toInt
+					
+					Match.updateResult(matchId, scoreA, scoreB).map { zmatch =>
+						Ok("ok")
+					}.getOrElse {
+						BadRequest("could not update match result")
+					}
 				}
 			)
+		}
+	}
+	
+	def deleteMatchResult(matchId: Long) = Logged("deleteMatchResult") { 
+		Action { implicit request =>
+			Match.clearResult(matchId)
+			Ok("ok")
 		}
 	}
 	

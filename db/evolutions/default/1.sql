@@ -18,8 +18,10 @@ create table team (
 
 create table match (
   id                        bigint not null primary key,
-  teamA						varchar(16) not null,
-  teamB						varchar(16) not null,
+  teamA						varchar(16), -- teamId or null if team is not yet known
+  teamAformula				varchar(16), -- the formula to compute teamA (eg. Win#29 means Winner match #29)
+  teamB						varchar(16), -- teamId or null if team is not yet known
+  teamBformula				varchar(16), -- the formula to compute teamB (eg. Win#29 means Winner match #29)
   kickoff					timestamp not null,
   phase						varchar(50) not null,
   -- result
@@ -30,7 +32,7 @@ create table match (
   foreign key(teamB)		references team(id) on delete cascade,
 );
 
-create sequence match_seq start with 1000;
+create sequence match_seq start with 1;
 
 # --- !Downs
 

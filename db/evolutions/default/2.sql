@@ -22,37 +22,63 @@ insert into team (id,name,"group") values ('SWE', 'Sweden', 'D');
 insert into team (id,name,"group") values ('FRA', 'France', 'D');
 insert into team (id,name,"group") values ('ENG', 'England', 'D');
 
---insert into match (id,teamA,teamB,kickoff,phase) values ( 1, 'POL', 'GRE', '2011-12-31 18:00:00', 'MD1');
+--insert into team (id,name) values ('WA', 'Winner Group A');
+--insert into team (id,name) values ('SA', 'Second Group A');
+--insert into team (id,name) values ('WB', 'Winner Group B');
+--insert into team (id,name) values ('SB', 'Second Group B');
+--insert into team (id,name) values ('WC', 'Winner Group C');
+--insert into team (id,name) values ('SC', 'Second Group C');
+--insert into team (id,name) values ('WD', 'Winner Group D');
+--insert into team (id,name) values ('SD', 'Second Group D');
+--
+--insert into team (id,name) values ('WQ1', 'Winner Quarter Final 1');
+--insert into team (id,name) values ('WQ2', 'Winner Quarter Final 2');
+--insert into team (id,name) values ('WQ3', 'Winner Quarter Final 3');
+--insert into team (id,name) values ('WQ4', 'Winner Quarter Final 4');
+--
+--insert into team (id,name) values ('WS1', 'Winner Semi Final 1');
+--insert into team (id,name) values ('WS2', 'Winner Semi Final 2');
+
 INSERT INTO PUBLIC.MATCH(ID, TEAMA, TEAMB, KICKOFF, PHASE, RESULT, SCOREA, SCOREB) VALUES
-(1000, 'POL', 'GRE', TIMESTAMP '2012-06-08 18:00:00.0', 'MD1', 'POL', 2, 1),
-(1001, 'RUS', 'CZE', TIMESTAMP '2012-06-08 20:45:00.0', 'MD1', 'DRAW', 1, 1),
-(1002, 'NED', 'DEN', TIMESTAMP '2012-06-09 18:00:00.0', 'MD1', 'DEN', 3, 4);
+(01, 'POL', 'GRE', TIMESTAMP '2012-06-08 18:00:00.0', 'MD1', 'POL', 2, 1),
+(02, 'RUS', 'CZE', TIMESTAMP '2012-06-08 20:45:00.0', 'MD1', 'DRAW', 1, 1),
+(03, 'NED', 'DEN', TIMESTAMP '2012-06-09 18:00:00.0', 'MD1', 'DEN', 3, 4);
 
 INSERT INTO PUBLIC.MATCH(ID, TEAMA, TEAMB, KICKOFF, PHASE) VALUES
-(1003, 'GER', 'POR', TIMESTAMP '2012-06-09 20:45:00.0', 'MD1'),
-(1004, 'ESP', 'ITA', TIMESTAMP '2012-06-10 18:00:00.0', 'MD1'),
-(1005, 'IRL', 'CRO', TIMESTAMP '2012-06-10 20:45:00.0', 'MD1'),
-(1006, 'FRA', 'ENG', TIMESTAMP '2012-06-11 18:00:00.0', 'MD1'),
-(1007, 'UKR', 'SWE', TIMESTAMP '2012-06-11 20:45:00.0', 'MD1'),
+(04, 'GER', 'POR', TIMESTAMP '2012-06-09 20:45:00.0', 'MD1'),
+(05, 'ESP', 'ITA', TIMESTAMP '2012-06-10 18:00:00.0', 'MD1'),
+(06, 'IRL', 'CRO', TIMESTAMP '2012-06-10 20:45:00.0', 'MD1'),
+(07, 'FRA', 'ENG', TIMESTAMP '2012-06-11 18:00:00.0', 'MD1'),
+(08, 'UKR', 'SWE', TIMESTAMP '2012-06-11 20:45:00.0', 'MD1'),
 
-(1008, 'GRE', 'CZE', TIMESTAMP '2012-06-12 18:00:00.0', 'MD2'),
-(1009, 'POL', 'RUS', TIMESTAMP '2012-06-12 20:45:00.0', 'MD2'),
-(1010, 'DEN', 'POR', TIMESTAMP '2012-06-13 18:00:00.0', 'MD2'),
-(1011, 'NED', 'GER', TIMESTAMP '2012-06-13 20:45:00.0', 'MD2'),
-(1012, 'ITA', 'CRO', TIMESTAMP '2012-06-14 18:00:00.0', 'MD2'),
-(1013, 'ESP', 'IRL', TIMESTAMP '2012-06-14 20:45:00.0', 'MD2'),
-(1014, 'UKR', 'FRA', TIMESTAMP '2012-06-15 18:00:00.0', 'MD2'),
-(1015, 'SWE', 'ENG', TIMESTAMP '2012-06-15 20:45:00.0', 'MD2'),
+(09, 'GRE', 'CZE', TIMESTAMP '2012-06-12 18:00:00.0', 'MD2'),
+(10, 'POL', 'RUS', TIMESTAMP '2012-06-12 20:45:00.0', 'MD2'),
+(11, 'DEN', 'POR', TIMESTAMP '2012-06-13 18:00:00.0', 'MD2'),
+(12, 'NED', 'GER', TIMESTAMP '2012-06-13 20:45:00.0', 'MD2'),
+(13, 'ITA', 'CRO', TIMESTAMP '2012-06-14 18:00:00.0', 'MD2'),
+(14, 'ESP', 'IRL', TIMESTAMP '2012-06-14 20:45:00.0', 'MD2'),
+(15, 'SWE', 'ENG', TIMESTAMP '2012-06-15 20:45:00.0', 'MD2'),
+(16, 'UKR', 'FRA', TIMESTAMP '2012-06-15 18:00:00.0', 'MD2'),
 
-(1016, 'GRE', 'RUS', TIMESTAMP '2012-06-16 20:45:00.0', 'MD3'),
-(1017, 'CZE', 'POL', TIMESTAMP '2012-06-16 20:45:00.0', 'MD3'),
-(1018, 'POR', 'NED', TIMESTAMP '2012-06-17 20:45:00.0', 'MD3'),
-(1019, 'DEN', 'GER', TIMESTAMP '2012-06-17 20:45:00.0', 'MD3'),
-(1020, 'CRO', 'ESP', TIMESTAMP '2012-06-18 20:45:00.0', 'MD3'),
-(1021, 'ITA', 'IRL', TIMESTAMP '2012-06-18 20:45:00.0', 'MD3'),
-(1022, 'SWE', 'FRA', TIMESTAMP '2012-06-19 20:45:00.0', 'MD3'),
-(1023, 'ENG', 'UKR', TIMESTAMP '2012-06-19 20:45:00.0', 'MD3');
+(17, 'CZE', 'POL', TIMESTAMP '2012-06-16 20:45:00.0', 'MD3'),
+(18, 'GRE', 'RUS', TIMESTAMP '2012-06-16 20:45:00.0', 'MD3'),
+(19, 'POR', 'NED', TIMESTAMP '2012-06-17 20:45:00.0', 'MD3'),
+(20, 'DEN', 'GER', TIMESTAMP '2012-06-17 20:45:00.0', 'MD3'),
+(21, 'CRO', 'ESP', TIMESTAMP '2012-06-18 20:45:00.0', 'MD3'),
+(22, 'ITA', 'IRL', TIMESTAMP '2012-06-18 20:45:00.0', 'MD3'),
+(23, 'ENG', 'UKR', TIMESTAMP '2012-06-19 20:45:00.0', 'MD3'),
+(24, 'SWE', 'FRA', TIMESTAMP '2012-06-19 20:45:00.0', 'MD3');
 
+INSERT INTO PUBLIC.MATCH(ID, TEAMAFORMULA, TEAMBFORMULA, KICKOFF, PHASE) VALUES
+(25, 'WIN#GROUP#A' , 'SEC#GROUP#B' , TIMESTAMP '2012-06-21 20:45:00.0', 'QUARTERFINALS'),
+(26, 'WIN#GROUP#B' , 'SEC#GROUP#A' , TIMESTAMP '2012-06-22 20:45:00.0', 'QUARTERFINALS'),
+(27, 'WIN#GROUP#C' , 'SEC#GROUP#D' , TIMESTAMP '2012-06-23 20:45:00.0', 'QUARTERFINALS'),
+(28, 'WIN#GROUP#D' , 'SEC#GROUP#C' , TIMESTAMP '2012-06-24 20:45:00.0', 'QUARTERFINALS'),
+
+(29, 'WIN#25' , 'WIN#27' , TIMESTAMP '2012-06-27 20:45:00.0', 'SEMIFINALS'),
+(30, 'WIN#26' , 'WIN#28' , TIMESTAMP '2012-06-28 20:45:00.0', 'SEMIFINALS'),
+
+(31, 'WIN#29' , 'WIN#30' , TIMESTAMP '2012-07-01 20:45:00.0', 'FINAL');
 
 # --- !Downs
 

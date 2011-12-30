@@ -18,8 +18,10 @@
 		 -
  		<input type="text" value="@zmatch.result.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
  		
- 		<a href="javascript:updateScore(@zmatch.id);" class="btn small primary" style="padding:3px;">Ok</a>
- 		<a href="javascript:resetScore();" class="btn small" style="padding:3px;">Cancel</a>
+ 		<a href="javascript:updateScore(@zmatch.id, '@routes.Admin.updateMatchResult(zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
+ 		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
+
+ 		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
 	</div>
 }
 
@@ -36,17 +38,78 @@
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/themes/cupertino/jquery.ui.all.css")">
 	
 	<script>
-		function updateScore(matchId) {
+		function updateScore(matchId, url) {
 			console.log("updateScore() matchId = " + matchId);
 			var div = $("#score_" + matchId);
-			var scoreA = $("input:eq(0)", div).val();
-			var scoreB = $("input:eq(1)", div).val();
+			var scoreAinput = $("input:eq(0)", div);
+			var scoreBinput = $("input:eq(1)", div);
+			var data = {
+				scoreA: scoreAinput.val(), 
+				scoreB: scoreBinput.val()
+			};
 			
-			$.post("/admin/matches/"+matchId+"/result", {scoreA: scoreA, scoreB: scoreB});
+			$.post("/admin/matches/"+matchId+"/result", 
+					data,
+					function(data) { // Success function
+						// remove error markers (if any)
+						scoreAinput.removeClass("error");
+						scoreBinput.removeClass("error");
+						// show ok notif icon
+						$("img", div).prop("src", "@routes.Assets.at("images/button_ok.png")").removeClass("invisible");
+					}
+			).fail(function(jqXHR) { // Error function
+				if (jqXHR.status == 400) {
+					var jsonStr = jqXHR.responseText;
+					var errorFields = $.parseJSON(jsonStr);
+					var fieldToFocus = null;
+					// remove error markers (if any)
+					scoreAinput.removeClass("error");
+					scoreBinput.removeClass("error");
+					// add error markers
+					for (var i=0; i<errorFields.length; i++) {
+						var field = errorFields[i];
+						if (field == "scoreA") { 
+							scoreAinput.addClass("error");
+							fieldToFocus = scoreAinput;
+						}
+						else if (field == "scoreB") {
+							scoreBinput.addClass("error");
+							if (fieldToFocus == null)
+								fieldToFocus = scoreBinput;
+						}
+					}
+					// focus field
+					fieldToFocus.select();
+					fieldToFocus.focus();
+				}
+				else {
+					console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+				}
+			});
 		}
 		
-		function resetScore() {
-			console.log("resetScore()");
+		function clearScore(matchId, url) {
+			console.log("clearScore()");
+			var div = $("#score_" + matchId);
+			var scoreAinput = $("input:eq(0)", div);
+			var scoreBinput = $("input:eq(1)", div);
+
+			var data = {};
+			$.ajax({
+				type: 'DELETE',
+				url: url,
+				data: data,
+				success: function(data) { // Success function
+					console.log("clear success. data=" + data);
+					// empty fields
+					scoreAinput.val("");
+					scoreBinput.val("");
+				}
+			}).fail(function(jqXHR) { // Error function
+				console.log("Clear error !!!");
+				console.log("  status = " + jqXHR.status);
+				console.log("  response = " + jqXHR.responseText);
+			});
 		}
 	
 		$(function() {
@@ -100,7 +163,7 @@
 		    		<tr>
 		    			<th>Id</th>
 		    			<th>Team A</th>
-		    			<th>Score</th>
+		    			<th style="text-align: center;">Score</th>
 		    			<th>Team B</th>
 		    			<th>Kick-off time</th>
 		    			<th>Phase</th>
@@ -110,11 +173,11 @@
 				    @matches.map { zmatch =>
 				    	<tr>
 				    		<td>@zmatch.id</td>
-				    		<td>@winnerInBold(zmatch.teamA, zmatch)</td>
+				    		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
 				    		<td style="text-align: center;">
 				    			@scoreBox(zmatch)				    		
 				    		</td>
-				    		<td>@winnerInBold(zmatch.teamB, zmatch)</td>
+				    		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
 				    		<td>
 				    			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
 				    		</td>
@@ -123,7 +186,8 @@
 				    }
 		    	</tbody>
 		    </table>
-		    
+
+@* <!--  		    
 		    <h4>Add Match</h4>
 		    
 		    <form id="form" action="@routes.Admin.newMatch()" method="post">
@@ -184,6 +248,8 @@
 					</div>
 				</fieldset>
 		    </form>
+--> *@		    
+		    
 	    </div>
     </section>
 }

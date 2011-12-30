@@ -23,5 +23,6 @@ GET		/admin						controllers.Admin.showAdmin()
 POST	/admin/matches/new			controllers.Admin.newMatch()
 # update match result				
 POST	/admin/matches/:id/result	controllers.Admin.updateMatchResult(id: Long)
+DELETE	/admin/matches/:id/result	controllers.Admin.deleteMatchResult(id: Long)
 
 GET 	/test						controllers.Application.test()

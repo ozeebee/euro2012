@@ -53,13 +53,13 @@ trait Debuggable {
 	 * An action wrapper that logs the action invocation.
 	 * @ajo implemented for testing composition (see Controller and Action in play.api.mvc for more details)
 	 */
-	def Logged[A](action: Action[A]): Action[A] = {
+	def Logged[A](methodName: String = "<function>")(action: Action[A]): Action[A] = {
 		Action(action.parser) { request =>
-			logger.debug("*** before invoke : " + action)
+			logger.debug("*** [" + methodName + "] before invoke : " + action)
 			val time = System.currentTimeMillis()
 			val result = action(request)
 			val time2 = System.currentTimeMillis()
-			logger.debug("*** after invoke : " + action + " time = " + (time2 - time) + " ms")
+			logger.debug("*** [" + methodName + "] after invoke : " + action + " time = " + (time2 - time) + " ms")
 			result
 		}
 	}

@@ -10,8 +10,10 @@ import models.Phase.Phase
 
 case class Match(
 	id: Pk[Long],
-	teamA: String,
-	teamB: String,
+	teamA: Option[String],
+	teamAformula: Option[String],
+	teamB: Option[String],
+	teamBformula: Option[String],
 	kickoff: java.util.Date,
 	phase: Phase, // example: round1, quarter finals, semi final, etc
 	// stadium
@@ -20,6 +22,16 @@ case class Match(
 ) {
 	val played: Boolean = result.isDefined
 
+	/**
+	 * @return either the team id or the formula if the team id is not yet known (computed)
+	 */
+	def teamAorFormula: String = {
+		teamA.getOrElse(teamAformula.get)
+	}
+	def teamBorFormula: String = {
+		teamB.getOrElse(teamBformula.get)
+	}
+	
 	/**
 	 * @return the winner (team id) or None it's a draw OR if no result yet
 	 */
@@ -52,19 +64,21 @@ object Match {
 	// Parser
 	val simple = {
 		get[Pk[Long]]("match.id") ~/
-		get[String]("match.teamA") ~/
-		get[String]("match.teamB") ~/
+		get[Option[String]]("match.teamA") ~/
+		get[Option[String]]("match.teamAformula") ~/
+		get[Option[String]]("match.teamB") ~/
+		get[Option[String]]("match.teamBformula") ~/
 		get[java.util.Date]("match.kickoff") ~/
 		get[String]("match.phase") ~/
 		get[Option[String]]("match.result") ~/
 		get[Option[Int]]("match.scoreA") ~/
 		get[Option[Int]]("match.scoreB") ^^ {
-			case id~teamA~teamB~kickoff~phase~result~scoreA~scoreB => {
+			case id~teamA~teamAformula~teamB~teamBformula~kickoff~phase~result~scoreA~scoreB => {
 				if (result.isEmpty) // Match without Result
-					Match(id, teamA, teamB, kickoff, Phase.withName(phase), Option(null))
+					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), Option(null))
 				else { // Match with Result
 					assert(scoreA.isDefined && scoreB.isDefined, "if there is a result, scores must exist")
-					Match(id, teamA, teamB, kickoff, Phase.withName(phase), Some(Result(result.get, scoreA.get, scoreB.get)))
+					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), Some(Result(result.get, scoreA.get, scoreB.get)))
 				}
 			}
 		}
@@ -73,6 +87,12 @@ object Match {
 	def findAll(): Seq[Match] = {
 		DB.withConnection { implicit connection =>
 			SQL("select * from match").as(Match.simple *)
+		}
+	}
+	
+	def findById(id: Long): Option[Match] = {
+		DB.withConnection { implicit connection =>
+			SQL("select * from match where id={id}").on('id -> id).as(Match.simple ?)
 		}
 	}
 	
@@ -94,6 +114,43 @@ object Match {
 			).executeUpdate()
 			
 			zmatch.copy(id = Id(id))
+		}
+	}
+	
+	def updateResult(matchId: Long, scoreA: Int, scoreB: Int): Option[Match] = {
+		findById(matchId).map { zmatch =>
+			assert(zmatch.teamA.isDefined && zmatch.teamB.isDefined, "at this step the teams should be known (computed) !")
+			val result = (scoreA, scoreB) match {
+				case (x, y) if (x > y) => zmatch.teamA.get // teamA wins
+				case (x, y) if (x < y) => zmatch.teamB.get // teamB wins
+				case _ => "DRAW"
+			}
+			
+			DB.withConnection { implicit connection =>
+				SQL("""
+					update match 
+					set result = {result}, scoreA = {scoreA}, scoreB = {scoreB}
+					where id = {id}
+				""").on(
+					'id -> matchId,
+					'result -> result,
+					'scoreA -> scoreA,
+					'scoreB -> scoreB
+				).executeUpdate()
+			}
+			
+			// set result in match
+			zmatch.copy(result = Some(Result(result, scoreA, scoreB)))
+		}
+	}
+	
+	def clearResult(matchId: Long) = {
+		DB.withConnection { implicit connection =>
+			SQL("""
+				update match 
+				set result = null, scoreA = null, scoreB = null
+				where id = {id}
+			""").on('id -> matchId).executeUpdate()
 		}
 	}
 }
