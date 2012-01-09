@@ -1,0 +1,38 @@
+@(matchesByPhase: Map [String, Seq[Match]])(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("Home") {
+    
+    <div class="page-header">
+    	<h1>Schedule
+    		<small>Matches played and upcoming matches</small>
+    	</h1>
+    </div>
+    
+    <div class="row">
+    
+    @* SET BUG *@
+    @models.Phase.values.toSeq.map { phase => 
+    	@println("phase = " + phase)
+    	
+    	<h2 class="center underline color:">@Messages("phase." + phase)</h2>
+    	
+    	@matchesByPhase(phase.toString).map { zmatch =>
+	    	<div class="sched">
+	    		<span class="koDate">@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")</span>
+	    		<div class="match">
+	    		@if(! zmatch.isFormula) {
+	    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
+	    		}
+	    		@zmatch.teamA
+	    		<span class="koTime">@zmatch.kickoff.format("HH:mm")</span>
+	    		@zmatch.teamB
+	    		@if(! zmatch.isFormula) {
+	    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">
+	    		}
+	    		</div>
+	    	</div>
+    	}
+    	
+    }
+	</div>    
+}

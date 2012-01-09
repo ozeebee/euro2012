@@ -21,6 +21,7 @@ case class Match(
 	result: Option[Result]
 ) {
 	val played: Boolean = result.isDefined
+	val isFormula: Boolean = teamAformula.isDefined
 
 	/**
 	 * @return either the team id or the formula if the team id is not yet known (computed)

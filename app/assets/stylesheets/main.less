@@ -94,6 +94,58 @@ section#admin input.error {
 	visibility: hidden;
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~ Scehdule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+div.sched {
+	margin-top: 5px;
+	
+	// center div horizontally
+	width: 500px;
+	margin-left: auto;	
+	margin-right: auto;
+	
+	// center content vertically (see http://www.vanseodesign.com/css/vertical-centering/ and http://blog.themeforest.net/tutorials/vertical-centering-with-css/)
+	
+	text-align: center;	
+}
+
+div.match {
+	color: #F0F0F0;
+	#font > .verdana(normal, 14px, 20px);
+
+	// center content vertically (see http://www.vanseodesign.com/css/vertical-centering/ and http://blog.themeforest.net/tutorials/vertical-centering-with-css/)
+	line-height: 2000px;
+
+	.rounded-corners;
+	width: 500px;
+	padding: 0px 2px 0px 2px;
+	margin-top: 5px;
+	
+	
+	// from http://www.colorzilla.com/gradient-editor/
+	
+background: rgb(174,188,191);
+background: -moz-linear-gradient(top, rgba(174,188,191,1) 0%, rgba(110,119,116,1) 50%, rgba(10,14,10,1) 51%, rgba(10,8,9,1) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(174,188,191,1)), color-stop(50%,rgba(110,119,116,1)), color-stop(51%,rgba(10,14,10,1)), color-stop(100%,rgba(10,8,9,1)));
+background: -webkit-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
+background: -o-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
+background: -ms-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
+background: linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
+
+}
+
+span.koDate {
+	font-style: italic;
+	color: gray;
+}
+
+span.koTime {
+	color: #888;
+	font-size: 12px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~ Groups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 a.group {
@@ -134,4 +186,12 @@ div.group {
 		color: #F0F0F0;
 		#font > .verdana(normal, 20px, 30px);
 	}
+}
+
+h2.center {
+	text-align: center;
+}
+
+h2.underline {
+	border-bottom: 1px solid #ddd;	
 }

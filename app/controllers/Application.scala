@@ -8,7 +8,6 @@ object Application extends Controller {
 	val logger = Logger(this.getClass())
 
 	// ~~~~~~~~~~~~~~~~~ Actions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
 	def index = Action { implicit request =>
 		request.session.get(controllers.Security.USERNAME).map { username =>
 			// user is logged, proceed to index page
@@ -32,9 +31,18 @@ object Application extends Controller {
 		Ok(views.html.groups(teams, groups))
 	}
 
+	def showSchedule = Action { implicit request =>
+		val matches = Match.findAll()
+		
+		val matchesByPhase = matches groupBy { zmatch =>
+			zmatch.phase.toString()
+		}
+		
+		Ok(views.html.schedule(matchesByPhase))
+	}
+	
 	def test() = Action { implicit request =>
 		val values = Set("Value1", "Value2", "Value3")
-		
 		Ok(views.html.test(values))
 	} 
 
