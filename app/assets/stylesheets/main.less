@@ -80,6 +80,11 @@
 	-moz-border-radius: @radius;
 }
 
+.center() {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 body {
@@ -96,6 +101,25 @@ section#admin input.error {
 
 // ~~~~~~~~~~~~~~~~~~~~~ Scehdule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+table.match {
+	width: 400px;
+	.center();
+	
+	td {
+		vertical-align: middle;
+	}
+}
+
+div.koDate {
+	font-size: 14px;	
+	font-style: italic;
+	color: gray;
+	text-align: center;
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+
+/* old tests with divs insted of table ==> vertical centering problem
 div.sched {
 	margin-top: 5px;
 	
@@ -105,6 +129,7 @@ div.sched {
 	margin-right: auto;
 	
 	// center content vertically (see http://www.vanseodesign.com/css/vertical-centering/ and http://blog.themeforest.net/tutorials/vertical-centering-with-css/)
+	position: relative;
 	
 	text-align: center;	
 }
@@ -114,13 +139,14 @@ div.match {
 	#font > .verdana(normal, 14px, 20px);
 
 	// center content vertically (see http://www.vanseodesign.com/css/vertical-centering/ and http://blog.themeforest.net/tutorials/vertical-centering-with-css/)
-	line-height: 2000px;
+	position: absolute;
+	height: 40px;
+	top: 50%;
 
 	.rounded-corners;
 	width: 500px;
 	padding: 0px 2px 0px 2px;
 	margin-top: 5px;
-	
 	
 	// from http://www.colorzilla.com/gradient-editor/
 	
@@ -131,8 +157,8 @@ background: -webkit-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116
 background: -o-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
 background: -ms-linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
 background: linear-gradient(top, rgba(174,188,191,1) 0%,rgba(110,119,116,1) 50%,rgba(10,14,10,1) 51%,rgba(10,8,9,1) 100%);
-
 }
+*/
 
 span.koDate {
 	font-style: italic;

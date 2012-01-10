@@ -16,9 +16,9 @@ object Team {
 	
 	// Parser
 	val simple = {
-		get[String]("team.id") ~/
-		get[String]("team.name") ~/
-		get[String]("team.group") ^^ {
+		get[String]("team.id") ~
+		get[String]("team.name") ~
+		get[String]("team.group") map {
 			case id~name~group => Team(id, name, group)
 		}
 		

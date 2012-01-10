@@ -13,7 +13,7 @@ object Security extends Controller with Debuggable {
 	// EXP: define a Form (mapping request parameters to Model properties)
 	val loginForm = Form(
 		of(User.apply _, User.unapply _)(
-			"username" -> requiredText(minLength = 4),
+			"username" -> nonEmptyText(minLength = 4),
 			"password" -> text
 		)
 	)

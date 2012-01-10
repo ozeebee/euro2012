@@ -30,9 +30,9 @@ object Admin extends Controller with Debuggable {
 	val matchForm = Form(
 		of(Match.apply _, Match.unapply _)(
 			"id" -> ignored(NotAssigned),
-			"teamA" -> optional(requiredText),
+			"teamA" -> optional(nonEmptyText),
 			"teamAformula" -> ignored(Option(null)),
-			"teamB" -> optional(requiredText),
+			"teamB" -> optional(nonEmptyText),
 			"teamAformula" -> ignored(Option(null)),
 			"kickoff" -> date("dd/MM/yyyy HH:mm"),
 			"phase" -> of[Phase](phaseFormat),

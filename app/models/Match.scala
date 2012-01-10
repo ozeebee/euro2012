@@ -34,6 +34,19 @@ case class Match(
 	}
 	
 	/**
+	 * @return the match kickoff day without time information
+	 */
+	def kickoffDay: java.util.Date = {
+		val cal = java.util.Calendar.getInstance()
+		cal.setTime(kickoff)
+		cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+		cal.set(java.util.Calendar.MINUTE, 0)
+		cal.set(java.util.Calendar.SECOND, 0)
+		cal.set(java.util.Calendar.MILLISECOND, 0)
+		cal.getTime()
+	}
+	
+	/**
 	 * @return the winner (team id) or None it's a draw OR if no result yet
 	 */
 	def winner: Option[String] = {
@@ -64,16 +77,16 @@ object Match {
 	
 	// Parser
 	val simple = {
-		get[Pk[Long]]("match.id") ~/
-		get[Option[String]]("match.teamA") ~/
-		get[Option[String]]("match.teamAformula") ~/
-		get[Option[String]]("match.teamB") ~/
-		get[Option[String]]("match.teamBformula") ~/
-		get[java.util.Date]("match.kickoff") ~/
-		get[String]("match.phase") ~/
-		get[Option[String]]("match.result") ~/
-		get[Option[Int]]("match.scoreA") ~/
-		get[Option[Int]]("match.scoreB") ^^ {
+		get[Pk[Long]]("match.id") ~
+		get[Option[String]]("match.teamA") ~
+		get[Option[String]]("match.teamAformula") ~
+		get[Option[String]]("match.teamB") ~
+		get[Option[String]]("match.teamBformula") ~
+		get[java.util.Date]("match.kickoff") ~
+		get[String]("match.phase") ~
+		get[Option[String]]("match.result") ~
+		get[Option[Int]]("match.scoreA") ~
+		get[Option[Int]]("match.scoreB") map {
 			case id~teamA~teamAformula~teamB~teamBformula~kickoff~phase~result~scoreA~scoreB => {
 				if (result.isEmpty) // Match without Result
 					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), Option(null))
@@ -93,14 +106,14 @@ object Match {
 	
 	def findById(id: Long): Option[Match] = {
 		DB.withConnection { implicit connection =>
-			SQL("select * from match where id={id}").on('id -> id).as(Match.simple ?)
+			SQL("select * from match where id={id}").on('id -> id).as(Match.simple.singleOpt)
 		}
 	}
 	
 	def create(zmatch: Match): Match = {
 		DB.withConnection { implicit connection =>
 			// generated identifier
-			val id: Long =  SQL("select next value for match_seq").as(scalar[Long])
+			val id: Long =  SQL("select next value for match_seq").as(scalar[Long].single)
 			
 			SQL("""
 				insert into match (id, teamA, teamB, kickoff, phase) 
