@@ -23,10 +23,10 @@
     
     <div class="row">
     	<ul class="media-grid">
-	    @groups.toSeq.map { group =>
+	    @groups.map { group =>
 	    	<li>
-	        	<a href="#" class="group">@groupDiv(group)</a>
-	        <li>
+	        	<a href="@routes.Application.showGroup(group)" class="group">@groupDiv(group)</a>
+	        </li>
 	    }
     	</ul>
     </div>

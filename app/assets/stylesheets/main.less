@@ -99,7 +99,7 @@ section#admin input.error {
 	visibility: hidden;
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~ Scehdule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~ Schedule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 table.match {
 	width: 400px;
@@ -214,10 +214,52 @@ div.group {
 	}
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~ Standings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+div.standings {
+	color: white;
+	width: 400px;
+	height: 230px;
+	
+	padding: 10px;
+	
+	&.groupA {
+		.linear-gradient(@groupA-startColor, @groupA-stopColor);
+	}
+	
+	&.groupB {
+		.linear-gradient(@groupB-startColor, @groupB-stopColor);
+	}
+	
+	&.groupC {
+		.linear-gradient(@groupC-startColor, @groupC-stopColor);
+	}
+	
+	&.groupD {
+		.linear-gradient(@groupD-startColor, @groupD-stopColor);
+	}
+	
+	h4 {
+		text-align: center;
+		color: #F0F0F0;
+	}
+
+	th {
+		font-size: 10px;
+	}
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 h2.center {
 	text-align: center;
 }
 
 h2.underline {
 	border-bottom: 1px solid #ddd;	
+}
+
+.size16x16 {
+	width: 16px;
+	height: 16px;
 }

@@ -21,13 +21,14 @@ object Application extends Controller {
 
 	def showTeams = Action { implicit request =>
 		val teams = Team.findAll()
-		val groups = getGroups(teams)
+		val groups = Team.getGroups()
+		
 		Ok(views.html.teams(teams, groups))
 	}
 	
 	def showGroups = Action { implicit request =>
 		val teams = Team.findAll()
-		val groups = getGroups(teams)
+		val groups = Team.getGroups()
 		Ok(views.html.groups(teams, groups))
 	}
 
@@ -40,6 +41,22 @@ object Application extends Controller {
 		
 		Ok(views.html.schedule(matchesByPhase))
 	}
+
+	def showStandings = Action { implicit request =>
+		val groups = Team.getGroups()
+		
+		val matches = Match.findAll()
+		val standings = Match.computeStandings(matches)
+		println("standings = " + standings)
+		
+		Ok(views.html.standings(groups, standings))
+	}
+	
+	def showGroup(group:String) = Action { implicit request =>
+		val matches = Match.findByGroup(group)
+		val standings = Match.computeStandings(group, matches)
+		Ok(views.html.group(group, standings, matches))
+	}
 	
 	def test() = Action { implicit request =>
 		val values = Set("Value1", "Value2", "Value3")
@@ -48,10 +65,6 @@ object Application extends Controller {
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	def getGroups(teams: Seq[Team]): Set[String] = {
-		teams map(_.group) toSet
-	}
-	
 }
 
 trait Debuggable {

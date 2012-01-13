@@ -1,0 +1,21 @@
+@(groups: Set[String], standings: Map[String, Seq[Standing]])(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("Standings") {
+    
+    <div class="page-header">
+    	<h1>Standings
+    		<small>Displaying all the groups</small>
+    	</h1>
+    </div>
+    
+    <div class="row">
+    	<ul class="media-grid">
+	    @groups.map { group =>
+	    	<li>
+	        	<a href="@routes.Application.showGroup(group)" class="group">@helper.groupStandings(group, standings(group))</a>
+	        </li>
+	    }
+    	</ul>
+    </div>
+    
+}

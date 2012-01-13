@@ -1,0 +1,36 @@
+@(group: String, standings: Seq[Standing])
+
+	<div class="standings group@group">
+    	<h4>Group @group</h4>
+    	<table>
+    		<thead>
+    			<tr>
+    				<th></th>
+    				<th>Pl</th>
+    				<th>Pts</th>
+    				<th>W</th>
+    				<th>D</th>
+    				<th>L</th>
+    				<th>GS</th>
+    				<th>GA</th>
+    			</tr>
+    		</thead>
+    		<tbody>
+    		@standings.map { standing =>
+	    		<tr>
+	    			<td style="vertical-align: middle; white-space: nowrap;">
+	    				<img style="float: left; margin-right: 5px;" src="@routes.Assets.at("images/" + Messages("country.icon.32." + standing.team))" class="size16x16">
+	    				@standing.team
+	    			</td>
+	    			<td>@standing.played</td>
+	    			<td style="font-weight: bold;">@standing.points</td>
+	    			<td>@standing.wins</td>
+	    			<td>@standing.draws</td>
+	    			<td>@standing.losses</td>
+	    			<td>@standing.goalsScored</td>
+	    			<td>@standing.goalsAgainst</td>
+	    		</tr>
+	    	}
+    		</tbody>
+    	</table>
+	</div>

@@ -236,7 +236,7 @@
 							<label for="phase">Phase</label>
 							<div class="input">
 								<select id="phase" name="phase" class="span3">
-									@models.Phase.values.toSeq.map { phase =>
+									@models.Phase.values.map { phase =>
 										<option value="@phase">@phase</option>
 									}
 								</select>

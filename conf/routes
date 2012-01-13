@@ -16,6 +16,8 @@ GET		/logout						controllers.Security.logout()
 GET		/teams						controllers.Application.showTeams()
 GET		/groups						controllers.Application.showGroups()
 GET		/schedule					controllers.Application.showSchedule()
+GET		/standings					controllers.Application.showStandings()
+GET		/group/:id					controllers.Application.showGroup(id: String)
 
 #############
 # Admin tools
