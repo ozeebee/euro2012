@@ -13,6 +13,7 @@
     				<th>L</th>
     				<th>GS</th>
     				<th>GA</th>
+    				<th>GD</th>
     			</tr>
     		</thead>
     		<tbody>
@@ -29,6 +30,7 @@
 	    			<td>@standing.losses</td>
 	    			<td>@standing.goalsScored</td>
 	    			<td>@standing.goalsAgainst</td>
+	    			<td>@if(standing.goalDiff > 0){+}@standing.goalDiff</td>
 	    		</tr>
 	    	}
     		</tbody>

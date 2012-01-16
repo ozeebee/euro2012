@@ -219,12 +219,12 @@ println("matches in group " + group + " = " + matchesInGroup)
 		val standingsMap = matchesInGroup.foldLeft(collection.mutable.Map[String, Standing]()) { (map: collection.mutable.Map[String, Standing], zmatch: Match) =>
 			// get current standing or create it if it doesnt exist
 			val standingA = map.get(zmatch.teamA.get).getOrElse { 
-				val standing = Standing(zmatch.teamA.get, 0, 0, 0, 0, 0, 0, 0)
+				val standing = Standing.Empty(zmatch.teamA.get)
 				map(zmatch.teamA.get) = standing
 				standing
 			}
 			val standingB = map.get(zmatch.teamB.get).getOrElse {
-				val standing = Standing(zmatch.teamB.get, 0, 0, 0, 0, 0, 0, 0)
+				val standing = Standing.Empty(zmatch.teamB.get)
 				map(zmatch.teamB.get) = standing
 				standing
 			}
@@ -336,13 +336,13 @@ case class Standing (
 			}
 			else if (result.result == team) {
 				points += 3
-				wins += 3
+				wins += 1
 			}
 			else {
 				losses += 1
 			}
 			
-			if (team == zmatch.teamA) {
+			if (team == zmatch.teamA.get) {
 				goalsScored += result.scoreA
 				goalsAgainst += result.scoreB
 			}
@@ -352,4 +352,8 @@ case class Standing (
 			}
 		}
 	}
+}
+
+object Standing {
+	def Empty(team: String) = new Standing(team, 0, 0, 0, 0, 0, 0, 0)	
 }

@@ -107,7 +107,18 @@ table.match {
 	
 	td {
 		vertical-align: middle;
+		text-align: center;
+}
+	
+	td.dateOrScore {
+		white-space: nowrap; 
+		padding-top: 0px;
 	}
+	
+	td.timeOrScore {
+		white-space: nowrap; 
+	}
+	
 }
 
 div.koDate {
@@ -168,8 +179,12 @@ span.koDate {
 span.koTime {
 	color: #888;
 	font-size: 12px;
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+span.score {
+	font-weight: bold;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Groups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

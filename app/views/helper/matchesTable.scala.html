@@ -14,18 +14,34 @@
    		}
 
 		@if(showDates) {
-			<td style="white-space: nowrap; text-align: center;">
-				<span class="koTime">
-					@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")
-					<br>
-  					@zmatch.kickoff.format("HH:mm")
-  				</span>
+			<td class="dateOrScore">
+				@if(zmatch.played) {
+					<span class="koTime">
+						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy") @zmatch.kickoff.format("HH:mm")
+	  				</span>
+	  				<br>
+					<span class="score">
+						@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
+					</span>
+				} else {
+					<span class="koTime">
+						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")
+						<br>
+	  					@zmatch.kickoff.format("HH:mm")
+	  				</span>
+	  			}
   			</td>
 		} else {
-			<td>
-				<span class="koTime">
-  					@zmatch.kickoff.format("HH:mm")
-  				</span>
+			<td class="timeOrScore">
+				@if(zmatch.played) {
+					<span class="score">
+						@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
+					</span>
+				} else {
+					<span class="koTime">
+	  					@zmatch.kickoff.format("HH:mm")
+	  				</span>
+  				}
   			</td>
 		}
 		
