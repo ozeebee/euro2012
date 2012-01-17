@@ -1,0 +1,80 @@
+@(registerForm: play.api.data.Form[models.User])(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("Register") {
+	<div class="modal" style="position: relative; top: auto; left: auto; margin: 0pt auto; z-index: 1;">
+		<div class="modal-header">
+			<!-- <a href="#" class="close">x</a> -->
+			<h3>Registration form</h3>
+		</div>
+		
+		<div class="modal-body">
+<!--  
+			@if(registerForm.hasErrors) {
+				<h5>Form has errors</h5>
+			}
+	
+			@registerForm.errors.map { error =>
+		        <div style="color:#fff; background:#c00">
+		            @error.key : @error.message
+		        </div>
+		    }
+	
+			@if(registerForm.hasGlobalErrors) {
+				<h5>Form has global errors</h5>
+			}
+-->
+			<form id="registerForm" method="post" action="@routes.Security.registerSubmit()">
+				<fieldset>
+					<legend>Register your user</legend>
+					@registerForm.forField("name") { field =>
+						<div class="clearfix @if(! field.errors.isEmpty) { error }">
+							<label for="name">Username :</label>
+							<div class="input">
+								<input id="name" name="@field.name" type="text" value="@field.value" autofocus />
+								@if(! field.errors.isEmpty) {
+									<span class="help-inline">
+										@field.errors.map(_.message).mkString(",")
+									</span>
+								}
+							</div>
+						</div>
+					}
+					@registerForm.forField("email") { field =>
+						<div class="clearfix @if(! field.errors.isEmpty) { error }">
+							<label for="email">E-mail :</label>
+							<div class="input">
+								<input id="email" name="@field.name" type="email" value="@field.value" />
+								@if(! field.errors.isEmpty) {
+									<span class="help-inline">
+										@field.errors.map(_.message).mkString(",")
+									</span>
+								}
+							</div>
+						</div>
+					}
+					@registerForm.forField("password") { field =>
+						<div class="clearfix @if(! field.errors.isEmpty) { error }">
+							<label for="password">Password :</label>
+							<div class="input">
+								<input id="password" name="@field.name" type="password" />
+								@if(! field.errors.isEmpty) {
+									<span class="help-inline">
+										@field.errors.map(_.message).mkString(",")
+									</span>
+								}
+							</div>
+						</div>
+					}
+				</fieldset>
+			</form>
+		</div>
+		
+		<div class="modal-footer">
+			@if(registerForm.hasErrors) {
+				<span class="error">Please fix the errors before submitting</span>
+			}		
+			<!-- <a href="#" class="btn primary">Login</a> -->
+			<a href="#"	class="btn secondary" onclick="$('#registerForm').submit()">Register</a>
+		</div>
+	</div>
+}

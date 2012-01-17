@@ -26,11 +26,11 @@
 			<form id="loginForm" method="post" action="@routes.Security.authenticate()">
 				<fieldset>
 					<legend>Enter your credentials</legend>
-					@loginForm.forField("username") { field =>
+					@loginForm.forField("name") { field =>
 						<div class="clearfix @if(! field.errors.isEmpty) { error }">
-							<label for="username">Username :</label>
+							<label for="name">Username :</label>
 							<div class="input">
-								<input id="username" name="@field.name" type="text" value="@field.value" autofocus />
+								<input id="name" name="@field.name" type="text" value="@field.value" autofocus />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
 										@field.errors.map(_.message).mkString(",")
@@ -58,8 +58,8 @@
 		</div>
 		
 		<div class="modal-footer">
-			<!-- <a href="#" class="btn primary">Login</a> -->
-			<a href="#"	class="btn secondary" onclick="$('#loginForm').submit()">Submit</a>
+			<a href="#"	class="btn primary" onclick="$('#loginForm').submit()">Submit</a>
+			<a href="@routes.Security.register()" class="btn secondary">Register</a>
 		</div>
 	</div>
 }

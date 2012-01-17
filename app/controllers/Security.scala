@@ -10,11 +10,14 @@ object Security extends Controller with Debuggable {
 
 	val USERNAME = "username"
 	
+	// ~~~~~~~~~~~~~~~~~ Authentication ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	
 	// EXP: define a Form (mapping request parameters to Model properties)
 	val loginForm = Form(
 		of(User.apply _, User.unapply _)(
-			"username" -> nonEmptyText(minLength = 4),
-			"password" -> text
+			"name" -> nonEmptyText(minLength = 4),
+			"password" -> text,
+			"email" -> ignored(null)
 		)
 	)
 	
@@ -32,18 +35,18 @@ object Security extends Controller with Debuggable {
 		//   applied in case of errors, the second one is the success function (taking the form value as argument)
 		filledForm.fold(
 			formWithErrors => {
-				println("form has errors ! : " + formWithErrors)
+				println("login form has errors ! : " + formWithErrors)
 				BadRequest(views.html.login(formWithErrors))
 			},
 			user => {
-				println("form is ok ! value is = " + user)
+				println("login form is ok ! value is = " + user)
 
 				if (request.body.asUrlFormEncoded.get.contains("rememberUser")) {
 					println("! user has to be remembered !")
 				}
 
 				logger.info("user " + user + " has logged in")
-				Redirect(routes.Application.index()).withSession(session + (USERNAME -> user.username)) // EXP : add the username to the session (stored in a cookie)
+				Redirect(routes.Application.index()).withSession(session + (USERNAME -> user.name)) // EXP : add the username to the session (stored in a cookie)
 			}
 		)
 	}
@@ -53,6 +56,42 @@ object Security extends Controller with Debuggable {
 		Redirect(routes.Security.login()).withNewSession
 	}
 
+	// ~~~~~~~~~~~~~~~~~ Registration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	
+	val registerForm = Form(
+		of(User.apply _, User.unapply _)(
+			"name" -> nonEmptyText(minLength = 4),
+			"password" -> nonEmptyText(minLength = 6),
+			"email" -> email
+		) verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
+	)
+	
+	def register = Logged() {
+		Action { implicit request =>
+			Ok(views.html.register(registerForm))
+		}
+	}
+	
+	def registerSubmit = Action { implicit request =>
+		val filledForm = registerForm.bindFromRequest()
 
+		filledForm.fold(
+			formWithErrors => {
+				println("register form has errors ! : " + formWithErrors)
+				BadRequest(views.html.register(formWithErrors))
+			},
+			user => {
+				println("register form is ok ! value is = " + user)
+
+				logger.info("user " + user + " created")
+
+				User.create(user)
+				
+				//Redirect(routes.Security.login(user))
+				Ok(views.html.login(loginForm.fill(user)))
+			}
+		)
+		
+	}
 
 }

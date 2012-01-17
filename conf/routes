@@ -12,6 +12,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET		/login						controllers.Security.login()
 POST	/authenticate				controllers.Security.authenticate()
 GET		/logout						controllers.Security.logout()
+GET		/register					controllers.Security.register()
+POST	/register					controllers.Security.registerSubmit()
 
 GET		/teams						controllers.Application.showTeams()
 GET		/groups						controllers.Application.showGroups()
@@ -27,5 +29,7 @@ POST	/admin/matches/new			controllers.Admin.newMatch()
 # update match result				
 POST	/admin/matches/:id/result	controllers.Admin.updateMatchResult(id: Long)
 DELETE	/admin/matches/:id/result	controllers.Admin.deleteMatchResult(id: Long)
+
+GET		/admin/users				controllers.Admin.showUsers()
 
 GET 	/test						controllers.Application.test()

@@ -102,4 +102,9 @@ object Admin extends Controller with Debuggable {
 		}
 	}
 	
+	def showUsers = Action { implicit request =>
+		val users = User.findAll()
+		Ok(views.html.adminpages.users(users))
+	}
+	
 }

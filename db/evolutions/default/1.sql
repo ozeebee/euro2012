@@ -6,9 +6,11 @@
 
 create table user (
   email                     varchar(255) not null primary key,
-  name                      varchar(255) not null,
+  name                      varchar(255) not null unique,
   password                  varchar(255) not null
 );
+
+create unique index on user(name);
 
 create table team (
   id                        varchar(16) not null primary key,

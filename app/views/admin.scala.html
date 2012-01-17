@@ -151,11 +151,25 @@
     	</div>
 	    <div class="row">
 	    	<ul class="tabs">
-	    		<li><a href="#users">Users</a></li>
-	    		<li class="active"><a href="#matches">Matches</a></li>
-	    		<li><a href="#teams">Teams</a></li>
+	    		<li class="active"><a href="#about" onclick="showTab(event);">About</a></li>
+	    		<li><a href="#users" onclick="showTab(event, '@routes.Admin.showUsers()');">Users</a></li>
+	    		<li><a href="#matches">Matches</a></li>
+	    		<li><a href="#teams" onclick="showTab(event, '@routes.Admin.showUsers()');">Teams</a></li>
 	    		<li><a href="#other">Other</a></li>
 	    	</ul>
+	    	
+	    	<div class="tab-content">
+	    		<div id="about" class="tab-pane active">
+	    			<p>
+		    			The Admin page give you access to tools for administering things like Users, Teams and Matches.
+		    			Select the appropriate tab.
+	    			</p>
+	    		</div>
+	    		<div id="teams" class="tab-pane">
+	    			balblabla teams bla bla
+	    		</div>
+	    	</div>
+	    	
 		    <h3>Matches</h3>
 		    
 		    <table class="condensed-table zebra-striped">
