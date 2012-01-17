@@ -23,6 +23,15 @@
 				<h5>Form has global errors</h5>
 			}
 -->
+
+			@if(registerForm.hasGlobalErrors) {
+				<div class="alert-message error">
+					@registerForm.globalError.map { error =>
+		                <p class="error">@error.message</p>
+		            }
+				</div>
+			}
+			
 			<form id="registerForm" method="post" action="@routes.Security.registerSubmit()">
 				<fieldset>
 					<legend>Register your user</legend>
