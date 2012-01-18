@@ -42,7 +42,7 @@
 								<input id="name" name="@field.name" type="text" value="@field.value" autofocus />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
-										@field.errors.map(_.message).mkString(",")
+										@field.errors.map(err => Messages(err.message)).mkString(",")
 									</span>
 								}
 							</div>
@@ -55,7 +55,7 @@
 								<input id="email" name="@field.name" type="email" value="@field.value" />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
-										@field.errors.map(_.message).mkString(",")
+										@field.errors.map(err => Messages(err.message)).mkString(",")
 									</span>
 								}
 							</div>
@@ -68,7 +68,7 @@
 								<input id="password" name="@field.name" type="password" />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
-										@field.errors.map(_.message).mkString(",")
+										@field.errors.map(err => Messages(err.message)).mkString(",")
 									</span>
 								}
 							</div>

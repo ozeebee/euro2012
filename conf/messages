@@ -1,31 +1,35 @@
 # messages
 
+error.required = required field
+error.minLength = not enough characters
+error.email = not a valid email
+
 # phases
 
-phase.MD1=Match Day 1
-phase.MD2=Match Day 2
-phase.MD3=Match Day 3
-phase.QUARTERFINALS=Quarter Finals
-phase.SEMIFINALS=Semi Finals
-phase.FINAL=Final
+phase.MD1 = Match Day 1
+phase.MD2 = Match Day 2
+phase.MD3 = Match Day 3
+phase.QUARTERFINALS = Quarter Finals
+phase.SEMIFINALS = Semi Finals
+phase.FINAL = Final
 
 # country icons
-country.icon.32.POL=country/32/pl.png
-country.icon.32.GRE=country/32/gr.png
-country.icon.32.RUS=country/32/ru.png
-country.icon.32.CZE=country/32/cz.png
+country.icon.32.POL = country/32/pl.png
+country.icon.32.GRE = country/32/gr.png
+country.icon.32.RUS = country/32/ru.png
+country.icon.32.CZE = country/32/cz.png
 
-country.icon.32.NED=country/32/nl.png
-country.icon.32.DEN=country/32/dk.png
-country.icon.32.GER=country/32/de.png
-country.icon.32.POR=country/32/pt.png
+country.icon.32.NED = country/32/nl.png
+country.icon.32.DEN = country/32/dk.png
+country.icon.32.GER = country/32/de.png
+country.icon.32.POR = country/32/pt.png
 
-country.icon.32.ESP=country/32/es.png
-country.icon.32.ITA=country/32/it.png
-country.icon.32.IRL=country/32/ie.png
-country.icon.32.CRO=country/32/hr.png
+country.icon.32.ESP = country/32/es.png
+country.icon.32.ITA = country/32/it.png
+country.icon.32.IRL = country/32/ie.png
+country.icon.32.CRO = country/32/hr.png
 
-country.icon.32.UKR=country/32/ua.png
-country.icon.32.SWE=country/32/se.png
-country.icon.32.FRA=country/32/fr.png
-country.icon.32.ENG=country/32/gb.png
+country.icon.32.UKR = country/32/ua.png
+country.icon.32.SWE = country/32/se.png
+country.icon.32.FRA = country/32/fr.png
+country.icon.32.ENG = country/32/gb.png
