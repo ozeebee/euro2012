@@ -1,0 +1,121 @@
+@(matches: Seq[models.Match], matchForm: play.api.data.Form[Match])(implicit request: play.api.mvc.RequestHeader)
+
+@winnerInBold(team: String, zmatch: Match) = {
+	@zmatch.winner.map { winningTeamId =>
+		@if(winningTeamId == team) {
+			<strong>@team</strong>
+		} else {
+			@team
+		}
+	}.getOrElse {
+		@team
+	}
+}
+
+@scoreBox(zmatch: Match) = {
+	<div id="score_@zmatch.id">
+		<input type="text" value="@zmatch.result.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
+		 -
+ 		<input type="text" value="@zmatch.result.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
+ 		
+ 		<a href="javascript:updateScore(@zmatch.id, '@routes.Admin.updateMatchResult(zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
+ 		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
+
+ 		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
+	</div>
+}
+
+<h3>Matches</h3>
+
+<table class="condensed-table zebra-striped">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Team A</th>
+			<th style="text-align: center;">Score</th>
+		<th>Team B</th>
+		<th>Kick-off time</th>
+		<th>Phase</th>
+	</tr>
+</thead>
+<tbody>
+	@matches.map { zmatch =>
+	 	<tr>
+	 		<td>@zmatch.id</td>
+	 		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
+	 		<td style="text-align: center;">
+	  			@scoreBox(zmatch)				    		
+	  		</td>
+	  		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
+	  		<td>
+	  			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
+	  		</td>
+	  		<td>@zmatch.phase</td>
+	  	</tr>
+	}
+	</tbody>
+</table>
+
+@* <!--  		    
+		    <h4>Add Match</h4>
+		    
+		    <form id="form" action="@routes.Admin.newMatch()" method="post">
+		    	<fieldset>
+					<legend>New Match</legend>
+					@matchForm.forField("teamA") { field =>
+						<div class="clearfix">
+							<label for="teamA">Team A</label>
+							<div class="input">
+								<select id="teamA" name="teamA" class="span3">
+									@models.Team.findAll().map { team =>
+										<option value="@team.id">@team.name</option>
+									}
+								</select>
+							</div>
+						</div>
+					}
+					@matchForm.forField("teamB") { field =>
+						<div class="clearfix">
+							<label for="teamB">Team B</label>
+							<div class="input">
+								<select id="teamB" name="teamB" class="span3">
+									@models.Team.findAll().map { team =>
+										<option value="@team.id">@team.name</option>
+									}
+								</select>
+							</div>
+						</div>
+					}
+					@matchForm.forField("kickoff") { field =>
+						<div class="clearfix">
+							<label for="datepicker">Kick-Off</label>
+							<div class="input">
+								<input id="kickoff" name="kickoff" type="hidden" />
+								<input id="datepicker" type="text" />
+								time :
+								<select id="kickoffHour" class="span2">
+									<option value="18:00">18:00</option>
+									<option value="20:45">20:45</option>
+								</select>
+							</div>
+						</div>
+					}
+					@matchForm.forField("phase") { field =>
+						<div class="clearfix">
+							<label for="phase">Phase</label>
+							<div class="input">
+								<select id="phase" name="phase" class="span3">
+									@models.Phase.values.map { phase =>
+										<option value="@phase">@phase</option>
+									}
+								</select>
+							</div>
+						</div>
+					}
+					<div class="actions">
+						<input type="submit" class="btn primary" value="Save" />
+					</div>
+				</fieldset>
+		    </form>
+--> *@		    
+		    

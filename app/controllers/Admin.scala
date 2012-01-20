@@ -48,10 +48,14 @@ object Admin extends Controller with Debuggable {
 	)
 
 	def showAdmin = Action { implicit request =>
-		val matches = Match.findAll()
-		Ok(views.html.admin(matches, matchForm))
+		Ok(views.html.admin())
 	}
 
+	def showMatches = Action { implicit request =>
+		val matches = Match.findAll()
+		Ok(views.html.adminpages.matches(matches, matchForm))
+	}
+	
 	def newMatch = Action { implicit request =>
 		logger.debug("newMatch")
 		
@@ -59,7 +63,7 @@ object Admin extends Controller with Debuggable {
 			formWithErrors => {
 				println("form has errors ! : " + formWithErrors)
 				val matches = Match.findAll()
-				BadRequest(views.html.admin(matches, formWithErrors))
+				BadRequest(views.html.adminpages.matches(matches, formWithErrors))
 			},
 			zmatch => {
 				println("form is ok ! value is = " + zmatch)

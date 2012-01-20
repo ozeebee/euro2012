@@ -1,29 +1,4 @@
-@(matches: Seq[models.Match], matchForm: play.api.data.Form[Match])(implicit request: play.api.mvc.RequestHeader)
-
-@winnerInBold(team: String, zmatch: Match) = {
-	@zmatch.winner.map { winningTeamId =>
-		@if(winningTeamId == team) {
-			<strong>@team</strong>
-		} else {
-			@team
-		}
-	}.getOrElse {
-		@team
-	}
-}
-
-@scoreBox(zmatch: Match) = {
-	<div id="score_@zmatch.id">
-		<input type="text" value="@zmatch.result.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
-		 -
- 		<input type="text" value="@zmatch.result.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
- 		
- 		<a href="javascript:updateScore(@zmatch.id, '@routes.Admin.updateMatchResult(zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
- 		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
-
- 		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
-	</div>
-}
+@()(implicit request: play.api.mvc.RequestHeader)
 
 @currentDateTimeChooser = {
 	@defining(Param.getCurrentDateTime()) { currentDateTime =>
@@ -41,127 +16,8 @@
 
 @headContent = {
 	<script src="@routes.Assets.at("javascripts/jquery-ui-1.8.16.custom.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/admin.js")" type="text/javascript"></script>
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/themes/cupertino/jquery.ui.all.css")">
-	
-	<script>
-		function setCurrentDateTime() {
-			console.log("setCurrentDateTime()");
-			var dateStr = $("#currentDateChooser").val();
-			var timeStr = $("#currentTime").val();
-			var dateTimeStr = dateStr + " " + timeStr;
-			console.log("  posting dateTime " + dateTimeStr);
-			$.post("/admin/currentDateTime",
-					{dateTime: dateTimeStr},
-					function(data) {
-						console.log("Ok ! currentDateTime updated");
-					}
-			).fail(function(jqXHR) { // Error function
-				console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-			});
-		}
-	
-		function updateScore(matchId, url) {
-			console.log("updateScore() matchId = " + matchId);
-			var div = $("#score_" + matchId);
-			var scoreAinput = $("input:eq(0)", div);
-			var scoreBinput = $("input:eq(1)", div);
-			var data = {
-				scoreA: scoreAinput.val(), 
-				scoreB: scoreBinput.val()
-			};
-			
-			$.post("/admin/matches/"+matchId+"/result", 
-					data,
-					function(data) { // Success function
-						// remove error markers (if any)
-						scoreAinput.removeClass("error");
-						scoreBinput.removeClass("error");
-						// show ok notif icon
-						$("img", div).prop("src", "@routes.Assets.at("images/button_ok.png")").removeClass("invisible");
-					}
-			).fail(function(jqXHR) { // Error function
-				if (jqXHR.status == 400) {
-					var jsonStr = jqXHR.responseText;
-					var errorFields = $.parseJSON(jsonStr);
-					var fieldToFocus = null;
-					// remove error markers (if any)
-					scoreAinput.removeClass("error");
-					scoreBinput.removeClass("error");
-					// add error markers
-					for (var i=0; i<errorFields.length; i++) {
-						var field = errorFields[i];
-						if (field == "scoreA") { 
-							scoreAinput.addClass("error");
-							fieldToFocus = scoreAinput;
-						}
-						else if (field == "scoreB") {
-							scoreBinput.addClass("error");
-							if (fieldToFocus == null)
-								fieldToFocus = scoreBinput;
-						}
-					}
-					// focus field
-					fieldToFocus.select();
-					fieldToFocus.focus();
-				}
-				else {
-					console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-				}
-			});
-		}
-		
-		function clearScore(matchId, url) {
-			console.log("clearScore()");
-			var div = $("#score_" + matchId);
-			var scoreAinput = $("input:eq(0)", div);
-			var scoreBinput = $("input:eq(1)", div);
-
-			var data = {};
-			$.ajax({
-				type: 'DELETE',
-				url: url,
-				data: data,
-				success: function(data) { // Success function
-					console.log("clear success. data=" + data);
-					// empty fields
-					scoreAinput.val("");
-					scoreBinput.val("");
-				}
-			}).fail(function(jqXHR) { // Error function
-				console.log("Clear error !!!");
-				console.log("  status = " + jqXHR.status);
-				console.log("  response = " + jqXHR.responseText);
-			});
-		}
-	
-		$(function() {
-			$("#form").submit(function () {
-				var zdate = $("#datepicker").prop("value");
-				var hour = $("#kickoffHour").val();
-				$("#kickoff").prop("value", zdate + " " + hour);
-				console.log("kickoff = " + $("#kickoff").prop("value"))
-				return true;
-			});
-
-			// initialize currentDateTimeChooser date picker
-			$("#currentDateChooser").datepicker({
-				dateFormat: "dd/mm/yy",
-				changeMonth: true,
-				changeYear: true,
-				defaultDate: "08/06/2012"
-				//showOn: "button",
-				//buttonImage: "@routes.Assets.at("images/calendar-blue.png")",
-				//buttonImageOnly: true,
-				/*
-				onSelect: function(dateText, inst) {
-					//console.log("dateText = " + dateText)
-					var hour = $("#kickoffHour").val();
-					$("#datepicker").prop("value", dateText + " " + hour);
-					return false;
-				}*/
-			});
-		});
-	</script>
 }
 
 @layout.main("Admin", head = headContent) {
@@ -176,7 +32,7 @@
 	    	<ul class="tabs">
 	    		<li class="active"><a href="#about" onclick="showTab(event);">About</a></li>
 	    		<li><a href="#users" onclick="showTab(event, '@routes.Admin.showUsers()');">Users</a></li>
-	    		<li><a href="#matches">Matches</a></li>
+	    		<li><a href="#matches"  onclick="showTab(event, '@routes.Admin.showMatches()');">Matches</a></li>
 	    		<li><a href="#teams" onclick="showTab(event, '@routes.Admin.showUsers()');">Teams</a></li>
 	    		<li><a href="#other">Other</a></li>
 	    	</ul>
@@ -193,102 +49,7 @@
 	    		<div id="teams" class="tab-pane">
 	    			balblabla teams bla bla
 	    		</div>
-	    	</div>
-	    	
-		    <h3>Matches</h3>
-		    
-		    <table class="condensed-table zebra-striped">
-		    	<thead>
-		    		<tr>
-		    			<th>Id</th>
-		    			<th>Team A</th>
-		    			<th style="text-align: center;">Score</th>
-		    			<th>Team B</th>
-		    			<th>Kick-off time</th>
-		    			<th>Phase</th>
-		    		</tr>
-		    	</thead>
-		    	<tbody>
-				    @matches.map { zmatch =>
-				    	<tr>
-				    		<td>@zmatch.id</td>
-				    		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
-				    		<td style="text-align: center;">
-				    			@scoreBox(zmatch)				    		
-				    		</td>
-				    		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
-				    		<td>
-				    			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
-				    		</td>
-				    		<td>@zmatch.phase</td>
-				    	</tr>
-				    }
-		    	</tbody>
-		    </table>
-
-@* <!--  		    
-		    <h4>Add Match</h4>
-		    
-		    <form id="form" action="@routes.Admin.newMatch()" method="post">
-		    	<fieldset>
-					<legend>New Match</legend>
-					@matchForm.forField("teamA") { field =>
-						<div class="clearfix">
-							<label for="teamA">Team A</label>
-							<div class="input">
-								<select id="teamA" name="teamA" class="span3">
-									@models.Team.findAll().map { team =>
-										<option value="@team.id">@team.name</option>
-									}
-								</select>
-							</div>
-						</div>
-					}
-					@matchForm.forField("teamB") { field =>
-						<div class="clearfix">
-							<label for="teamB">Team B</label>
-							<div class="input">
-								<select id="teamB" name="teamB" class="span3">
-									@models.Team.findAll().map { team =>
-										<option value="@team.id">@team.name</option>
-									}
-								</select>
-							</div>
-						</div>
-					}
-					@matchForm.forField("kickoff") { field =>
-						<div class="clearfix">
-							<label for="datepicker">Kick-Off</label>
-							<div class="input">
-								<input id="kickoff" name="kickoff" type="hidden" />
-								<input id="datepicker" type="text" />
-								time :
-								<select id="kickoffHour" class="span2">
-									<option value="18:00">18:00</option>
-									<option value="20:45">20:45</option>
-								</select>
-							</div>
-						</div>
-					}
-					@matchForm.forField("phase") { field =>
-						<div class="clearfix">
-							<label for="phase">Phase</label>
-							<div class="input">
-								<select id="phase" name="phase" class="span3">
-									@models.Phase.values.map { phase =>
-										<option value="@phase">@phase</option>
-									}
-								</select>
-							</div>
-						</div>
-					}
-					<div class="actions">
-						<input type="submit" class="btn primary" value="Save" />
-					</div>
-				</fieldset>
-		    </form>
---> *@		    
-		    
+	    	</div>	    	
 	    </div>
     </section>
 }
