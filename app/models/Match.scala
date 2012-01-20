@@ -117,7 +117,7 @@ object Match {
 	
 	def findAll(): Seq[Match] = {
 		DB.withConnection { implicit connection =>
-			SQL("select * from match").as(Match.simple *)
+			SQL("select * from match order by kickoff").as(Match.simple *)
 		}
 	}
 	

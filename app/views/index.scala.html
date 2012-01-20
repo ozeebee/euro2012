@@ -2,18 +2,31 @@
 
 @layout.main("Home") {
     
-    Hi there
+    <h2>Main menu</h2>
+	<ul>
+		<li><a href="@routes.Admin.showAdmin()">admin</a></li>
+	</ul>
     
+    <h3>Dashboard</h3>
+    <p>
+    	number of forecasts (with completion)
+    	number of points / remaining number of points
+    	calendar with results/forecasts
+    </p>
+    
+    <h3>Competition</h3>
     <ul>
     	<li><a href="@routes.Application.showTeams()">teams</a></li>
     	<li><a href="@routes.Application.showGroups()">groups</a></li>
     	<li><a href="@routes.Application.showSchedule()">schedule/results</a></li>
     	<li><a href="@routes.Application.showStandings()">standings</a></li>
-    	
-    	<li><a href="@@routes.Application.showStandings()">forecasts</a></li>
-    	<li><a href="@@routes.Application.showStandings()">ranking</a></li>
-    	
-    	<li><a href="@routes.Admin.showAdmin()">admin</a></li>
     </ul>
     
+    <h3>Game</h3>
+    <ul>
+        <li><a href="@routes.Application.showForecasts()">forecasts</a></li>
+    	<li><a href="#ranking">ranking</a></li>
+    </ul>	
+    
+
 }

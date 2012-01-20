@@ -1,10 +1,9 @@
-this is empty !
 
-TBD:
-
-next step : schedule
-
-## Tournament
+TODO:
+	- add test for user registration (validation)
+	- secure pages with connected user/role (admin) : interceptors ?
+	
+## Competition
 
 - view teams/groups/schedules/standings
 
@@ -20,5 +19,4 @@ next step : schedule
 - ? user picture
 	
 ### Other
-	
-
+- JS : remove absolute urls in external javascripts

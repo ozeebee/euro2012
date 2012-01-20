@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.data._
+import play.api.data.validation._
 import play.api.mvc._
 import play.api.Logger
 import models.User
@@ -9,6 +10,8 @@ object Security extends Controller with Debuggable {
 	val logger = Logger(this.getClass())
 
 	val USERNAME = "username"
+		
+	def username(implicit request: RequestHeader) = request.session.get(USERNAME)
 	
 	// ~~~~~~~~~~~~~~~~~ Authentication ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
 	
@@ -60,7 +63,9 @@ object Security extends Controller with Debuggable {
 	
 	val registerForm = Form(
 		of(User.apply _, User.unapply _)(
-			"name" -> nonEmptyText(minLength = 4),
+			"name" -> (text verifying (Constraints.nonEmpty, 
+										Constraints.minLength(4), 
+										Constraints.pattern("""[a-zA-Z0-9._]+"""r, "constraint.username", "error.username"))),
 			"password" -> nonEmptyText(minLength = 6),
 			"email" -> email
 		) verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))

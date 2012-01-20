@@ -25,11 +25,17 @@
 	</div>
 }
 
-@OLD_scoreBox(zmatch: Match) = {
-	@zmatch.result.map { result =>
-		@result.scoreA - @result.scoreB
-	}.getOrElse {
-		<a href="javascript:setScore();" class="btn small" style="padding: 3px 10px;">set</a>
+@currentDateTimeChooser = {
+	@defining(Param.getCurrentDateTime()) { currentDateTime =>
+	<div>
+		<label for="currentDateChooser">Current date and time</label>
+		<div class="input">
+			<input id="currentDateChooser" type="text" class="span2" value="@currentDateTime.format("dd/MM/yyyy")" />
+			time :
+			<input id="currentTime" type="text" class="span2" value="@currentDateTime.format("HH:mm")" />
+		</div>
+		<input type="button" class="btn small" value="Set" onclick="setCurrentDateTime();" />
+	</div>
 	}
 }
 
@@ -38,6 +44,22 @@
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/themes/cupertino/jquery.ui.all.css")">
 	
 	<script>
+		function setCurrentDateTime() {
+			console.log("setCurrentDateTime()");
+			var dateStr = $("#currentDateChooser").val();
+			var timeStr = $("#currentTime").val();
+			var dateTimeStr = dateStr + " " + timeStr;
+			console.log("  posting dateTime " + dateTimeStr);
+			$.post("/admin/currentDateTime",
+					{dateTime: dateTimeStr},
+					function(data) {
+						console.log("Ok ! currentDateTime updated");
+					}
+			).fail(function(jqXHR) { // Error function
+				console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+			});
+		}
+	
 		function updateScore(matchId, url) {
 			console.log("updateScore() matchId = " + matchId);
 			var div = $("#score_" + matchId);
@@ -121,7 +143,8 @@
 				return true;
 			});
 
-			$("#datepicker").datepicker({
+			// initialize currentDateTimeChooser date picker
+			$("#currentDateChooser").datepicker({
 				dateFormat: "dd/mm/yy",
 				changeMonth: true,
 				changeYear: true,
@@ -164,6 +187,8 @@
 		    			The Admin page give you access to tools for administering things like Users, Teams and Matches.
 		    			Select the appropriate tab.
 	    			</p>
+	    			
+	    			@currentDateTimeChooser
 	    		</div>
 	    		<div id="teams" class="tab-pane">
 	    			balblabla teams bla bla

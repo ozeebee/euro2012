@@ -1,10 +1,11 @@
 package controllers
 
 import play.api._
+import play.api.data._
 import play.api.mvc._
 import models._
 
-object Application extends Controller {
+object Application extends Controller with Debuggable {
 	val logger = Logger(this.getClass())
 
 	// ~~~~~~~~~~~~~~~~~ Actions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,7 +35,6 @@ object Application extends Controller {
 
 	def showSchedule = Action { implicit request =>
 		val matches = Match.findAll()
-		
 		val matchesByPhase = matches groupBy { zmatch =>
 			zmatch.phase.toString()
 		}
@@ -57,7 +57,7 @@ object Application extends Controller {
 		val standings = Match.computeStandings(group, matches)
 		Ok(views.html.group(group, standings, matches))
 	}
-	
+
 	def test() = Action { implicit request =>
 		val values = Set("Value1", "Value2", "Value3")
 		Ok(views.html.test(values))
@@ -65,6 +65,54 @@ object Application extends Controller {
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	def showForecasts = Action { implicit request =>
+		val matches = Match.findAll()
+		val matchesByPhase = matches groupBy { zmatch =>
+			zmatch.phase.toString()
+		}
+		
+		val username = Security.username.get
+		
+		val forecastsByMatch = Forecast.findByUser(username)
+			.foldLeft(collection.mutable.Map[anorm.Pk[Long], Forecast]()) { (map: collection.mutable.Map[anorm.Pk[Long], Forecast], forecast: Forecast) =>
+				map(forecast.matchid) = forecast
+				map
+			}
+		
+		Ok(views.html.forecasts(matchesByPhase, forecastsByMatch))
+	}
+	
+	val forecastForm = Form(
+		of(
+			"matchId" -> longNumber,
+			"scoreA" -> number(min=0, max=99),
+			"scoreB" -> number(min=0, max=99)
+		)
+	)
+	
+	def saveForecast = Logged("saveForecast") { 
+		Action { implicit request =>
+			forecastForm.bindFromRequest().fold(
+				formWithErrors => BadRequest,
+				dataTuple => {
+					logger.debug("saving forecast dataTuple = " + dataTuple)
+					Forecast.saveForecast(Forecast(Security.username.get, anorm.Id(dataTuple._1), dataTuple._2, dataTuple._3))
+					Ok
+				} 
+			)
+		}
+	}
+	
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	/**
+	 * @return true if the forecast can be captured for the given target kickoff date/time
+	 */
+	def canForecast(kickoff: java.util.Date): Boolean = {
+		val now = Param.getCurrentDateTime()
+		now.before(kickoff)
+	}
+	
 }
 
 trait Debuggable {

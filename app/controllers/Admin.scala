@@ -107,4 +107,19 @@ object Admin extends Controller with Debuggable {
 		Ok(views.html.adminpages.users(users))
 	}
 	
+	val currentDateTimeForm = Form(of("dateTime" -> date("dd/MM/yyyy HH:mm")))
+	
+	def setCurrentDateTime() = Logged("setCurrentDateTime") {
+		Action { implicit request =>
+			Form("dateTime" -> date("dd/MM/yyyy HH:mm")).bindFromRequest().fold(
+				formWithErrors => BadRequest,
+				date => {
+					logger.debug("OK, date = " + date)
+					Param.setCurrentDateTime(date)
+					Ok("ok")
+				}
+			)
+		}
+	}
+	
 }

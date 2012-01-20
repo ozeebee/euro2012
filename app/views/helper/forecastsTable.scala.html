@@ -1,0 +1,72 @@
+@(matches: Seq[Match], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
+
+@forecastBox(zmatch: Match, forecastOpt: Option[Forecast]) = {
+	<div id="forecast_@zmatch.id" class="forecastBox">
+		<input type="text" value="@forecastOpt.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
+		 -
+ 		<input type="text" value="@forecastOpt.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
+ 		
+ 		<div class="subrow">
+			<span class="koTime">
+	  			@zmatch.kickoff.format("HH:mm")
+	  		</span>
+ 			<a onclick="saveForecast(@zmatch.id, '@routes.Application.saveForecast()');" class="saveBtn notDisplayed">
+ 				<img src="@routes.Assets.at("images/diskette.gif")">
+ 				<span>save</span>
+ 			</a>
+ 		</div>
+	</div>
+}
+
+	<table class="forecast zebra-striped">
+  	@matches.map { zmatch =>
+  		<tr>
+  			<!-- <td style="text-align: right; white-space: nowrap;">Sunday, the 17 of June 2012 18:00</td> -->
+  		
+   		@if(! zmatch.isFormula) {
+  				<td>
+    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
+  				</td>
+  				<td>@zmatch.teamA</td>
+   		} else {
+   			<td></td>
+   			<td>@zmatch.teamAformula</td>
+   		}
+
+		<td class="forecast">
+			@if(zmatch.played) {
+				<span class="score">
+					@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
+				</span>
+				@forecastsByMatch.get(zmatch.id).map { forecast =>
+					<br>
+					your forecast : @forecast.scoreA - @forecast.scoreB 
+				}.getOrElse {
+					<br>
+					no forecast
+				}
+			} else {
+				@if(controllers.Application.canForecast(zmatch.kickoff)) {
+					@forecastBox(zmatch, forecastsByMatch.get(zmatch.id))
+				} else {
+					<span class="koTime">
+  						@zmatch.kickoff.format("HH:mm")
+  					</span>
+					<br>
+					no forecast
+				}
+			}
+		</td>
+		
+ 		@if(! zmatch.isFormula) {
+   			<td>@zmatch.teamB</td>
+   			<td>
+    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">
+   			</td>
+   		} else {
+   			<td>@zmatch.teamBformula</td>
+   			<td></td>
+   		}
+  		</tr>
+  	}
+ 	</table>

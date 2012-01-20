@@ -99,6 +99,10 @@ section#admin input.error {
 	visibility: hidden;
 }
 
+.notDisplayed {
+	display: none;
+}
+
 li.active a {
 	outline: none; // remove dotted lines around focus on the active tab (anchor)
 }
@@ -106,6 +110,64 @@ li.active a {
 span.error {
 	color: red;
 	font-size: 14px;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~ Forecasts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+a.scoreSaveBtn {
+	padding: 3px;
+}
+
+table.forecast {
+	width: 400px;
+	.center();
+	
+	td {
+		vertical-align: middle;
+		text-align: center;
+		
+		border-top: 1px solid #DDD;
+		border-bottom: 1px solid #DDD;
+	}
+	
+	td.dateOrScore {
+		white-space: nowrap; 
+		padding-top: 0px;
+	}
+	
+	td.forecast {
+		white-space: nowrap;
+		min-width: 230px;
+	}
+	
+}
+
+div.forecastBox {
+	span.koTime {
+		color: #999;
+		#font > .sans-serif(normal, 11px, 20px);
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+	
+	a {
+		color: #999;
+		cursor: default;
+		
+		&:hover { 
+			text-decoration: underline;
+			color: #0084B4;			
+		}
+	}
+	
+	div.subrow {
+		text-align: left;
+		margin-left: 50px; // depends on the td.forecast min-width
+	}
+	
+	span.notif {
+		color: #999;
+	}
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Schedule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

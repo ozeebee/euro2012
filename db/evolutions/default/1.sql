@@ -4,9 +4,14 @@
 
 -- set ignorecase true;
 
+create table param (
+	name					varchar(255) not null primary key,
+	value					varchar(1024)
+);
+
 create table user (
-  email                     varchar(255) not null primary key,
-  name                      varchar(255) not null unique,
+  name                      varchar(255) not null primary key,
+  email                     varchar(255) not null unique,
   password                  varchar(255) not null
 );
 
@@ -36,9 +41,22 @@ create table match (
 
 create sequence match_seq start with 1;
 
+create table forecast (
+  username					varchar(255) not null,
+  matchid					bigint not null,
+  scoreA					integer not null,
+  scoreB					integer not null,
+  modifDate					timestamp not null default current_timestamp(),
+  constraint pk_forecast	primary key(username, matchid),	
+  foreign key(username)		references user(name) on delete cascade,
+  foreign key(matchid)		references match(id) on delete cascade
+);
+
 # --- !Downs
 
+drop table if exists forecast;
 drop table if exists match;
 drop sequence if exists match_seq;
 drop table if exists team;
 drop table if exists user;
+drop table if exists param;

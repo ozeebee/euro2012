@@ -21,6 +21,9 @@ GET		/schedule					controllers.Application.showSchedule()
 GET		/standings					controllers.Application.showStandings()
 GET		/group/:id					controllers.Application.showGroup(id: String)
 
+GET		/forecasts					controllers.Application.showForecasts()
+POST	/forecasts					controllers.Application.saveForecast()
+
 #############
 # Admin tools
 GET		/admin						controllers.Admin.showAdmin()
@@ -31,5 +34,6 @@ POST	/admin/matches/:id/result	controllers.Admin.updateMatchResult(id: Long)
 DELETE	/admin/matches/:id/result	controllers.Admin.deleteMatchResult(id: Long)
 
 GET		/admin/users				controllers.Admin.showUsers()
+POST	/admin/currentDateTime		controllers.Admin.setCurrentDateTime()
 
 GET 	/test						controllers.Application.test()

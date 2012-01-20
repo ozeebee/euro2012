@@ -8,7 +8,7 @@ import anorm.SqlParser._
 
 case class User (
 	name: String,
-	email:String,
+	email: String,
 	password: String
 )
 
@@ -59,5 +59,55 @@ object User {
 				.isDefined
 		}
 	}
+}
+
+case class Forecast (
+	username: String,
+	matchid: Pk[Long],
+	scoreA: Int,
+	scoreB: Int
+)
+
+object Forecast {
 	
+	val simple = {
+		get[String]("username") ~
+		get[Pk[Long]]("matchid") ~
+		get[Int]("scoreA") ~
+		get[Int]("scoreB") map {
+			case username ~ matchid ~ scoreA ~ scoreB => Forecast(username, matchid, scoreA, scoreB)
+		}
+	}
+	
+	def findByUser(user: String): Seq[Forecast] = {
+		DB.withConnection { implicit connection =>
+			SQL("select username, matchid, scoreA, scoreB from forecast where username = {username}")
+				.on('username -> user)
+				.as(Forecast.simple *)
+		}
+	}
+	
+	def create(forecast: Forecast)(implicit connection: java.sql.Connection) = {
+		SQL("insert into forecast (username, matchid, scoreA, scoreB) values ({username}, {matchid}, {scoreA}, {scoreB})")
+			.on('username -> forecast.username, 'matchid -> forecast.matchid, 'scoreA -> forecast.scoreA, 'scoreB -> forecast.scoreB)
+			.executeUpdate()
+	}
+	
+	def update(forecast: Forecast)(implicit connection: java.sql.Connection) = {
+		SQL("update forecast set scoreA = {scoreA}, scoreB = {scoreB} where username = {username} and matchid = {matchid}")
+			.on('username -> forecast.username, 'matchid -> forecast.matchid, 'scoreA -> forecast.scoreA, 'scoreB -> forecast.scoreB)
+			.executeUpdate()
+	}
+	
+	def saveForecast(forecast: Forecast) = {
+		DB.withConnection { implicit connection =>
+			// check wether we should issue an insert or update statement
+			SQL("select matchid from forecast where username = {username} and matchid = {matchid}")
+					.on('username -> forecast.username, 'matchid -> forecast.matchid)
+					.singleOpt() match {
+				case Some(result) => update(forecast) // record exists, update it
+				case None => create(forecast) // no record yet, create it 
+			}
+		}
+	}
 }
