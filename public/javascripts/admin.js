@@ -88,6 +88,21 @@ function clearScore(matchId, url) {
 	});
 }
 
+function showUserForecasts(username) {
+	console.log("showUserForecasts");
+	
+	var url = userForecastsUrl.replace(/:username/, username);
+	console.log("  url = " + url);
+	$.get(url,
+			function(data) {
+				console.log("Ok ! got data");
+				$("#userForecasts").html(data);
+			}
+	).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
 $(function() {
 	$("#form").submit(function () {
 		var zdate = $("#datepicker").prop("value");

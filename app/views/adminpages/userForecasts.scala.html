@@ -1,0 +1,36 @@
+@(username: String, matches: Seq[Match], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
+
+	<h4>Forecasts for user <strong>@username</strong></h4>
+	<table class="condensed-table zebra-striped userForecasts">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Team A</th>
+				<th style="text-align: center;">Forecast</th>
+				<th>Team B</th>
+				<th>Kick-off time</th>
+				<th>Phase</th>
+			</tr>
+		</thead>
+		<tbody>
+		@matches.map { zmatch =>
+			<tr>
+				<td>@zmatch.id</td>
+				<td>@zmatch.teamA</td>
+				<td style="text-align: center;">
+					@forecastsByMatch.get(zmatch.id).map { forecast =>
+						@forecast.scoreA - @forecast.scoreB
+					}
+					<div style="font-size:11px; color:gray;">
+						@if(zmatch.played) {
+							(@zmatch.result.get.scoreA - @zmatch.result.get.scoreB)
+						}
+					</div>
+				</td>
+				<td>@zmatch.teamB</td>
+				<td>@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</td>
+				<td>@zmatch.phase</td>
+			<tr>
+		}
+		</tbody>
+	</table>

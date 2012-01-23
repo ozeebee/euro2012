@@ -1,6 +1,5 @@
 @(users: Seq[User])(implicit request: play.api.mvc.RequestHeader)
 
-
 <h3>Users</h3>
 
 <table class="condensed-table zebra-striped">
@@ -13,10 +12,13 @@
 	<tbody>
 		@users.map { user =>
 		<tr>
-  			<td>@user.name</td>
+  			<td><a href="#" onclick="event.preventDefault(); showUserForecasts('@user.name');">@user.name</a></td>
   			<td>@user.email</td>
 		</tr>
 		}
 	</tbody>
 </table>
+
+<div id="userForecasts">
+</div>
 

@@ -111,6 +111,22 @@ object Admin extends Controller with Debuggable {
 		Ok(views.html.adminpages.users(users))
 	}
 	
+	def showUserForecasts(username: String) = Logged("showUserForecasts") {
+		Action { implicit requests =>
+			val matches = Match.findAll()
+			
+			val username = Security.username.get
+			
+			val forecastsByMatch = Forecast.findByUser(username)
+				.foldLeft(collection.mutable.Map[anorm.Pk[Long], Forecast]()) { (map: collection.mutable.Map[anorm.Pk[Long], Forecast], forecast: Forecast) =>
+					map(forecast.matchid) = forecast
+					map
+				}
+
+			Ok(views.html.adminpages.userForecasts(username, matches, forecastsByMatch))
+		}
+	}
+	
 	val currentDateTimeForm = Form(of("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {

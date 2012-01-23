@@ -33,26 +33,26 @@
 			<th>Id</th>
 			<th>Team A</th>
 			<th style="text-align: center;">Score</th>
-		<th>Team B</th>
-		<th>Kick-off time</th>
-		<th>Phase</th>
-	</tr>
-</thead>
-<tbody>
-	@matches.map { zmatch =>
-	 	<tr>
-	 		<td>@zmatch.id</td>
-	 		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
-	 		<td style="text-align: center;">
-	  			@scoreBox(zmatch)				    		
-	  		</td>
-	  		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
-	  		<td>
-	  			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
-	  		</td>
-	  		<td>@zmatch.phase</td>
-	  	</tr>
-	}
+			<th>Team B</th>
+			<th>Kick-off time</th>
+			<th>Phase</th>
+		</tr>
+	</thead>
+	<tbody>
+		@matches.map { zmatch =>
+		 	<tr>
+		 		<td>@zmatch.id</td>
+		 		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
+		 		<td style="text-align: center;">
+		  			@scoreBox(zmatch)				    		
+		  		</td>
+		  		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
+		  		<td>
+		  			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
+		  		</td>
+		  		<td>@zmatch.phase</td>
+		  	</tr>
+		}
 	</tbody>
 </table>
 
