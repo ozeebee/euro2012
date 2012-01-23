@@ -1,4 +1,13 @@
 $(function() {
+	// restrict input fields to numeric input only
+	$("input").keydown(function (event) {
+		var key = event.which || event.keyCode;
+		var char = String.fromCharCode(key);
+		if (/^[0-9]+$/.test(char))
+			return true;
+		return false;
+	});
+	
 	// add listener for forecast text inputs
 	$("input").keypress(function (event) {
 		// show save button
