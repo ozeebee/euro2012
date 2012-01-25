@@ -112,21 +112,43 @@ object Admin extends Controller with Debuggable {
 	}
 	
 	def showUserForecasts(username: String) = Logged("showUserForecasts") {
-		Action { implicit requests =>
+		Action { implicit request =>
 			val matches = Match.findAll()
 			
 			val username = Security.username.get
 			
-			val forecastsByMatch = Forecast.findByUser(username)
-				.foldLeft(collection.mutable.Map[anorm.Pk[Long], Forecast]()) { (map: collection.mutable.Map[anorm.Pk[Long], Forecast], forecast: Forecast) =>
-					map(forecast.matchid) = forecast
-					map
-				}
+			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 
 			Ok(views.html.adminpages.userForecasts(username, matches, forecastsByMatch))
 		}
 	}
 	
+	def deleteUserForecasts(username: String) = Logged("deleteUserForecasts") {
+		Action { implicit request =>
+			Forecast.delete(username)
+			Redirect(routes.Admin.showUserForecasts(username))
+		}
+	}
+	
+	def randomForecasts(username: String) = Logged("randomForecasts") {
+		Action { implicit request =>
+			val matches = Match.findAll()
+			val forecastsByMatch = Forecast.getForecastsByMatch(username)
+			// get matches for which no forecast has been entered yet
+			//  and generate a forecast with random scores for each of them
+			val forecasts = matches.filter(m => ! forecastsByMatch.contains(m.id)).map { zmatch =>
+				val randomResult = Match.generateRandomResult()
+				logger.debug("generating random forecast for match " + zmatch.id + " score : " + randomResult._1 + "-" + randomResult._2)
+				Forecast(username, zmatch.id, randomResult._1, randomResult._2)
+			}
+			
+			Forecast.create(forecasts)
+			
+			Redirect(routes.Admin.showUserForecasts(username))
+		}
+	}
+	
+
 	val currentDateTimeForm = Form(of("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {

@@ -24,7 +24,7 @@
     </div>
     
     <div class="row">
-    
+        
     @models.Phase.values.toSeq.map { phase => 
     	<a name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
     	<h2 class="center underline color:">@Messages("phase." + phase)

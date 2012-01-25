@@ -73,11 +73,7 @@ object Application extends Controller with Debuggable {
 		
 		val username = Security.username.get
 		
-		val forecastsByMatch = Forecast.findByUser(username)
-			.foldLeft(collection.mutable.Map[anorm.Pk[Long], Forecast]()) { (map: collection.mutable.Map[anorm.Pk[Long], Forecast], forecast: Forecast) =>
-				map(forecast.matchid) = forecast
-				map
-			}
+		val forecastsByMatch = Forecast.getForecastsByMatch(username)
 		
 		Ok(views.html.forecasts(matchesByPhase, forecastsByMatch))
 	}

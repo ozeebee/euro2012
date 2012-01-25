@@ -277,6 +277,28 @@ println("standingsMap = " + standingsMap)
 		}
 	}
 	
+	lazy val randomScoreRanges = Array(
+			0  until 30, // score 0
+			30 until 60, // score 1
+			60 until 80, // score 2
+			80 until 90, // score 3
+			90 until 95, // score 4
+			95 until 98, // score 5
+			98 until 100 // score 6
+		) 
+	
+	def generateRandomScore(): Int = {
+		val randInt = util.Random.nextInt(randomScoreRanges.last.end)
+println("  randInt = " + randInt)
+		val index = randomScoreRanges.indexWhere(_.contains(randInt))
+		// index is the score
+		index
+	}
+	
+	def generateRandomResult(): (Int, Int) = {
+		(generateRandomScore(), generateRandomScore())
+	}
+	
 	// inner function
 	/**
 	 * Compute goal difference for given team against otherTeam

@@ -18,5 +18,4 @@ package object models {
 		val SEMIFINALS = Value // Semi Finals
 		val FINAL = Value // Final
 	}
-	
 }

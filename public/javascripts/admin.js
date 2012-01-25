@@ -103,6 +103,36 @@ function showUserForecasts(username) {
 	});
 }
 
+function deleteUserForecasts(url) {
+	console.log("deleteUserForecasts");
+	
+	var data = {};
+	$.ajax({
+		type: 'DELETE',
+		url: url,
+		data: data,
+		success: function(data) { // Success function
+			console.log("Ok ! got data");
+			$("#userForecasts").html(data);
+		}
+	}).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
+function generateRandomForecasts(url) {
+	console.log("generateRandomForecasts");
+	
+	$.get(url,
+			function(data) {
+				console.log("Ok ! got data");
+				$("#userForecasts").html(data);
+			}
+	).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
 $(function() {
 	$("#form").submit(function () {
 		var zdate = $("#datepicker").prop("value");

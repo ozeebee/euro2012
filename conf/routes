@@ -35,6 +35,8 @@ DELETE	/admin/matches/:id/result	controllers.Admin.deleteMatchResult(id: Long)
 
 GET		/admin/users				controllers.Admin.showUsers()
 GET		/admin/users/:id/forecasts	controllers.Admin.showUserForecasts(id: String)
+DELETE	/admin/users/:id/forecasts	controllers.Admin.deleteUserForecasts(id: String)
+GET		/admin/users/:id/forecasts/random	controllers.Admin.randomForecasts(id: String)
 GET		/admin/matches				controllers.Admin.showMatches()
 POST	/admin/currentDateTime		controllers.Admin.setCurrentDateTime()
 

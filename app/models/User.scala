@@ -87,12 +87,35 @@ object Forecast {
 		}
 	}
 	
+	def getForecastsByMatch(user: String): collection.mutable.Map[anorm.Pk[Long], models.Forecast] = {
+		Forecast.findByUser(user)
+			.foldLeft(collection.mutable.Map[anorm.Pk[Long], Forecast]()) { (map: collection.mutable.Map[anorm.Pk[Long], Forecast], forecast: Forecast) =>
+				map(forecast.matchid) = forecast
+				map
+			}
+	}
+	
 	def create(forecast: Forecast)(implicit connection: java.sql.Connection) = {
 		SQL("insert into forecast (username, matchid, scoreA, scoreB) values ({username}, {matchid}, {scoreA}, {scoreB})")
 			.on('username -> forecast.username, 'matchid -> forecast.matchid, 'scoreA -> forecast.scoreA, 'scoreB -> forecast.scoreB)
 			.executeUpdate()
 	}
 	
+	def create(forecasts: Seq[Forecast]) = {
+		DB.withConnection { implicit connection =>
+			// batch creation
+			val sqlstr = "insert into forecast (username, matchid, scoreA, scoreB) values ({username}, {matchid}, {scoreA}, {scoreB})"
+			val batchSql = SQL(sqlstr).asBatch
+			
+			forecasts.foldLeft(batchSql) { (batchSql, forecast) =>
+				batchSql.addBatch('username.name -> forecast.username, 'matchid.name -> forecast.matchid, 'scoreA.name -> forecast.scoreA, 'scoreB.name -> forecast.scoreB)
+			}.execute()
+				
+//			val forecast = forecasts.head
+//			SQL(sqlstr).asBatch.addBatch('username.name -> forecast.username, 'matchid.name -> forecast.matchid, 'scoreA.name -> forecast.scoreA, 'scoreB.name -> forecast.scoreB).execute()
+		}
+	}
+
 	def update(forecast: Forecast)(implicit connection: java.sql.Connection) = {
 		SQL("update forecast set scoreA = {scoreA}, scoreB = {scoreB} where username = {username} and matchid = {matchid}")
 			.on('username -> forecast.username, 'matchid -> forecast.matchid, 'scoreA -> forecast.scoreA, 'scoreB -> forecast.scoreB)
@@ -108,6 +131,12 @@ object Forecast {
 				case Some(result) => update(forecast) // record exists, update it
 				case None => create(forecast) // no record yet, create it 
 			}
+		}
+	}
+	
+	def delete(user: String) = {
+		DB.withConnection { implicit connection =>
+			SQL("delete from forecast where username = {username}").on('username -> user).executeUpdate()
 		}
 	}
 }
