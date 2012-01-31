@@ -67,6 +67,20 @@ case class Match(
 	}
 	
 	/**
+	 * @return true if team A is the winner, false if the result is a draw of if the match has not yet been played
+	 */
+	def isTeamAWinner: Boolean = {
+		(result.isDefined && teamA.isDefined && result.get.result == teamA.get)
+	}
+	
+	/**
+	 * @return true if team B is the winner, false if the result is a draw of if the match has not yet been played
+	 */
+	def isTeamBWinner: Boolean = {
+		(result.isDefined && teamB.isDefined && result.get.result == teamB.get)
+	}
+
+	/**
 	 * @return true wether this match concerns both supplied teams (in any order) 
 	 */
 	def concernTeams(teamX: String, teamY: String): Boolean = {

@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.data._
+import play.api.data.Forms._
 import play.api.mvc._
 import models._
 
@@ -79,7 +80,7 @@ object Application extends Controller with Debuggable {
 	}
 	
 	val forecastForm = Form(
-		of(
+		tuple(
 			"matchId" -> longNumber,
 			"scoreA" -> number(min=0, max=99),
 			"scoreB" -> number(min=0, max=99)

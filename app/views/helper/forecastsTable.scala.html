@@ -10,6 +10,10 @@
 			<span class="koTime">
 	  			@zmatch.kickoff.format("HH:mm")
 	  		</span>
+ 			<a onclick="randomForecast(@zmatch.id)">
+ 				<img src="@routes.Assets.at("images/calculator.gif")">
+ 				<span>generate</span>
+ 			</a>
  			<a onclick="saveForecast(@zmatch.id, '@routes.Application.saveForecast()');" class="saveBtn notDisplayed">
  				<img src="@routes.Assets.at("images/diskette.gif")">
  				<span>save</span>
@@ -35,9 +39,7 @@
 
 		<td class="forecast">
 			@if(zmatch.played) {
-				<span class="score">
-					@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
-				</span>
+				@helper.scoreDiv(zmatch)
 				@forecastsByMatch.get(zmatch.id).map { forecast =>
 					<br>
 					your forecast : @forecast.scoreA - @forecast.scoreB 

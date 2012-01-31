@@ -103,9 +103,10 @@ function showUserForecasts(username) {
 	});
 }
 
-function deleteUserForecasts(url) {
+function deleteUserForecasts(event, url) {
 	console.log("deleteUserForecasts");
-	
+	var btn = $(event.target);
+	btn.button('loading');
 	var data = {};
 	$.ajax({
 		type: 'DELETE',
@@ -113,24 +114,63 @@ function deleteUserForecasts(url) {
 		data: data,
 		success: function(data) { // Success function
 			console.log("Ok ! got data");
+			btn.button('reset');
 			$("#userForecasts").html(data);
 		}
 	}).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		btn.button('reset');
 	});
 }
 
-function generateRandomForecasts(url) {
+function generateRandomForecasts(event, url) {
 	console.log("generateRandomForecasts");
-	
+	var btn = $(event.target);
+	btn.button('loading');
 	$.get(url,
 			function(data) {
 				console.log("Ok ! got data");
+				btn.button('reset');
 				$("#userForecasts").html(data);
 			}
 	).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		btn.button('reset');
 	});
+}
+
+function updateForecast(username, matchId, url) {
+	console.log("updateForecast");
+	
+	var div = $("#forecast_" + matchId);
+	var scoreAinput = $("input:eq(0)", div);
+	var scoreBinput = $("input:eq(1)", div);
+	var data = {
+		username: username,
+		matchId: matchId,
+		scoreA: scoreAinput.val(), 
+		scoreB: scoreBinput.val()
+	};
+
+	$.post(url, 
+			data,
+			function(data) { // Success function
+			}
+	).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
+function deleteForecast(username, matchId, url) {
+	console.log("deleteForecast");
+	$.ajax({
+		type: 'DELETE',
+		url: url,
+		success: function(data) { // Success function
+		}
+	}).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});	
 }
 
 $(function() {

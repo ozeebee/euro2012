@@ -34,9 +34,7 @@
 		} else {
 			<td class="timeOrScore">
 				@if(zmatch.played) {
-					<span class="score">
-						@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
-					</span>
+					@helper.scoreDiv(zmatch)
 				} else {
 					<span class="koTime">
 	  					@zmatch.kickoff.format("HH:mm")

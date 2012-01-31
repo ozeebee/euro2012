@@ -2,6 +2,8 @@ import scala.xml.Node
 
 package object models {
 
+	val DEFAULT_TIMEOUT: Int = 30*60*1000;
+	
 	trait ModelObject[T] {
 		val DATA_DIR = System.getProperty("user.home") + "/Dev/Workspaces/AJO/PersoProjects/euro2012/data"
 			

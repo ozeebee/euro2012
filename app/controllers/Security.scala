@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.data._
+import play.api.data.Forms._
 import play.api.data.validation._
 import play.api.mvc._
 import play.api.Logger
@@ -17,11 +18,11 @@ object Security extends Controller with Debuggable {
 	
 	// EXP: define a Form (mapping request parameters to Model properties)
 	val loginForm = Form(
-		of(User.apply _, User.unapply _)(
+		mapping(
 			"name" -> nonEmptyText(minLength = 4),
 			"password" -> text,
-			"email" -> ignored(null)
-		)
+			"email" -> ignored(null.asInstanceOf[String])
+		)(User.apply)(User.unapply)
 	)
 	
 	def login = Logged() {
@@ -44,7 +45,7 @@ object Security extends Controller with Debuggable {
 			user => {
 				println("login form is ok ! value is = " + user)
 
-				if (request.body.asUrlFormEncoded.get.contains("rememberUser")) {
+				if (request.body.asFormUrlEncoded.get.contains("rememberUser")) {
 					println("! user has to be remembered !")
 				}
 
@@ -62,13 +63,14 @@ object Security extends Controller with Debuggable {
 	// ~~~~~~~~~~~~~~~~~ Registration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 	
 	val registerForm = Form(
-		of(User.apply _, User.unapply _)(
+		mapping(
 			"name" -> (text verifying (Constraints.nonEmpty, 
 										Constraints.minLength(4), 
 										Constraints.pattern("""[a-zA-Z0-9._]+"""r, "constraint.username", "error.username"))),
 			"password" -> nonEmptyText(minLength = 6),
 			"email" -> email
-		) verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
+		)(User.apply)(User.unapply)
+			verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
 	)
 	
 	def register = Logged() {

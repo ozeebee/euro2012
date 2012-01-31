@@ -139,4 +139,10 @@ object Forecast {
 			SQL("delete from forecast where username = {username}").on('username -> user).executeUpdate()
 		}
 	}
+	
+	def delete(user: String, matchid: Long) = {
+		DB.withConnection { implicit connection =>
+			SQL("delete from forecast where username = {username} and matchid = {matchid}").on('username -> user, 'matchid -> matchid).executeUpdate()
+		}
+	}
 }

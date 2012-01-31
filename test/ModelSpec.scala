@@ -3,9 +3,10 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 
-object ModelSpec extends Specification {
+class ModelSpec extends Specification {
 	
 	import models._
+	import play.api.cache.Cache
 	
 	"User model" should {
 		"return existing users" in {
@@ -20,4 +21,5 @@ object ModelSpec extends Specification {
 			}
 		}
 	}
+	
 }

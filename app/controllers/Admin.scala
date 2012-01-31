@@ -1,8 +1,10 @@
 package controllers
 
 import play.api.data._
+import play.api.data.Forms._
 import play.api.data.format._
 import play.api.libs.json._
+import play.api.libs.json.Json._
 import play.api.mvc._
 import play.api.Logger
 import models._
@@ -28,20 +30,20 @@ object Admin extends Controller with Debuggable {
 	}
 
 	val matchForm = Form(
-		of(Match.apply _, Match.unapply _)(
-			"id" -> ignored(NotAssigned),
+		mapping(
+			"id" -> ignored(NotAssigned: anorm.Pk[Long]),
 			"teamA" -> optional(nonEmptyText),
-			"teamAformula" -> ignored(Option(null)),
+			"teamAformula" -> ignored(None:Option[String]), // ignored(Option(null))
 			"teamB" -> optional(nonEmptyText),
-			"teamAformula" -> ignored(Option(null)),
+			"teamAformula" -> ignored(Option.empty[String]), // Option.empty[String] same as None:Option[String] same as Option(null.asInstanceOf[models.Result])
 			"kickoff" -> date("dd/MM/yyyy HH:mm"),
 			"phase" -> of[Phase](phaseFormat),
-			"result" -> ignored(Option(null))
-		)
+			"result" -> ignored(Option.empty[models.Result])
+		)(Match.apply)(Match.unapply)
 	)
 	
 	val resultForm = Form(
-		of(
+		tuple(
 			"scoreA" -> number,
 			"scoreB" -> number
 		)
@@ -148,8 +150,37 @@ object Admin extends Controller with Debuggable {
 		}
 	}
 	
+	val forecastForm = Form(
+		tuple(
+			"username" -> nonEmptyText,
+			"matchId" -> longNumber,
+			"scoreA" -> number(min=0, max=99),
+			"scoreB" -> number(min=0, max=99)
+		)
+	)
+	
+	def updateForecast(username: String, matchId: Long) = Logged("updateForecast") { 
+		Action { implicit request =>
+			forecastForm.bindFromRequest().fold(
+				formWithErrors => BadRequest,
+				dataTuple => {
+					logger.debug("saving forecast dataTuple = " + dataTuple)
+					Forecast.saveForecast(Forecast(dataTuple._1, anorm.Id(dataTuple._2), dataTuple._3, dataTuple._4))
+					Ok
+				} 
+			)
+		}
+	}
+	
+	def deleteForecast(username: String, matchid: Long) = Logged("deleteForecast") { 
+		Action { implicit request =>
+			logger.debug("deleting forecast with username " + username + " and matchid " + matchid)
+			Forecast.delete(username, matchid)
+			Ok
+		}
+	}
 
-	val currentDateTimeForm = Form(of("dateTime" -> date("dd/MM/yyyy HH:mm")))
+	val currentDateTimeForm = Form(single("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {
 		Action { implicit request =>

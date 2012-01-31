@@ -1,5 +1,18 @@
 @(username: String, matches: Seq[Match], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
 
+@scoreBox(zmatch: Match, forecast: Option[Forecast]) = {
+	<div id="forecast_@zmatch.id">
+		<input type="text" value="@forecast.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
+		 -
+ 		<input type="text" value="@forecast.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
+ 		
+ 		<a href="javascript:updateForecast('@username', @zmatch.id, '@routes.Admin.updateForecast(username, zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
+ 		<a href="javascript:deleteForecast('@username', @zmatch.id, '@routes.Admin.deleteForecast(username, zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
+
+ 		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
+	</div>
+}
+
 	<h4>Forecasts for user <strong>@username</strong></h4>
 	<table class="condensed-table zebra-striped userForecasts">
 		<thead>
@@ -18,14 +31,14 @@
 				<td>@zmatch.id</td>
 				<td>@zmatch.teamA</td>
 				<td style="text-align: center;">
-					@forecastsByMatch.get(zmatch.id).map { forecast =>
-						@forecast.scoreA - @forecast.scoreB
-					}
 					<div style="font-size:11px; color:gray;">
 						@if(zmatch.played) {
-							(@zmatch.result.get.scoreA - @zmatch.result.get.scoreB)
+							(score: @zmatch.result.get.scoreA - @zmatch.result.get.scoreB)
 						}
 					</div>
+					@forecastsByMatch.get(zmatch.id).map { forecast =>
+						@scoreBox(zmatch, Some(forecast))
+					}
 				</td>
 				<td>@zmatch.teamB</td>
 				<td>@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</td>
@@ -36,7 +49,7 @@
 	</table>
 	
 	<div class="actions">
-		<button type="button" onclick="deleteUserForecasts('@routes.Admin.deleteUserForecasts(username)')" class="btn small">Delete all</button>
-		<button type="button" onclick="generateRandomForecasts('@routes.Admin.randomForecasts(username)')" class="btn small">Generate Random Forecasts</button>
+		<button type="button" onclick="deleteUserForecasts(event, '@routes.Admin.deleteUserForecasts(username)')" data-loading-text="deleting..." class="btn small">Delete all</button>
+		<button type="button" onclick="generateRandomForecasts(event, '@routes.Admin.randomForecasts(username)')" data-loading-text="generating..." class="btn small">Generate Random Forecasts</button>
 	</div>
 	

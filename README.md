@@ -2,6 +2,8 @@
 TODO:
 	- add test for user registration (validation)
 	- secure pages with connected user/role (admin) : interceptors ?
+	- don't accept draws after rounds
+	- add rules page
 	
 ## Competition
 

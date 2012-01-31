@@ -85,6 +85,20 @@
 	margin-right: auto;
 }
 
+// Border Radius
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+// Drop shadows
+.box-shadow(@shadow: 0 1px 3px rgba(0,0,0,.25)) {
+  -webkit-box-shadow: @shadow;
+     -moz-box-shadow: @shadow;
+          box-shadow: @shadow;
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 body {
@@ -256,6 +270,41 @@ span.koTime {
 
 span.score {
 	font-weight: bold;
+}
+
+div.score {
+	font-size: 11px;
+	font-weight: bold;
+	
+	div {
+		display: inline-block;
+		padding: 7px 12px;
+		text-shadow: 0 1px 1px rgba(255,255,255,.75);
+		color: #333;
+		line-height: normal;
+		border: 1px solid #ccc;
+		border-bottom-color: #bbb;
+		.border-radius(4px);
+		@shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+		.box-shadow(@shadow);
+	}
+	div.leftscore {
+	    .linear-gradient(#ffffff, darken(#ffffff, 10%));
+	    border-right: 0px;
+	    border-top-right-radius: 0px 0px;
+	    border-bottom-right-radius: 0px 0px;
+	}
+	div.rightscore {
+	    .linear-gradient(#ffffff, darken(#ffffff, 10%));
+	    border-left: 0px;
+	    border-top-left-radius: 0px 0px;
+	    border-bottom-left-radius: 0px 0px;
+	}
+	div.winner {
+		.linear-gradient(#5bc0de, #339bb9);
+		color: #eee;
+		text-shadow: 0 1px 1px rgba(0,0,0,.75);
+	}
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Groups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

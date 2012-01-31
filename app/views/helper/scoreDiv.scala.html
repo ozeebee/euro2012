@@ -1,0 +1,5 @@
+@(zmatch: Match)
+
+<div class="score">
+	<div class="leftscore @if(zmatch.isTeamAWinner){winner}">@zmatch.result.get.scoreA</div><div class="rightscore @if(zmatch.isTeamBWinner){winner}">@zmatch.result.get.scoreB</div>
+</div>
