@@ -38,8 +38,7 @@ object Team {
 	def getTeams(): Seq[Team] = {
 		val teams: Seq[Team] = Cache.getAs[Seq[Team]]("teams").getOrElse {
 			val tmpSeq = findAll()
-println("*** teams not in cache, caching them !!")
-			Cache.set("teams", tmpSeq, 1800) // TODO : remove expiration once the Cache bug has been fixed
+			Cache.set("teams", tmpSeq)
 			tmpSeq
 		}
 		

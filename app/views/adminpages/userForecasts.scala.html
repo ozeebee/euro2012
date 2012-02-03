@@ -9,7 +9,7 @@
  		<a href="javascript:updateForecast('@username', @zmatch.id, '@routes.Admin.updateForecast(username, zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
  		<a href="javascript:deleteForecast('@username', @zmatch.id, '@routes.Admin.deleteForecast(username, zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
 
- 		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
+ 		<div style="min-width: 12px; display: inline-block;"><img class="invisible" /></div> @* empty placeholder for image *@
 	</div>
 }
 
@@ -36,9 +36,7 @@
 							(score: @zmatch.result.get.scoreA - @zmatch.result.get.scoreB)
 						}
 					</div>
-					@forecastsByMatch.get(zmatch.id).map { forecast =>
-						@scoreBox(zmatch, Some(forecast))
-					}
+					@scoreBox(zmatch, forecastsByMatch.get(zmatch.id))
 				</td>
 				<td>@zmatch.teamB</td>
 				<td>@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</td>

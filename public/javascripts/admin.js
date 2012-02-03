@@ -88,6 +88,8 @@ function clearScore(matchId, url) {
 	});
 }
 
+// ===================== User Forecasts =======================================
+
 function showUserForecasts(username) {
 	console.log("showUserForecasts");
 	
@@ -155,21 +157,35 @@ function updateForecast(username, matchId, url) {
 	$.post(url, 
 			data,
 			function(data) { // Success function
+				// show ok notif icon
+				$("img", div).prop("src", assetsRoot + "images/checkmark.gif").removeClass("invisible");
 			}
 	).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		// show error notif icon
+		$("img", div).prop("src", assetsRoot + "images/x-red.gif").removeClass("invisible");
 	});
 }
 
 function deleteForecast(username, matchId, url) {
 	console.log("deleteForecast");
+	var div = $("#forecast_" + matchId);
 	$.ajax({
 		type: 'DELETE',
 		url: url,
 		success: function(data) { // Success function
+			// show ok notif icon
+			$("img", div).prop("src", assetsRoot + "images/checkmark.gif").removeClass("invisible");
+			// empty text fields
+			var scoreAinput = $("input:eq(0)", div);
+			var scoreBinput = $("input:eq(1)", div);
+			scoreAinput.val("");
+			scoreBinput.val("");
 		}
 	}).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		// show error notif icon
+		$("img", div).prop("src", assetsRoot + "images/x-red.gif").removeClass("invisible");
 	});	
 }
 
