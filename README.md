@@ -11,10 +11,12 @@ I would be surprised if this app ends up in a production environment for real us
 	- don't accept draws after rounds
 	- add rules page
 	- ? twitter integration
+	- i18n
 	
 ## Competition
 
 - view teams/groups/schedules/standings
+- ? calendar
 
 ## Game
 

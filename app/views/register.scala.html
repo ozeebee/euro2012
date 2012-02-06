@@ -8,22 +8,6 @@
 		</div>
 		
 		<div class="modal-body">
-<!--  
-			@if(registerForm.hasErrors) {
-				<h5>Form has errors</h5>
-			}
-	
-			@registerForm.errors.map { error =>
-		        <div style="color:#fff; background:#c00">
-		            @error.key : @error.message
-		        </div>
-		    }
-	
-			@if(registerForm.hasGlobalErrors) {
-				<h5>Form has global errors</h5>
-			}
--->
-
 			@if(registerForm.hasGlobalErrors) {
 				<div class="alert-message error">
 					@registerForm.globalError.map { error =>

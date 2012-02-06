@@ -38,7 +38,10 @@
  					<ul class="nav secondary-nav">
  					@controllers.Security.username.map { user =>
 						<li class="dropdown">
-	              			<a href="#" class="dropdown-toggle">@user</a>
+	              			<a href="#" class="dropdown-toggle">
+	              				<img height="20" src="http://www.gravatar.com/avatar/@app.utils.MD5.hash(controllers.Security.useremail.get)?s=140&d=mm" style="float:left; margin-right: 3px;" />
+	              				<span style="line-height: 22px;">@user</span>
+	              			</a>
 	              			<ul class="dropdown-menu">
 								<li><a href="@routes.Security.logout">Logout</a></li>
 							</ul>

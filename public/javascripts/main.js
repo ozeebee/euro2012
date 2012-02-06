@@ -67,3 +67,20 @@ function activate(element, container) {
       element.closest('li.dropdown').addClass('active')
     }
 }
+
+/**
+ * Install the given jquery button as the default button for input elements found
+ * in given jquery container.
+ * @param container
+ * @param button
+ */
+function installDefaultButton(container, button) {
+	$("input", container).keypress(function (e) {
+		if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+            button.click();
+            return false;
+        } else {
+        	return true;
+        }
+	});
+}

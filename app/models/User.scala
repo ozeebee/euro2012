@@ -24,6 +24,14 @@ object User {
 		}
 	}
 
+	def authenticate(username: String, password: String): Option[User] = {
+		DB.withConnection { implicit connection =>
+			SQL("select name, email, password from user where name = {username} and password = {password}")
+				.on('username -> username, 'password -> password)
+				.as(User.simple.singleOpt)
+		}
+	}
+	
 	def create(user: User) = {
 		DB.withConnection { implicit connection =>
 			SQL(

@@ -18,11 +18,15 @@
 		            @error.key : @error.message
 		        </div>
 		    }
-	
-			@if(loginForm.hasGlobalErrors) {
-				<h5>Form has global errors</h5>
-			}
 -->
+			@if(loginForm.hasGlobalErrors) {
+				<div class="alert-message error">
+					@loginForm.globalError.map { error =>
+		                <p class="error">@error.message</p>
+		            }
+				</div>
+			}
+			
 			<form id="loginForm" method="post" action="@routes.Security.authenticate()">
 				<fieldset>
 					<legend>Enter your credentials</legend>
@@ -30,36 +34,49 @@
 						<div class="clearfix @if(! field.errors.isEmpty) { error }">
 							<label for="name">Username :</label>
 							<div class="input">
-								<input id="name" name="@field.name" type="text" value="@field.value" autofocus />
+								<input id="name" name="@field.name" type="text" value="@field.value" autocomplete="on" autofocus />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
-										@field.errors.map(_.message).mkString(",")
+										@field.errors.map(err => Messages(err.message)).mkString(",")
 									</span>
 								}
 							</div>
 						</div>
 					}
 					@loginForm.forField("password") { field =>
-						<div class="clearfix">
+						<div class="clearfix @if(! field.errors.isEmpty) { error }">
 							<label for="password">Password :</label>
 							<div class="input">
 								<input id="password" name="@field.name" type="password" />
+								@if(! field.errors.isEmpty) {
+									<span class="help-inline">
+										@field.errors.map(err => Messages(err.message)).mkString(",")
+									</span>
+								}
 							</div>
 						</div>
 					}
-						<div class="clearfix">
+<!-- 						<div class="clearfix">
 							<div class="input">
 								<input id="rememberChk" name="rememberUser" type="checkbox" />
 								<span>Remember me</span>
 							</div>
 						</div>
-				</fieldset>
+ -->				</fieldset>
 			</form>
 		</div>
 		
 		<div class="modal-footer">
 			Not account yet ? <a href="@routes.Security.register()" class="btn small secondary" style="float: none;">Register</a>
-			<a href="#"	class="btn primary" onclick="$('#loginForm').submit()">Submit</a>
+			<!-- <a href="#"	class="btn primary" onclick="$('#loginForm').submit()">Submit</a> -->
+			<button id="loginButton" class="btn primary" onclick="$('#loginForm').submit()">Submit</button>
 		</div>
 	</div>
+	
+<script type="text/javascript">
+	$(function() {
+		installDefaultButton($("#loginForm"), $("#loginButton"));
+	});
+</script>
+	
 }

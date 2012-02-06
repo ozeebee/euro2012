@@ -4,6 +4,7 @@
 
 insert into param (name, value) values ('currentDateTime', '08/06/2012 17:30'); -- used to simulate date for forecast input
 
+insert into user (name, email, password) values ('ozeebee', 'ozeebee@gmail.com', 'welcome1');
 insert into user (name, email, password) values ('toto', 'toto@gmail.com', 'tototo');
 
 insert into team (id,name,"group") values ('POL', 'Poland', 'A');
