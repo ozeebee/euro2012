@@ -40,14 +40,14 @@ object Security extends Controller with Debuggable {
 		// so we have to define custom binding/unbinding functions.
 		{ // binding function
 			// here we authenticate user by selecting it from DB. It if exists, the User object will be filled
-			// with all User fields (including email). It it doesn't exist, we create a User object WITHOUT email address
+			// with all User fields (including email). If it doesn't exist, we create a User object WITHOUT email address
 			(name, password) => User.authenticate(name, password).getOrElse(User(name, null, password))
 		}
 		{ // unbinding function
 			user => Some(user.name, user.password)
 		}
-		verifying ("Invalid email or password", user => {
-			// the user will be considered authenticated if it's been found in DB and thus if the email field is not null
+		verifying ("Invalid user or password", user => {
+			// the user will be considered authenticated if it's been found in DB and thus if the email field is not null (see above)
 			user.email != null
 		}) 
 	)
@@ -126,5 +126,28 @@ object Security extends Controller with Debuggable {
 		)
 		
 	}
-
+	
+	// ~~~~~~~~~~~~~~~~~ Secured trait (inspired from zentask sample) ~~~~~~~~~
+	
+	/**
+	 * Provide security features
+	 */
+	trait Secured {
+	  
+		private def username(request: RequestHeader) = request.session.get(USERNAME)
+		
+		/**
+		 * Redirect to login if the user in not authorized.
+		 */
+		private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Security.login)
+	  
+		/** 
+		 * Action for authenticated users.
+		 */
+		def Authenticated(f: => String => Request[AnyContent] => Result) = 
+				play.api.mvc.Security.Authenticated(username, onUnauthorized) { user =>
+					Action(request => f(user)(request))
+		}
+	}
+	
 }

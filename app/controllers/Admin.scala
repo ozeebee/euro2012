@@ -10,8 +10,9 @@ import play.api.Logger
 import models._
 import models.Phase.Phase
 import anorm.NotAssigned
+import Security.Secured
 
-object Admin extends Controller with Debuggable {
+object Admin extends Controller with Debuggable with Secured {
 	val logger = Logger(this.getClass())
 
 	val phaseFormat = new Formatter[Phase] {
@@ -49,16 +50,16 @@ object Admin extends Controller with Debuggable {
 		)
 	)
 
-	def showAdmin = Action { implicit request =>
+	def showAdmin = Authenticated { username => implicit request =>
 		Ok(views.html.admin())
 	}
 
-	def showMatches = Action { implicit request =>
+	def showMatches = Authenticated { username => implicit request =>
 		val matches = Match.findAll()
 		Ok(views.html.adminpages.matches(matches, matchForm))
 	}
 	
-	def newMatch = Action { implicit request =>
+	def newMatch = Authenticated { username => implicit request =>
 		logger.debug("newMatch")
 		
 		matchForm.bindFromRequest().fold(
@@ -77,7 +78,7 @@ object Admin extends Controller with Debuggable {
 	}
 	
 	def updateMatchResult(matchId: Long) = Logged("updateMatchResult") { 
-		Action { implicit request =>
+		Authenticated { username => implicit request =>
 			val filledForm = resultForm.bindFromRequest() 
 			filledForm.fold(
 				formWithErrors => {
@@ -102,23 +103,20 @@ object Admin extends Controller with Debuggable {
 	}
 	
 	def deleteMatchResult(matchId: Long) = Logged("deleteMatchResult") { 
-		Action { implicit request =>
+		Authenticated { username => implicit request =>
 			Match.clearResult(matchId)
 			Ok("ok")
 		}
 	}
 	
-	def showUsers = Action { implicit request =>
+	def showUsers = Authenticated { username => implicit request =>
 		val users = User.findAll()
 		Ok(views.html.adminpages.users(users))
 	}
 	
 	def showUserForecasts(username: String) = Logged("showUserForecasts") {
-		Action { implicit request =>
+		Authenticated { username => implicit request =>
 			val matches = Match.findAll()
-			
-			val username = Security.username.get
-			
 			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 
 			Ok(views.html.adminpages.userForecasts(username, matches, forecastsByMatch))
@@ -126,14 +124,14 @@ object Admin extends Controller with Debuggable {
 	}
 	
 	def deleteUserForecasts(username: String) = Logged("deleteUserForecasts") {
-		Action { implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			Forecast.delete(username)
 			Redirect(routes.Admin.showUserForecasts(username))
 		}
 	}
 	
 	def randomForecasts(username: String) = Logged("randomForecasts") {
-		Action { implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			val matches = Match.findAll()
 			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 			// get matches for which no forecast has been entered yet
@@ -160,7 +158,7 @@ object Admin extends Controller with Debuggable {
 	)
 	
 	def updateForecast(username: String, matchId: Long) = Logged("updateForecast") { 
-		Action { implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			forecastForm.bindFromRequest().fold(
 				formWithErrors => BadRequest,
 				dataTuple => {
@@ -173,7 +171,7 @@ object Admin extends Controller with Debuggable {
 	}
 	
 	def deleteForecast(username: String, matchid: Long) = Logged("deleteForecast") { 
-		Action { implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			logger.debug("deleting forecast with username " + username + " and matchid " + matchid)
 			Forecast.delete(username, matchid)
 			Ok
@@ -183,7 +181,7 @@ object Admin extends Controller with Debuggable {
 	val currentDateTimeForm = Form(single("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {
-		Action { implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			Form("dateTime" -> date("dd/MM/yyyy HH:mm")).bindFromRequest().fold(
 				formWithErrors => BadRequest,
 				date => {

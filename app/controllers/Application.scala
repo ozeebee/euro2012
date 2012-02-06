@@ -5,36 +5,30 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
 import models._
+import Security.Secured
 
-object Application extends Controller with Debuggable {
+object Application extends Controller with Secured with Debuggable {
 	val logger = Logger(this.getClass())
 
 	// ~~~~~~~~~~~~~~~~~ Actions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	def index = Action { implicit request =>
-		request.session.get(controllers.Security.USERNAME).map { username =>
-			// user is logged, proceed to index page
-			Ok(views.html.index())
-		}.getOrElse {
-			// user not logged, show login page
-			logger.info("user not logged, redirecting to login page")
-			Redirect(routes.Security.login())
-		}
+	def index = Authenticated { username => implicit request =>
+		Ok(views.html.index())
 	}
 
-	def showTeams = Action { implicit request =>
+	def showTeams = Authenticated { username => implicit request =>
 		val teams = Team.findAll()
 		val groups = Team.getGroups()
 		
 		Ok(views.html.teams(teams, groups))
 	}
 	
-	def showGroups = Action { implicit request =>
+	def showGroups = Authenticated { username => implicit request =>
 		val teams = Team.findAll()
 		val groups = Team.getGroups()
 		Ok(views.html.groups(teams, groups))
 	}
 
-	def showSchedule = Action { implicit request =>
+	def showSchedule = Authenticated { username => implicit request =>
 		val matches = Match.findAll()
 		val matchesByPhase = matches groupBy { zmatch =>
 			zmatch.phase.toString()
@@ -43,7 +37,7 @@ object Application extends Controller with Debuggable {
 		Ok(views.html.schedule(matchesByPhase))
 	}
 
-	def showStandings = Action { implicit request =>
+	def showStandings = Authenticated { username => implicit request =>
 		val groups = Team.getGroups()
 		
 		val matches = Match.findAll()
@@ -53,26 +47,24 @@ object Application extends Controller with Debuggable {
 		Ok(views.html.standings(groups, standings))
 	}
 	
-	def showGroup(group:String) = Action { implicit request =>
+	def showGroup(group:String) = Authenticated { username => implicit request =>
 		val matches = Match.findByGroup(group)
 		val standings = Match.computeStandings(group, matches)
 		Ok(views.html.group(group, standings, matches))
 	}
 
-	def test() = Action { implicit request =>
+	def test() = Authenticated { username => implicit request =>
 		val values = Set("Value1", "Value2", "Value3")
 		Ok(views.html.test(values))
 	} 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	def showForecasts = Action { implicit request =>
+	def showForecasts = Authenticated { username => implicit request =>
 		val matches = Match.findAll()
 		val matchesByPhase = matches groupBy { zmatch =>
 			zmatch.phase.toString()
 		}
-		
-		val username = Security.username.get
 		
 		val forecastsByMatch = Forecast.getForecastsByMatch(username)
 		
@@ -88,12 +80,12 @@ object Application extends Controller with Debuggable {
 	)
 	
 	def saveForecast = Logged("saveForecast") { 
-		Action { implicit request =>
+		Authenticated { username => implicit request =>
 			forecastForm.bindFromRequest().fold(
 				formWithErrors => BadRequest,
 				dataTuple => {
 					logger.debug("saving forecast dataTuple = " + dataTuple)
-					Forecast.saveForecast(Forecast(Security.username.get, anorm.Id(dataTuple._1), dataTuple._2, dataTuple._3))
+					Forecast.saveForecast(Forecast(username, anorm.Id(dataTuple._1), dataTuple._2, dataTuple._3))
 					Ok
 				} 
 			)

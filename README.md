@@ -6,12 +6,17 @@ My main motivation is to learn the Scala language and the Play 2.0 framework as 
 I would be surprised if this app ends up in a production environment for real use, but who knows ...
 
 ##TODO:
-	- add test for user registration (validation)
-	- secure pages with connected user/role (admin) : interceptors ?
+	- bootstrap 2.0 refactoring
+	- add test for user registration (validation) and for authentication (check seured pages cannot be accessed anonymously)
+	- add user role (for administration pages)
 	- don't accept draws after rounds
 	- add rules page
 	- ? twitter integration
 	- i18n
+
+## Pages
+
+- ? add statistics to home page ? (changee homepage to dashboard like concept)
 	
 ## Competition
 
