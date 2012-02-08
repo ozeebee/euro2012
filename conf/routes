@@ -15,6 +15,7 @@ GET		/logout						controllers.Security.logout()
 GET		/register					controllers.Security.register()
 POST	/register					controllers.Security.registerSubmit()
 
+GET		/about						controllers.Application.showAbout()
 GET		/teams						controllers.Application.showTeams()
 GET		/groups						controllers.Application.showGroups()
 GET		/schedule					controllers.Application.showSchedule()

@@ -15,6 +15,10 @@ object Application extends Controller with Secured with Debuggable {
 		Ok(views.html.index())
 	}
 
+	def showAbout = Authenticated { username => implicit request =>
+		Ok(views.html.about())
+	}
+	
 	def showTeams = Authenticated { username => implicit request =>
 		val teams = Team.findAll()
 		val groups = Team.getGroups()

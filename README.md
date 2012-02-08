@@ -9,7 +9,6 @@ I would be surprised if this app ends up in a production environment for real us
 	- bootstrap 2.0 refactoring
 	- add test for user registration (validation) and for authentication (check seured pages cannot be accessed anonymously)
 	- add user role (for administration pages)
-	- don't accept draws after rounds
 	- add rules page
 	- ? twitter integration
 	- i18n

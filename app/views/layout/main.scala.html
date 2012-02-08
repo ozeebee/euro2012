@@ -1,4 +1,4 @@
-@(title: String, head: Html = Html.empty)(content: Html)(implicit request: play.api.mvc.RequestHeader)
+@(title: String, head: Html = Html.empty, activeNav: String = "home")(content: Html)(implicit request: play.api.mvc.RequestHeader)
 
 <!DOCTYPE html>
 
@@ -24,8 +24,8 @@
           			<a class="brand" href="#">Eu12</a>
 					
 					<ul class="nav">
-            			<li class="active"><a href="@routes.Application.index()">Home</a></li>
-            			<li><a href="#">About</a></li>
+            			<li @if(activeNav=="home"){class="active"}><a href="@routes.Application.index()">Home</a></li>
+            			<li @if(activeNav=="about"){class="active"}><a href="@routes.Application.showAbout()">About</a></li>
             			<li><a href="#">Contact</a></li>
           			</ul>
           			

@@ -1,0 +1,91 @@
+@()(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("About", activeNav = "about") {
+
+	<div class="page-header">
+		<h1>About
+			<small>Motivation and rationale</small>
+		</h1>
+	</div>
+	<div class="row">
+		<div class="span10 offset3">
+			Ok, this project is an attempt to create a web application that offers a forecasting system for Euro 2012 football competition.
+			My main motivation is to learn the Scala language and the Play 2.0 framework as well as HTML5 and other 'trendy' libs/frameworks (Bootstrap, LESS, ...)
+			I would be surprised if this app ends up in a production environment for real use, but who knows ...
+		</div>
+	</div>
+	
+	<div class="page-header">
+		<h1>Game rules
+			<small>How points are computed</small>
+		</h1>
+	</div>
+	<div class="row">
+		<div class="span10 offset3">
+			<h4>Points</h4>
+	
+			Each phase contains several matches to forecast. 
+			Each match correctly forecasted yield a number of points. 
+			A forecast is correct if you guess the winning team or a draw. 
+			Bonus points are added if you also guess the exact score of the match. 
+			The number of points and bonus points depend on the phase of the competition as follows:
+		
+			<h5>Stage 1 - Group Stage (includes MD1,MD2,MD3 24 matches):</h5>
+			<ul>
+				<li>Correct Result: 1 point</li>
+				<li>Correct Score: +3 points</li>	
+			</ul>
+			
+			@*<!--  
+			Stage 2 Ð Round of 16 (8 matches):
+			Correct Result: 3 points
+			Correct Score: +5 points
+			-->*@
+
+			<h5>Stage 2 - Quarter-Finals (4 matches):</h5>
+			<ul>
+				<li>Correct Result: 4 points</li>
+				<li>Correct Score: +7 points</li>
+			</ul>
+			
+			
+			<h5>Stage 3 - Semi-Finals (2 matches):</h5>
+			<ul>
+				<li>Correct Result: 6 points</li>
+				<li>Correct Score: +10 points</li>
+			</ul>
+			
+			@*<!--
+			<h5>Stage 4 - Play-Off (3rd place):</h5>
+			<ul>
+				<li>Correct Result: 10 points</li>
+				<li>Correct Score: +10 points</li>
+			</ul>
+			-->*@
+			
+			<h5>Stage 4 - Final (1st place):</h5>
+			<ul>
+				<li>Correct Result: 15 points</li>
+				<li>Correct Score: +20 points</li>
+			</ul>
+
+			<h4>Deadline</h4>
+			A forecast can be entered up until 30 minutes before the start of each match (Central European Time). 
+			Beyond that point, forecasting is locked for that match.
+			 
+			<h4>Score</h4>
+			The final official score after full time, including extra-time if needed, represents the base for calculating points for match results and bonus points for correct score. 
+			Eventual penalty shootouts after extra-time do not count!
+			 
+			<h4>Award</h4>
+			The winners are the three (3) with the highest number of points after the contest is over. 
+			Winners with equal number of points will be separated on goal-average as follows: each correct score yields +1 point in goal-average. 
+			Winners with equal goal-average will be separated by draw, if possible in their presence.
+			 
+			<h4>Prizes</h4>
+			This game is being played for fun !
+			Unless donations are made, expect no special prize except my respect ;-)
+		
+		</div>
+	</div>
+}
