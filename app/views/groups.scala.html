@@ -4,11 +4,14 @@
 	@defining(models.Team.getTeams(teams, group)) { groupTeams => 
 	<div class="group group@group">
     	<h4>Group @group</h4>
-    	@groupTeams.map { team =>
-    		<ul>
-    			<li>@team.name</li>
-    		</ul>
-		}	
+    	<ul style="list-style: none;">
+	    	@groupTeams.map { team =>
+    			<li>
+    				<img style="float: left; margin-right: 5px;" src="@routes.Assets.at("images/" + Messages("country.icon.32." + team.id))">
+    				@team.name
+    			</li>
+			}	
+   		</ul>
 	</div>
 	}
 }
@@ -22,10 +25,10 @@
     </div>
     
     <div class="row">
-    	<ul class="media-grid">
+    	<ul class="thumbnails">
 	    @groups.map { group =>
-	    	<li>
-	        	<a href="@routes.Application.showGroup(group)" class="group">@groupDiv(group)</a>
+	    	<li class="span6">
+	        	<a href="@routes.Application.showGroup(group)" class="thumbnail group">@groupDiv(group)</a>
 	        </li>
 	    }
     	</ul>

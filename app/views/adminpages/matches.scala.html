@@ -18,8 +18,8 @@
 		 -
  		<input type="text" value="@zmatch.result.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
  		
- 		<a href="javascript:updateScore(@zmatch.id, '@routes.Admin.updateMatchResult(zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
- 		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
+ 		<a href="javascript:updateScore(@zmatch.id, '@routes.Admin.updateMatchResult(zmatch.id.get)');" class="btn btn-small btn-primary" style="padding:3px;">Ok</a>
+ 		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn btn-small" style="padding:3px;">Clear</a>
 
  		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
 	</div>
@@ -27,7 +27,7 @@
 
 <h3>Matches</h3>
 
-<table class="condensed-table zebra-striped">
+<table class="table table-condensed table-striped">
 	<thead>
 		<tr>
 			<th>Id</th>

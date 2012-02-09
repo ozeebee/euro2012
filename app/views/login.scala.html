@@ -1,39 +1,28 @@
 @(loginForm: play.api.data.Form[models.User])(implicit request: play.api.mvc.RequestHeader)
 
-@layout.main("Login") {
+@layout.main("Login", activeNav = "login") {
 	<div class="modal" style="position: relative; top: auto; left: auto; margin: 0pt auto; z-index: 1;">
 		<div class="modal-header">
-			<!-- <a href="#" class="close">x</a> -->
 			<h3>Login</h3>
 		</div>
 		
 		<div class="modal-body">
-<!--  
-			@if(loginForm.hasErrors) {
-				<h5>Form has errors</h5>
-			}
-	
-			@loginForm.errors.map { error =>
-		        <div style="color:#fff; background:#c00">
-		            @error.key : @error.message
-		        </div>
-		    }
--->
 			@if(loginForm.hasGlobalErrors) {
-				<div class="alert-message error">
+				<div class="alert alert-error">
 					@loginForm.globalError.map { error =>
-		                <p class="error">@error.message</p>
+						<strong>Oh no !</strong>
+		            	@error.message
 		            }
 				</div>
 			}
 			
-			<form id="loginForm" method="post" action="@routes.Security.authenticate()">
+			<form id="loginForm" method="post" action="@routes.Security.authenticate()" class="form-horizontal">
 				<fieldset>
 					<legend>Enter your credentials</legend>
 					@loginForm.forField("name") { field =>
-						<div class="clearfix @if(! field.errors.isEmpty) { error }">
-							<label for="name">Username :</label>
-							<div class="input">
+						<div class="control-group @if(! field.errors.isEmpty) { error }">
+							<label class="control-label" for="name">Username :</label>
+							<div class="controls">
 								<input id="name" name="@field.name" type="text" value="@field.value" autocomplete="on" autofocus />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
@@ -44,9 +33,9 @@
 						</div>
 					}
 					@loginForm.forField("password") { field =>
-						<div class="clearfix @if(! field.errors.isEmpty) { error }">
-							<label for="password">Password :</label>
-							<div class="input">
+						<div class="control-group @if(! field.errors.isEmpty) { error }">
+							<label class="control-label" for="password">Password :</label>
+							<div class="controls">
 								<input id="password" name="@field.name" type="password" />
 								@if(! field.errors.isEmpty) {
 									<span class="help-inline">
@@ -56,20 +45,13 @@
 							</div>
 						</div>
 					}
-<!-- 						<div class="clearfix">
-							<div class="input">
-								<input id="rememberChk" name="rememberUser" type="checkbox" />
-								<span>Remember me</span>
-							</div>
-						</div>
- -->				</fieldset>
+ 				</fieldset>
 			</form>
 		</div>
 		
 		<div class="modal-footer">
-			Not account yet ? <a href="@routes.Security.register()" class="btn small secondary" style="float: none;">Register</a>
-			<!-- <a href="#"	class="btn primary" onclick="$('#loginForm').submit()">Submit</a> -->
-			<button id="loginButton" class="btn primary" onclick="$('#loginForm').submit()">Submit</button>
+			Not account yet ? <a href="@routes.Security.register()" class="btn btn-small" style="float: none;">Register</a>
+			<button id="loginButton" class="btn btn-primary" onclick="$('#loginForm').submit()">Submit</button>
 		</div>
 	</div>
 	

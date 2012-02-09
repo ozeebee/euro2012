@@ -2,57 +2,41 @@
 
 @layout.main("Home") {
     
-    <div class="page-header">
+    <header class="jumbotron subhead">
+    	<a name="top"></a>
     	<h1>Schedule
     		<small>Matches played and upcoming matches</small>
     	</h1>
-    	
-    	<ul class="pills">
-	    @models.Phase.values.toSeq.map { phase => 
-    		<li><a href="#@phase">@Messages("phase." + phase)</a></li>
-    	}
-    	</ul>
-    </div>
+	    <div class="subnav">
+	    	<ul class="nav nav-pills">
+			    @models.Phase.values.toSeq.map { phase => 
+		    		<li><a href="#@phase">@Messages("phase." + phase)</a></li>
+		    	}
+	    	</ul>
+	    </div>
+    </header>
     
     <div class="row">
-    
     @models.Phase.values.toSeq.map { phase => 
     	@println("phase = " + phase)
     	
-    	<a name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
-    	<h2 class="center underline color:">@Messages("phase." + phase)</h2>
+    	<a id="@phase" name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
+    	<h2 class="center underline color:">@Messages("phase." + phase)
+    		<a href="#top" style="float:right;"><img src="@routes.Assets.at("images/topArrow.gif")"></a>
+    	</h2>
 
-	<!--@* group matches by date so we can display matches played day by day  *@-->
-	@defining(matchesByPhase(phase.toString).groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
-		@matchesByDate.keys.toSeq.sorted.map { date =>
-			<div class="koDate">@date.format("EEEEE', the' dd 'of' MMMMM yyyy")</div>
-
-			@helper.matchesTable(matchesByDate(date))
+		<!--@* group matches by date so we can display matches played day by day  *@-->
+		@defining(matchesByPhase(phase.toString).groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
+			@matchesByDate.keys.toSeq.sorted.map { date =>
+				<div class="koDate">@date.format("EEEEE', the' dd 'of' MMMMM yyyy")</div>
+	
+				@helper.matchesTable(matchesByDate(date))
+			}
 		}
-	}
-
-    	
-@*    	
-    	@matchesByPhase(phase.toString).map { zmatch =>
-	    	<div class="sched">
-	    		<span class="koDate">@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")</span>
-	    		<div class="match">
-	    		@if(! zmatch.isFormula) {
-	    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
-	    		}
-	    			<p>
-	    				@zmatch.teamA
-			    		<span class="koTime">@zmatch.kickoff.format("HH:mm")</span>
-			    		@zmatch.teamB
-	    			</p>
-	    		@if(! zmatch.isFormula) {
-	    			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">
-	    		}
-	    		</div>
-	    	</div>
-    	}
-*@
-  	
     }
-	</div>    
+	</div>
+	
+	<script>
+		installSubnavScrollSpy();
+	</script>
 }

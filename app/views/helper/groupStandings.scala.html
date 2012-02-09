@@ -2,7 +2,7 @@
 
 	<div class="standings group@group">
     	<h4>Group @group</h4>
-    	<table>
+    	<table class="table">
     		<thead>
     			<tr>
     				<th></th>
@@ -19,7 +19,7 @@
     		<tbody>
     		@standings.map { standing =>
 	    		<tr>
-	    			<td style="vertical-align: middle; white-space: nowrap;">
+	    			<td style="vertical-align: middle; text-align: left; white-space: nowrap;">
 	    				<img style="float: left; margin-right: 5px;" src="@routes.Assets.at("images/" + Messages("country.icon.32." + standing.team))" class="size16x16">
 	    				@standing.team
 	    			</td>

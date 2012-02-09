@@ -9,10 +9,10 @@
     </div>
     
     <div class="row">
-    	<ul class="media-grid">
+    	<ul class="thumbnails">
 	    @groups.map { group =>
-	    	<li>
-	        	<a href="@routes.Application.showGroup(group)" class="group">@helper.groupStandings(group, standings(group))</a>
+	    	<li class="span5">
+	        	<a href="@routes.Application.showGroup(group)" class="thumbnail group">@helper.groupStandings(group, standings(group))</a>
 	        </li>
 	    }
     	</ul>

@@ -2,6 +2,9 @@
  * OzB
  */
 
+// import jumbotron styles
+@import "jumbotron.less";
+
 @groupA-startColor: #ED1C37; // #F41C37;
 @groupA-stopColor:  #BB1328;
 @groupB-startColor: #ECA315; 
@@ -133,7 +136,7 @@ a.scoreSaveBtn {
 }
 
 table.forecast {
-	width: 400px;
+	width: 420px;
 	.center();
 	
 	td {
@@ -142,6 +145,10 @@ table.forecast {
 		
 		border-top: 1px solid #DDD;
 		border-bottom: 1px solid #DDD;
+		
+		input {
+			margin-bottom: 3px;
+		}
 	}
 	
 	td.dateOrScore {
@@ -152,6 +159,10 @@ table.forecast {
 	td.forecast {
 		white-space: nowrap;
 		min-width: 230px;
+	}
+	
+	div.forecasted {
+		margin-top: 3px;
 	}
 	
 }
@@ -187,7 +198,7 @@ div.forecastBox {
 // ~~~~~~~~~~~~~~~~~~~~~ Schedule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 table.match {
-	width: 400px;
+	width: 420px;
 	.center();
 	
 	td {
@@ -268,10 +279,6 @@ span.koTime {
 	margin-right: 10px;
 }
 
-span.score {
-	font-weight: bold;
-}
-
 div.score {
 	font-size: 11px;
 	font-weight: bold;
@@ -315,8 +322,7 @@ a.group {
 
 div.group {
 	color: white;
-	width: 330px;
-	height: 230px;
+	min-height: 230px;
 	
 	padding: 10px;
 	
@@ -353,8 +359,6 @@ div.group {
 
 div.standings {
 	color: white;
-	width: 400px;
-	height: 230px;
 	
 	padding: 10px;
 	
@@ -377,11 +381,13 @@ div.standings {
 	h4 {
 		text-align: center;
 		color: #F0F0F0;
+		padding: 10px 0px;
 	}
 
 	th {
 		font-size: 10px;
 	}
+	
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Admin ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

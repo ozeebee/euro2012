@@ -1,6 +1,6 @@
 @(matches: Seq[Match], showDates: Boolean = false)
 
-	<table class="match zebra-striped">
+	<table class="match table table-striped">
   	@matches.map { zmatch =>
   		<tr>
    		@if(! zmatch.isFormula) {
@@ -19,10 +19,7 @@
 					<span class="koTime">
 						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy") @zmatch.kickoff.format("HH:mm")
 	  				</span>
-	  				<br>
-					<span class="score">
-						@zmatch.result.get.scoreA - @zmatch.result.get.scoreB
-					</span>
+					@helper.scoreDiv(zmatch)
 				} else {
 					<span class="koTime">
 						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")

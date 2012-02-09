@@ -12,7 +12,14 @@ object ApplicationBuild extends Build {
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
-      // Add your own project settings here      
+
+    	// specify *explicitly* which less files are to be compiled
+    	lessEntryPoints <<=	baseDirectory(base =>
+    			(base / "app" / "assets" / "stylesheets" / "main.less")
+    			+++ (base / "app" / "assets" / "stylesheets" / "bootstrap" / "bootstrap.less")
+    			+++ (base / "app" / "assets" / "stylesheets" / "bootstrap" / "responsive.less")
+    		)
+
     )
 
 }

@@ -24,7 +24,7 @@ function showTab(event, url, reload) {
 	
 	var tabDiv = $(divId);
 
-	var liContainer = $("ul.tabs");
+	var liContainer = $("ul.nav-tabs");
 	var divContainer = $("div.tab-content");
 	
 	// check if the div is already (loaded) into the dom
@@ -52,14 +52,15 @@ function showTab(event, url, reload) {
 }
 
 /**
- * from bootstrap-tabs.js
+ * from bootstrap-tab.js
  */
 function activate(element, container) {
-    container
-      .find('> .active')
-      .removeClass('active')
-      .find('> .dropdown-menu > .active')
-      .removeClass('active')
+	var $active = container.find('> .active');
+	
+    $active
+    	.removeClass('active')
+    	.find('> .dropdown-menu > .active')
+    	.removeClass('active');
 
     element.addClass('active')
 
@@ -84,3 +85,29 @@ function installDefaultButton(container, button) {
         }
 	});
 }
+
+/**
+ * jumbotron sub nav scroll support (from twitter bootstrap docs (application.js))
+ */
+function installSubnavScrollSpy() {
+    var $win = $(window)
+    	, $nav = $('.subnav')
+    	, navTop = $('.subnav').length && $('.subnav').offset().top - 40 // the value here is the height of subnav
+    	, isFixed = 0;
+    
+    processScroll();
+
+    $win.on("scroll", processScroll);
+	
+	function processScroll() {
+		var i, scrollTop = $win.scrollTop();
+		if (scrollTop >= navTop && !isFixed) {
+			isFixed = 1;
+			$nav.addClass('subnav-fixed');
+		} else if (scrollTop <= navTop && isFixed) {
+			isFixed = 0;
+			$nav.removeClass('subnav-fixed');
+		}
+	}
+}
+

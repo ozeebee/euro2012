@@ -6,7 +6,7 @@
 
 @layout.main("Forecasts", head = headContent) {
     
-    <div class="page-header">
+    <header class="jumbotron subhead">
     	<a name="top"></a>
     	<h1>Forecasts
     		<small>Enter your forecasts</small>
@@ -15,18 +15,19 @@
     			<input type="checkbox" onclick="showModifiableForecasts(event)"> show only modifiable forecast
     		</span>
     	</h1>
-    	
-    	<ul class="pills">
-	    @models.Phase.values.toSeq.map { phase => 
-    		<li><a href="#@phase">@Messages("phase." + phase)</a></li>
-    	}
-    	</ul>
-    </div>
+	    <div class="subnav">
+	    	<ul class="nav nav-pills">
+			    @models.Phase.values.toSeq.map { phase => 
+		    		<li><a href="#@phase">@Messages("phase." + phase)</a></li>
+		    	}
+	    	</ul>
+	    </div>
+    
+    </header>
     
     <div class="row">
-        
     @models.Phase.values.toSeq.map { phase => 
-    	<a name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
+    	<a id="@phase" name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
     	<h2 class="center underline color:">@Messages("phase." + phase)
     		<a href="#top" style="float:right;"><img src="@routes.Assets.at("images/topArrow.gif")"></a>
     	</h2>
@@ -42,5 +43,9 @@
 			}
 		}
     }
-	</div>    
+	</div>
+	
+	<script>
+		installSubnavScrollSpy();
+	</script>
 }

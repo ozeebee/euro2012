@@ -6,15 +6,15 @@
 		 -
  		<input type="text" value="@forecast.map(_.scoreB).getOrElse("")" style="width: 40px; text-align: center;"/>
  		
- 		<a href="javascript:updateForecast('@username', @zmatch.id, '@routes.Admin.updateForecast(username, zmatch.id.get)');" class="btn small primary" style="padding:3px;">Ok</a>
- 		<a href="javascript:deleteForecast('@username', @zmatch.id, '@routes.Admin.deleteForecast(username, zmatch.id.get)');" class="btn small" style="padding:3px;">Clear</a>
+ 		<a href="javascript:updateForecast('@username', @zmatch.id, '@routes.Admin.updateForecast(username, zmatch.id.get)');" class="btn btn-small btn-primary" style="padding:3px;">Ok</a>
+ 		<a href="javascript:deleteForecast('@username', @zmatch.id, '@routes.Admin.deleteForecast(username, zmatch.id.get)');" class="btn btn-small" style="padding:3px;">Clear</a>
 
  		<div style="min-width: 12px; display: inline-block;"><img class="invisible" /></div> @* empty placeholder for image *@
 	</div>
 }
 
 	<h4>Forecasts for user <strong>@username</strong></h4>
-	<table class="condensed-table zebra-striped userForecasts">
+	<table class="table table-condensed table-striped userForecasts">
 		<thead>
 			<tr>
 				<th>Id</th>
@@ -47,7 +47,7 @@
 	</table>
 	
 	<div class="actions">
-		<button type="button" onclick="deleteUserForecasts(event, '@routes.Admin.deleteUserForecasts(username)')" data-loading-text="deleting..." class="btn small">Delete all</button>
-		<button type="button" onclick="generateRandomForecasts(event, '@routes.Admin.randomForecasts(username)')" data-loading-text="generating..." class="btn small">Generate Random Forecasts</button>
+		<button type="button" onclick="deleteUserForecasts(event, '@routes.Admin.deleteUserForecasts(username)')" data-loading-text="deleting..." class="btn btn-small">Delete all</button>
+		<button type="button" onclick="generateRandomForecasts(event, '@routes.Admin.randomForecasts(username)')" data-loading-text="generating..." class="btn btn-small">Generate Random Forecasts</button>
 	</div>
 	

@@ -6,16 +6,18 @@ My main motivation is to learn the Scala language and the Play 2.0 framework as 
 I would be surprised if this app ends up in a production environment for real use, but who knows ...
 
 ##TODO:
-	- bootstrap 2.0 refactoring
-	- add test for user registration (validation) and for authentication (check seured pages cannot be accessed anonymously)
+	- add responsive (bootstrap) variation to navbar
+	- refactor main.less to use bootstrap mixins
+	- add test for user registration (validation) and for authentication (check secured pages cannot be accessed anonymously)
 	- add user role (for administration pages)
-	- add rules page
 	- ? twitter integration
 	- i18n
+	- Play Bug with batch updates : the call to addBatch() must be done after settings parameters
+	- Test MongoDB ! (get rid of the relational model)
 
 ## Pages
 
-- ? add statistics to home page ? (changee homepage to dashboard like concept)
+- ? add statistics to home page ? (change homepage to dashboard like concept)
 	
 ## Competition
 
@@ -32,6 +34,7 @@ I would be surprised if this app ends up in a production environment for real us
 ### User management
 - create account
 - ? user picture / gravatar integration
+- ? chat function (with WebSocket impl) ?
 	
 ### Other
 - JS : remove absolute urls in external javascripts
