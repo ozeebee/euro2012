@@ -7,6 +7,7 @@ import anorm._
 import anorm.SqlParser._
 
 import models.Phase.Phase
+import models.MatchOutcome.MatchOutcome
 
 case class Match(
 	id: Pk[Long],
@@ -16,8 +17,7 @@ case class Match(
 	teamBformula: Option[String],
 	kickoff: java.util.Date,
 	phase: Phase, // example: round1, quarter finals, semi final, etc
-	// stadium
-	// result
+	// stadium ?
 	result: Option[Result]
 ) {
 	val played: Boolean = result.isDefined
@@ -70,14 +70,14 @@ case class Match(
 	 * @return true if team A is the winner, false if the result is a draw of if the match has not yet been played
 	 */
 	def isTeamAWinner: Boolean = {
-		(result.isDefined && teamA.isDefined && result.get.result == teamA.get)
+		result.map(_.outcome == MatchOutcome.TEAM_A).getOrElse(false)
 	}
 	
 	/**
 	 * @return true if team B is the winner, false if the result is a draw of if the match has not yet been played
 	 */
 	def isTeamBWinner: Boolean = {
-		(result.isDefined && teamB.isDefined && result.get.result == teamB.get)
+		result.map(_.outcome == MatchOutcome.TEAM_B).getOrElse(false)
 	}
 
 	/**
@@ -89,20 +89,11 @@ case class Match(
 }
 
 case class Result(
-	result: String, // either 'DRAW', teamAId or TeamBId
+	outcome: MatchOutcome,
+	winner: Option[String],
 	scoreA: Int,
 	scoreB: Int
-) {
-	/**
-	 * @return the winner (team id) or None it's a draw
-	 */
-	def winner: Option[String] = {
-		if (result == "DRAW")
-			Option(null)
-		else
-			Some(result)
-	}
-}
+)
 
 object Match {
 	
@@ -119,11 +110,18 @@ object Match {
 		get[Option[Int]]("match.scoreA") ~
 		get[Option[Int]]("match.scoreB") map {
 			case id~teamA~teamAformula~teamB~teamBformula~kickoff~phase~result~scoreA~scoreB => {
-				if (result.isEmpty) // Match without Result
-					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), Option(null))
-				else { // Match with Result
+				result.map { result => // Match with Result
 					assert(scoreA.isDefined && scoreB.isDefined, "if there is a result, scores must exist")
-					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), Some(Result(result.get, scoreA.get, scoreB.get)))
+					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), result match {
+						case "DRAW" => Some(Result(MatchOutcome.DRAW, None, scoreA.get, scoreB.get)) 
+						case _ => {
+							if (result == teamA.get) Some(Result(MatchOutcome.TEAM_A, Some(result), scoreA.get, scoreB.get))
+							else if (result == teamB.get) Some(Result(MatchOutcome.TEAM_B, Some(result), scoreA.get, scoreB.get))
+							else throw new IllegalArgumentException("result for matchId "+id+" does not match concerned team !")
+						}
+					}) 
+				}.getOrElse { // Match without Result
+					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), None)
 				}
 			}
 		}
@@ -154,6 +152,13 @@ object Match {
 		}
 	}
 	
+	def findPlayed(): Seq[Match] = {
+		DB.withConnection { implicit connection =>
+			SQL("select * from match where scoreA is not null").as(Match.simple *)
+			// assuming scoreA and scoreB are both set
+		}
+	}
+	
 	def create(zmatch: Match): Match = {
 		DB.withConnection { implicit connection =>
 			// generated identifier
@@ -166,7 +171,7 @@ object Match {
 				'id -> id,
 				'teamA -> zmatch.teamA,
 				'teamB -> zmatch.teamB,
-// XXX : NO TIMESTAMP SUPPORT !!!
+// XXX : NO TIMESTAMP SUPPORT !!! ==> this should have been fixed in play2.0, to be re-tested
 				'kickoff -> new java.sql.Timestamp(zmatch.kickoff.getTime()),
 				'phase -> zmatch.phase.toString()
 			).executeUpdate()
@@ -198,7 +203,12 @@ object Match {
 			}
 			
 			// set result in match
-			zmatch.copy(result = Some(Result(result, scoreA, scoreB)))
+			val newResult = result match {
+				case "DRAW" => Some(Result(MatchOutcome.DRAW, None, scoreA, scoreB))
+				case teamId if (teamId == zmatch.teamA.get) => Some(Result(MatchOutcome.TEAM_A, Some(teamId), scoreA, scoreB))
+				case teamId if (teamId == zmatch.teamB.get) => Some(Result(MatchOutcome.TEAM_B, Some(teamId), scoreA, scoreB))
+			}
+			zmatch.copy(result = newResult)
 		}
 	}
 	
@@ -216,7 +226,7 @@ object Match {
 	 * compute standings for all groups
 	 */
 	def computeStandings(matches: Seq[Match]): Map[String, Seq[Standing]] = {
-		// this generate a collection of tuples(2) that can be used to crate a map
+		// this generate a collection of tuples(2) that can be used to create a map
 		val tuples = for (group <- Team.getGroups()) yield group -> computeStandings(group, matches)
 		Map(tuples.toSeq: _*)
 	}
@@ -345,37 +355,14 @@ case class Standing (
 	
 	def goalDiff: Int = (goalsScored - goalsAgainst)
 	
-	/**
-	 * function used to sort standings to give team positions
-	 * @return true if first standing is before second one
-	 */
-//	def positionComp(standingA: Standing, standingB: Standing): Boolean = {
-//		if (standingA.points > standingB.points) {
-//			true
-//		} else if (standingA.points < standingB.points) {
-//			false
-//		} 
-//		else {
-//			// same number of points, check goal difference be
-//		}
-//	}
-	
 	def update(zmatch: Match) {
-		if (zmatch.played) {
+		zmatch.result.foreach { result =>
 			played += 1
-			
-			val result = zmatch.result.get
-			
-			if (result.winner.isEmpty) {
-				points += 1
-				draws += 1
-			}
-			else if (result.result == team) {
-				points += 3
-				wins += 1
-			}
-			else {
-				losses += 1
+
+			result.winner match {
+				case None => points += 1; draws += 1;
+				case Some(teamId) if (team == teamId) => points += 3; wins +=1;
+				case _ => losses += 1
 			}
 			
 			if (team == zmatch.teamA.get) {

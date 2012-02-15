@@ -1,0 +1,42 @@
+@(rankings: Seq[UserRanking])(implicit request: play.api.mvc.RequestHeader)
+
+@layout.main("Ranking") {
+    
+    <div class="page-header">
+    	<h1>Ranking
+    		<small>Who's the best forecaster ?</small>
+    	</h1>
+    </div>
+    
+    <div class="row">
+
+	@for(i <- rankings.indices; ranking = rankings(i)) {
+		<div class="ranking">
+			@if(ranking.user.name == controllers.Security.username.get) {
+				<div class="you">
+					YOU &gt;
+				</div>
+			}
+			<div class="pos">
+				<span class="label label-info">@(i+1)</span>
+			</div>
+			<div class="userinfo">
+				<img src="@models.User.gravatarUrl(ranking.user.email)" />
+				<strong>@ranking.user.name</strong>
+				<div class="secline">
+					<div class="total">@ranking.forecastedMatches <small>forecasts</small></div> 
+ 					<div class="ok">@ranking.correctScores <small>correct scores</small></div>
+					<div class="warn">@ranking.correctResults <small>correct results</small></div>
+					<div class="error">@ranking.badForecasts <small>wrong forecasts</small></div>
+				</div>
+			</div>
+			<div class="pts">
+				<strong>@ranking.points</strong>
+				Pts
+			</div>
+		</div>
+	}
+    
+    </div>
+    
+}

@@ -390,6 +390,106 @@ div.standings {
 	
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~ Rankings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+div.ranking {
+	min-height: 60px;
+	position: relative;
+	border-left: 1px solid #E8E8E8;
+	border-right: 1px solid #E8E8E8;
+	border-bottom: 1px solid #E8E8E8;
+	padding: 5px 5px;
+	margin-left: 150px;
+	
+	&:hover {
+		background-color: rgb(255, 255, 239);
+	}
+
+	&:first-child {
+		border-top: 1px solid #E8E8E8;
+		.border-radius(3px);
+	    border-bottom-right-radius: 0px 0px;
+		border-bottom-left-radius: 0px 0px;
+	}
+	
+	&:last-child {
+		.border-radius(3px);
+		border-top-right-radius: 0px 0px;
+		border-top-left-radius: 0px 0px;
+	}
+
+	div {
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	
+	div.you {
+		float: left;
+		margin-left: -100px;
+		margin-top: 20px;
+		color: #B7D675;
+		text-transform: uppercase;
+		#font > .verdana(bold, 24px, 20px);
+	}
+	
+	div.pos {
+		float: left;
+	}
+	
+	div.userinfo {
+		float: left;
+		#font > .sans-serif(normal, 14px, 18px);
+		color: #999;
+		
+		img {
+			float:left; 
+			margin-right: 10px; 
+			max-height: 48px;
+			.border-radius(3px);
+		}
+		
+		strong {
+			font-size: 20px;
+			color: #333;
+		}
+		
+		div.secline {
+			margin-left: 70px;
+			
+			small {	font-size: 9px; display: block; text-transform: capitalize; }
+
+			div {
+				display: inline-block;
+				text-align: center;
+			}
+
+			div.total { color: #555;	}
+			div.ok    { color: #93BF96; }
+			div.warn  { color: #FFC472; }
+			div.error { color: #FF9797; }
+		}
+	}
+	
+	div.pts {
+		float: left;
+		position: absolute;
+		right: 5px;
+		top: 18px;
+		
+		strong {
+			display: block;
+			font-size: 26px;
+			color: #333;
+		}
+		
+		color: #999;
+		font-size: 10px;
+		line-height: 20px;
+		text-transform: uppercase;
+	}
+
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~ Admin ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 table.userForecasts {

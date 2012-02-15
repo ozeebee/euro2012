@@ -24,6 +24,7 @@ GET		/group/:id					controllers.Application.showGroup(id: String)
 
 GET		/forecasts					controllers.Application.showForecasts()
 POST	/forecasts					controllers.Application.saveForecast()
+GET		/ranking					controllers.Application.showRanking()
 
 #############
 # Admin tools

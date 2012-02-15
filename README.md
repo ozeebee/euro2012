@@ -6,6 +6,7 @@ My main motivation is to learn the Scala language and the Play 2.0 framework as 
 I would be surprised if this app ends up in a production environment for real use, but who knows ...
 
 ##TODO:
+	- ! Unit test for ranking system (as well as for group standings)
 	- add responsive (bootstrap) variation to navbar
 	- refactor main.less to use bootstrap mixins
 	- add test for user registration (validation) and for authentication (check secured pages cannot be accessed anonymously)
@@ -28,6 +29,8 @@ I would be surprised if this app ends up in a production environment for real us
 
 - forecasts
 - rankings
+	- stats à la vimeo.com (ex: http://vimeo.com/29763331)
+- banner for live matches (with live score) : ah the bottom of the page (fixed pos) [like less site header]
 
 ## Admin
 

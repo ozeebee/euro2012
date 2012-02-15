@@ -67,6 +67,10 @@ object User {
 				.isDefined
 		}
 	}
+	
+	def gravatarUrl(email: String) = {
+		"http://www.gravatar.com/avatar/" + app.utils.MD5.hash(email) + "?s=140&d=mm";
+	}
 }
 
 case class Forecast (
@@ -74,7 +78,16 @@ case class Forecast (
 	matchid: Pk[Long],
 	scoreA: Int,
 	scoreB: Int
-)
+) {
+	def outcome = {
+		if (scoreA > scoreB)
+			MatchOutcome.TEAM_A
+		else if (scoreA < scoreB)
+			MatchOutcome.TEAM_B
+		else
+			MatchOutcome.DRAW 
+	}
+} 
 
 object Forecast {
 	
@@ -84,6 +97,12 @@ object Forecast {
 		get[Int]("scoreA") ~
 		get[Int]("scoreB") map {
 			case username ~ matchid ~ scoreA ~ scoreB => Forecast(username, matchid, scoreA, scoreB)
+		}
+	}
+	
+	def findAll(): Seq[Forecast] = {
+		DB.withConnection { implicit connection =>
+			SQL("select username, matchid, scoreA, scoreB from forecast").as(Forecast.simple *)
 		}
 	}
 	
@@ -152,5 +171,63 @@ object Forecast {
 		DB.withConnection { implicit connection =>
 			SQL("delete from forecast where username = {username} and matchid = {matchid}").on('username -> user, 'matchid -> matchid).executeUpdate()
 		}
+	}
+}
+
+case class UserRanking (user: User, var points: Int, var forecastedMatches: Int, 
+		var correctScores: Int, var correctResults: Int, var badForecasts: Int)
+
+object Ranking {
+	val correctResultMap = Map(
+			Phase.MD1 -> 1, Phase.MD2 -> 1, Phase.MD3 -> 1,
+			Phase.QUARTERFINALS -> 4,
+			Phase.SEMIFINALS -> 6,
+			Phase.FINAL -> 15
+	)
+
+	val correctScoreMap = Map(
+			Phase.MD1 -> 3, Phase.MD2 -> 3, Phase.MD3 -> 3,
+			Phase.QUARTERFINALS -> 7,
+			Phase.SEMIFINALS -> 10,
+			Phase.FINAL -> 20
+	)
+
+	def computeRanking(users: Seq[User], forecasts: Seq[Forecast], matches: Seq[Match]) = {
+		// create a map of matches keyed by match.id
+		val matchMap = matches.foldLeft(collection.mutable.Map[Pk[Long], Match]()) { (map: collection.mutable.Map[Pk[Long], Match], zmatch: Match) =>
+			map(zmatch.id) = zmatch
+			map
+		}
+		
+		// create initial user ranking map with one entry for each user found (even if he has no forecast)
+		val rankingMap = Map((for (user <- users) yield (user.name -> UserRanking(user, 0, 0, 0, 0, 0))) : _*)
+
+		forecasts.foldLeft(rankingMap) { (map: Map[String, UserRanking], forecast: Forecast) =>
+			val userRanking = map(forecast.username) // XXX: we should consider the case when one usre has entered a forecast then was unregistered (removed) from the application ! (in which case this statement whill yield an exception...)
+			matchMap.get(forecast.matchid).foreach { zmatch =>
+				zmatch.result.foreach { result =>
+					userRanking.forecastedMatches += 1
+					
+					println("forecast.matchid="+forecast.matchid+" forecast.outcome="+forecast.outcome+" result.outcome="+result.outcome)
+					// correct result ?
+					if (forecast.outcome == result.outcome) {
+						println("forecast.matchid="+forecast.matchid+" correct result")
+						userRanking.points += correctResultMap(zmatch.phase)
+						
+						// correct score ?
+						if ((forecast.scoreA, forecast.scoreB) == (result.scoreA, result.scoreB)) {
+							println("forecast.matchid="+forecast.matchid+" correct score")
+							userRanking.points += correctScoreMap(zmatch.phase)
+							userRanking.correctScores += 1
+						}
+						else
+							userRanking.correctResults += 1
+					}
+					else
+						userRanking.badForecasts += 1
+				}
+			}
+			map
+		}.values.toSeq.sortWith(_.points > _.points)
 	}
 }
