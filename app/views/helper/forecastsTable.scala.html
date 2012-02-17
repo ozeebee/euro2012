@@ -1,6 +1,40 @@
 @(matches: Seq[Match], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
 
+@import models.ForecastOutcome._
+
 @forecastBox(zmatch: Match, forecastOpt: Option[Forecast]) = {
+	<div id="forecast_@zmatch.id" class="forecast-box">
+		<div class="forecast-input">
+			<input type="text" value="@forecastOpt.map(_.scoreA).getOrElse("")" />
+		 	-
+			<input type="text" value="@forecastOpt.map(_.scoreB).getOrElse("")" />
+		</div>
+ 		<div class="subrow">
+			<span class="kickoff-time">
+	  			@zmatch.kickoff.format("HH:mm")
+	  		</span>
+ 			<a onclick="randomForecast(@zmatch.id)">
+ 				<img src="@routes.Assets.at("images/calculator.gif")">
+ 				<span>generate</span>
+ 			</a>
+ 			<a onclick="saveForecast(@zmatch.id, '@routes.Application.saveForecast()');" class="saveBtn notDisplayed">
+ 				<img src="@routes.Assets.at("images/diskette.gif")">
+ 				<span>save</span>
+ 			</a>
+ 		</div>
+	</div>
+}
+
+@classForOutcome(outcome: ForecastOutcome) = @{
+	outcome match {
+		case CORRECT_RESULT => "correct-result"
+		case CORRECT_SCORE => "correct-score"
+		case _ => ""
+	}
+}
+
+<!--@*  
+@forecastBox_OLD(zmatch: Match, forecastOpt: Option[Forecast]) = {
 	<div id="forecast_@zmatch.id" class="forecastBox">
 		<input type="text" value="@forecastOpt.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
 		 -
@@ -22,16 +56,14 @@
 	</div>
 }
 
-	<table class="forecast match table table-striped">
+	<table class="forecast table table-striped">
   	@matches.map { zmatch =>
   		<tr>
-  			<!-- <td style="text-align: right; white-space: nowrap;">Sunday, the 17 of June 2012 18:00</td> -->
-  		
    		@if(! zmatch.isFormula) {
-  				<td>
+ 			<td>
     			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
-  				</td>
-  				<td>@zmatch.teamA</td>
+  			</td>
+  			<td>@zmatch.teamA</td>
    		} else {
    			<td></td>
    			<td>@zmatch.teamAformula</td>
@@ -51,7 +83,7 @@
 				}
 			} else {
 				@if(controllers.Application.canForecast(zmatch.kickoff)) {
-					@forecastBox(zmatch, forecastsByMatch.get(zmatch.id))
+					@forecastBox_OLD(zmatch, forecastsByMatch.get(zmatch.id))
 				} else {
 					<span class="koTime">
   						@zmatch.kickoff.format("HH:mm")
@@ -71,6 +103,85 @@
    			<td>@zmatch.teamBformula</td>
    			<td></td>
    		}
+   		
   		</tr>
   	}
  	</table>
+*@-->
+
+	<div class="forecast-day">
+	@matches.map { zmatch =>
+		<div class="forecast-item">
+			<div class="flag">
+				@if(! zmatch.isFormula) {
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
+		  		}
+			</div>
+			<div class="teamA">
+		  		@if(! zmatch.isFormula) {
+		  			@zmatch.teamA
+		   		} else {
+		   			@zmatch.teamAformula
+		   		}
+			</div>
+
+			@if(zmatch.played) {
+				@helper.scoreDiv(zmatch)
+			} else {
+				@if(controllers.Application.canForecast(zmatch.kickoff)) {
+					@forecastBox(zmatch, forecastsByMatch.get(zmatch.id))
+				} else {
+					<div class="kickoff-time">
+  						@zmatch.kickoff.format("HH:mm")
+					</div>
+				}
+			}
+				
+			<div class="teamB">
+		 		@if(! zmatch.isFormula) {
+		   			@zmatch.teamB
+		   		} else {
+		   			@zmatch.teamBformula
+		   		}
+			</div>
+			<div class="flag">
+		 		@if(! zmatch.isFormula) {
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">
+	    		}
+			</div>
+			<div class="forecast-result">
+			@if(zmatch.played) {
+				@forecastsByMatch.get(zmatch.id).map { forecast =>
+					<div class="forecasted">
+						<div class="forecasted-score">
+							<code>@forecast.scoreA</code> - <code>@forecast.scoreB</code>
+						</div>
+						@defining(forecast.outcome(zmatch.result.get)) { outcome => 
+						<div class="forecast-pts @classForOutcome(outcome)">
+							@outcome match {
+								case CORRECT_RESULT => {
+									<strong>+ @Ranking.correctResultMap(zmatch.phase)</strong> Pts
+									<small>correct result !</small>
+								}
+								case CORRECT_SCORE => {
+									<strong>+ @(Ranking.correctResultMap(zmatch.phase) + Ranking.correctScoreMap(zmatch.phase))</strong> Pts
+									<small>correct score !</small>
+								}
+								case ForecastOutcome.WRONG_FORECAST => {
+									<strong>0</strong> Pts
+									<small>wrong forecast</small>
+								}
+							}
+						</div>
+						}
+					</div>
+				}.getOrElse {
+					<div class="no-forecast">
+						no forecast
+					</div>
+				}
+	   		}
+			</div>
+		</div>
+	}
+	</div>

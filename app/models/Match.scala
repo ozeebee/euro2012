@@ -93,7 +93,9 @@ case class Result(
 	winner: Option[String],
 	scoreA: Int,
 	scoreB: Int
-)
+) {
+	val score = (scoreA, scoreB)
+}
 
 object Match {
 	

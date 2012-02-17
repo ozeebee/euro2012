@@ -28,11 +28,13 @@ I would be surprised if this app ends up in a production environment for real us
 ## Game
 
 - forecasts
+	- add saveall button to forecasts page (at bottom)
 - rankings
 	- stats à la vimeo.com (ex: http://vimeo.com/29763331)
 - banner for live matches (with live score) : ah the bottom of the page (fixed pos) [like less site header]
 
 ## Admin
+- stats pages with number of users , number of match with results, number of forecasts and percentages
 
 ### User management
 - create account

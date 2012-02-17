@@ -9,6 +9,7 @@ import play.api.mvc._
 import play.api.Logger
 import models._
 import models.Phase.Phase
+import models.test._
 import anorm.NotAssigned
 import Security.Secured
 
@@ -178,6 +179,34 @@ object Admin extends Controller with Debuggable with Secured {
 		}
 	}
 
+	def showScenarios = Authenticated { username => implicit request =>
+		Ok(views.html.adminpages.scenarios(models.test.Scenarios.getScenarios()))
+	}
+
+	def applyScenario(name: String) = Logged("applyScenario") { 
+		Authenticated { authenticatedUsername => implicit request =>
+			Scenarios.getScenario(name).map { scenario =>
+				scenario.apply()
+				Ok
+			}.getOrElse {
+				BadRequest("Scenario " + name + " not found")
+			}
+		}
+	}
+	
+	def unapplyScenario(name: String) = Logged("unapplyScenario") { 
+		Authenticated { authenticatedUsername => implicit request =>
+			Scenarios.getScenario(name).map { scenario =>
+				scenario match {
+					case undoableScenario: UndoableScenario => undoableScenario.unapply(); Ok
+					case _ => BadRequest("Scenario " + name + " cannt be unapplied because it is not undoable")
+				}
+			}.getOrElse {
+				BadRequest("Scenario " + name + " not found")
+			}
+		}
+	}
+	
 	val currentDateTimeForm = Form(single("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {

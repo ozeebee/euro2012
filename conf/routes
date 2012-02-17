@@ -43,5 +43,8 @@ POST	/admin/users/:id/forecast/:matchid	controllers.Admin.updateForecast(id: Str
 DELETE	/admin/users/:id/forecast/:matchid	controllers.Admin.deleteForecast(id: String, matchid: Long)
 GET		/admin/matches				controllers.Admin.showMatches()
 POST	/admin/currentDateTime		controllers.Admin.setCurrentDateTime()
+GET		/admin/scenarios			controllers.Admin.showScenarios()
+POST	/admin/scenarios/:name		controllers.Admin.applyScenario(name: String)
+DELETE	/admin/scenarios/:name		controllers.Admin.unapplyScenario(name: String)
 
 GET 	/test						controllers.Application.test()

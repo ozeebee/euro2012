@@ -1,0 +1,32 @@
+@(scenarios: Seq[models.test.Scenario])(implicit request: play.api.mvc.RequestHeader)
+
+<h3>Scenarios</h3>
+
+<div class="alert alert-block">
+  <h4 class="alert-heading">Warning!</h4>
+  Use these with caution since these scenarios directly modify the database
+</div>
+
+<table class="table table-condensed table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@scenarios.map { scenario =>
+		<tr>
+  			<td>@scenario.name</td>
+  			<td>@scenario.description</td>
+  			<td>
+  				<button onclick="applyScenario(event, '@routes.Admin.applyScenario(scenario.name)')" data-loading-text="applying..." class="btn btn-small">Apply</button>
+  				@if(scenario.isInstanceOf[models.test.UndoableScenario]) {
+  					<button onclick="unapplyScenario(event, '@routes.Admin.unapplyScenario(scenario.name)')" data-loading-text="unapplying..."  class="btn btn-small">Unapply</button>
+  				}
+  			</td>
+		</tr>
+		}
+	</tbody>
+</table>

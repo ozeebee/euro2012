@@ -50,6 +50,12 @@ object User {
 		user
 	}
 	
+	def remove(username: String): Boolean = {
+		DB.withConnection { implicit connection =>
+			SQL("delete from user where name = {name}").on('name -> username).executeUpdate() > 0
+		}
+	}
+	
 	def findAll(): Seq[User] = {
 		DB.withConnection { implicit connection =>
 			SQL("select name, email, password from user").as(User.simple *)
@@ -79,13 +85,25 @@ case class Forecast (
 	scoreA: Int,
 	scoreB: Int
 ) {
-	def outcome = {
+	val score = (scoreA, scoreB)
+	
+	def matchOutcome = {
 		if (scoreA > scoreB)
 			MatchOutcome.TEAM_A
 		else if (scoreA < scoreB)
 			MatchOutcome.TEAM_B
 		else
 			MatchOutcome.DRAW 
+	}
+	
+	def outcome(result: Result) = {
+		if (matchOutcome == result.outcome)
+			if (score == result.score)
+				ForecastOutcome.CORRECT_SCORE
+			else
+				ForecastOutcome.CORRECT_RESULT
+		else
+			ForecastOutcome.WRONG_FORECAST
 	}
 } 
 
@@ -203,28 +221,25 @@ object Ranking {
 		val rankingMap = Map((for (user <- users) yield (user.name -> UserRanking(user, 0, 0, 0, 0, 0))) : _*)
 
 		forecasts.foldLeft(rankingMap) { (map: Map[String, UserRanking], forecast: Forecast) =>
-			val userRanking = map(forecast.username) // XXX: we should consider the case when one usre has entered a forecast then was unregistered (removed) from the application ! (in which case this statement whill yield an exception...)
+			val userRanking = map(forecast.username) // XXX: we should consider the case when one user has entered a forecast then was unregistered (removed) from the application ! (in which case this statement whill yield an exception...)
 			matchMap.get(forecast.matchid).foreach { zmatch =>
 				zmatch.result.foreach { result =>
 					userRanking.forecastedMatches += 1
 					
-					println("forecast.matchid="+forecast.matchid+" forecast.outcome="+forecast.outcome+" result.outcome="+result.outcome)
-					// correct result ?
-					if (forecast.outcome == result.outcome) {
-						println("forecast.matchid="+forecast.matchid+" correct result")
-						userRanking.points += correctResultMap(zmatch.phase)
-						
-						// correct score ?
-						if ((forecast.scoreA, forecast.scoreB) == (result.scoreA, result.scoreB)) {
-							println("forecast.matchid="+forecast.matchid+" correct score")
-							userRanking.points += correctScoreMap(zmatch.phase)
-							userRanking.correctScores += 1
-						}
-						else
+					println("forecast.matchid="+forecast.matchid+" forecast.matchOutcome="+forecast.matchOutcome+" result.outcome="+result.outcome)
+					forecast.outcome(result) match {
+						case ForecastOutcome.CORRECT_RESULT => {
+							println("forecast.matchid="+forecast.matchid+" correct result")
 							userRanking.correctResults += 1
-					}
-					else
-						userRanking.badForecasts += 1
+							userRanking.points += correctResultMap(zmatch.phase)
+						}
+						case ForecastOutcome.CORRECT_SCORE => {
+							println("forecast.matchid="+forecast.matchid+" correct score")
+							userRanking.correctScores += 1
+							userRanking.points += correctResultMap(zmatch.phase) + correctScoreMap(zmatch.phase)
+						}
+						case ForecastOutcome.WRONG_FORECAST => userRanking.badForecasts += 1 
+					}					
 				}
 			}
 			map

@@ -189,6 +189,40 @@ function deleteForecast(username, matchId, url) {
 	});	
 }
 
+//===================== Scenarios =============================================
+
+function applyScenario(event, url) {
+	console.log("applyScenario url=" + url);
+	var btn = $(event.target);
+	btn.button('loading');
+	$.post(url, 
+			function(data) { // Success function
+				btn.button('reset');
+			}
+	).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		btn.button('reset');
+	});
+}
+
+function unapplyScenario(event, url) {
+	console.log("unapplyScenario url=" + url);
+	var btn = $(event.target);
+	btn.button('loading');
+	$.ajax({
+		type: 'DELETE',
+		url: url, 
+		success: function(data) { // Success function
+				btn.button('reset');
+			}
+	}).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+		btn.button('reset');
+	});
+}
+
+//===================== Initializations =======================================
+
 $(function() {
 	$("#form").submit(function () {
 		var zdate = $("#datepicker").prop("value");

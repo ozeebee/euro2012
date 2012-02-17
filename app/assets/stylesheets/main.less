@@ -14,6 +14,10 @@
 @groupD-startColor: #445F17; 
 @groupD-stopColor:  #314A07;
 
+@forecast-correct-result-color:	#FFC472; // orange variant
+@forecast-correct-score-color:	#93BF96; // green variant
+@forecast-incorrect-color:		#FF9797; // red variant
+
 // adapted from bootstrap
 #font {
 	.shorthand(@weight: normal, @size: 14px, @lineHeight: 20px) {
@@ -136,7 +140,7 @@ a.scoreSaveBtn {
 }
 
 table.forecast {
-	width: 420px;
+	width: auto; // 420px;
 	.center();
 	
 	td {
@@ -163,6 +167,15 @@ table.forecast {
 	
 	div.forecasted {
 		margin-top: 3px;
+	}
+	
+	td.forecastResult {
+		border: 0px;
+		background-color: white;
+		
+		div.no-forecast {
+			font-style: italic;
+		}
 	}
 	
 }
@@ -193,6 +206,146 @@ div.forecastBox {
 	span.notif {
 		color: #999;
 	}
+}
+
+div.forecast-day {
+	width: 480px;
+	.center();
+	
+	div.forecast-item {
+		@center-div-width: 195px;
+	
+		position: relative;
+		text-align: center;
+
+		padding: 5px 5px;
+		border-top: 1px solid #DDD;
+		&:last-child {
+			border-bottom: 1px solid #DDD;
+		}
+
+		&:nth-child(odd) {
+			background-color: #F9F9F9;
+		}
+
+		div {
+			display: inline-block;
+			vertical-align: middle;
+			padding: 0px 5px;
+		}
+
+		div.flag {
+		}
+
+		div.teamA {
+			text-align: left;
+			min-width: 40px;
+		}
+		
+		div.teamB {
+			text-align: right;
+			min-width: 40px;
+		}
+		
+		div.score {
+			min-width: @center-div-width;
+		}
+		
+		div.score > div {
+			padding: 7px 12px;
+		}
+		
+		div.kickoff-time {
+			min-width: @center-div-width;
+			
+			color: #888;
+			font-size: 12px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+		
+		div.forecast-box {
+			min-width: @center-div-width;
+			
+			div.forecast-input {
+				input {
+					width: 40px;
+					text-align: center;
+					margin-bottom: 3px; // override bootstrap 9px
+				}
+			}
+			
+			div.subrow {
+				display: block;
+				padding: 0;
+				text-align: left;
+				margin-left: 20px;
+				
+				color: #999;
+				
+				span.kickoff-time {
+					#font > .sans-serif(normal, 11px, 20px);
+					margin-left: 10px;
+					margin-right: 10px;
+				}
+				
+				a {
+					cursor: default;
+					
+					img { vertical-align: middle; }
+		
+					&:hover { 
+						text-decoration: underline;
+						color: #0084B4;			
+					}
+				}
+			}
+		}
+		
+		div.forecast-result {
+			position: absolute;
+			right: -160px;
+			width: 160px;
+		
+			div.forecasted-score {
+				display: inline-block;
+			}
+		
+			div.forecast-pts {
+				display: inline-block;
+				text-transform: uppercase;
+				font-size: 9px;
+				color: #999;
+				.rounded-corners();
+
+				&.correct-result {
+					background-color: fadeout(@forecast-correct-result-color, 70%);
+				}
+				
+				&.correct-score {
+					background-color: fadeout(@forecast-correct-score-color, 70%);
+				}
+
+				strong {
+					color: #333;
+					font-size: 16px;
+				}
+		
+				small {
+					display: block;
+					text-transform: none;
+				}
+			}
+			
+			div.no-forecast {
+				display: inline-block;
+				font-size: 11px;
+				font-style: italic;
+				line-height: 40px;
+				color: #999;
+			}
+		}
+	}	
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Schedule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -280,7 +433,7 @@ span.koTime {
 }
 
 div.score {
-	font-size: 11px;
+	font-size: 12px;
 	font-weight: bold;
 	
 	div {
@@ -464,9 +617,9 @@ div.ranking {
 			}
 
 			div.total { color: #555;	}
-			div.ok    { color: #93BF96; }
-			div.warn  { color: #FFC472; }
-			div.error { color: #FF9797; }
+			div.ok    { color: @forecast-correct-score-color; }
+			div.warn  { color: @forecast-correct-result-color; }
+			div.error { color: @forecast-incorrect-color; }
 		}
 	}
 	

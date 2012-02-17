@@ -19,4 +19,10 @@ object MatchOutcome extends Enumeration {
 	val TEAM_B = Value // second team wins
 }
 
-
+object ForecastOutcome extends Enumeration {
+	type ForecastOutcome = Value
+	
+	val WRONG_FORECAST = Value
+	val CORRECT_RESULT = Value
+	val CORRECT_SCORE = Value
+}
