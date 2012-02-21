@@ -1,6 +1,6 @@
 @(group: String, standings: Seq[Standing], matches: Seq[Match])(implicit request: play.api.mvc.RequestHeader)
 
-@layout.main("Standings") {
+@layout.main("Group " + group, activeNav = "competition") {
     
     <div class="page-header">
     	<h1>Group @group

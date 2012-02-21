@@ -43,3 +43,4 @@ I would be surprised if this app ends up in a production environment for real us
 	
 ### Other
 - JS : remove absolute urls in external javascripts
+- Pjax : evaluate integration of pjax for page transitions; see project https://github.com/pvillega/pjax-Forms

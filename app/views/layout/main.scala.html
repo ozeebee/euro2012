@@ -32,7 +32,22 @@
 					<ul class="nav">
             			<li @if(activeNav=="home"){class="active"}><a href="@routes.Application.index()">Home</a></li>
             			<li @if(activeNav=="about"){class="active"}><a href="@routes.Application.showAbout()">About</a></li>
-            			<li><a href="#">Contact</a></li>
+            			<li class="dropdown @if(activeNav=="competition"){active}">
+	              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Competition <b class="caret"></b></a>
+	              			<ul class="dropdown-menu">
+	              				<li><a href="@routes.Application.showTeams()">Teams</a></li>
+	              				<li><a href="@routes.Application.showGroups()">Groups</a></li>
+	              				<li><a href="@routes.Application.showSchedule()">Schedule / Results</a></li>
+	              				<li><a href="@routes.Application.showStandings()">Standings</a></li>
+							</ul>
+            			</li>
+            			<li class="dropdown @if(activeNav=="game"){active}">
+	              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Game <b class="caret"></b></a>
+	              			<ul class="dropdown-menu">
+	              				<li><a href="@routes.Application.showForecasts()">Forecasts</a></li>
+	              				<li><a href="@routes.Application.showRanking()">Ranking</a></li>
+							</ul>
+            			</li>
           			</ul>
           			
  					<ul class="nav pull-right">

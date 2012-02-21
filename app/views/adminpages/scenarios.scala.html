@@ -1,4 +1,4 @@
-@(scenarios: Seq[models.test.Scenario])(implicit request: play.api.mvc.RequestHeader)
+@(scenariosByCategory: Map[String, Seq[models.test.Scenario]])(implicit request: play.api.mvc.RequestHeader)
 
 <h3>Scenarios</h3>
 
@@ -7,26 +7,45 @@
   Use these with caution since these scenarios directly modify the database
 </div>
 
-<table class="table table-condensed table-striped">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Description</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		@scenarios.map { scenario =>
-		<tr>
-  			<td>@scenario.name</td>
-  			<td>@scenario.description</td>
-  			<td>
-  				<button onclick="applyScenario(event, '@routes.Admin.applyScenario(scenario.name)')" data-loading-text="applying..." class="btn btn-small">Apply</button>
-  				@if(scenario.isInstanceOf[models.test.UndoableScenario]) {
-  					<button onclick="unapplyScenario(event, '@routes.Admin.unapplyScenario(scenario.name)')" data-loading-text="unapplying..."  class="btn btn-small">Unapply</button>
-  				}
-  			</td>
-		</tr>
+<div class="row">
+	<div class="span3">
+		<div class="well" style="padding: 8px 0;">
+			<ul class="nav nav-list">
+				<li class="nav-header">Categories</li>
+			@scenariosByCategory.keys.map { category =>
+				<li><a href="#" onclick="showScenarioCategory(event, '@category')">@category</a></li>
+			}
+			</ul>
+		</div>
+	</div>
+	
+	<div id="scenario_content" class="span9">
+		@scenariosByCategory.keys.map { category =>
+		<table id="cat_@category" class="table table-condensed table-striped hide">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Category</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@scenariosByCategory(category).map { scenario =>
+				<tr>
+		  			<td>@scenario.name</td>
+		  			<td>@scenario.description</td>
+		  			<td>@scenario.category</td>
+		  			<td style="white-space: nowrap;">
+		  				<button onclick="applyScenario(event, '@routes.Admin.applyScenario(scenario.name)')" data-loading-text="applying..." class="btn btn-small">Apply</button>
+		  				@if(scenario.isInstanceOf[models.test.UndoableScenario]) {
+		  					<button onclick="unapplyScenario(event, '@routes.Admin.unapplyScenario(scenario.name)')" data-loading-text="unapplying..."  class="btn btn-small">Unapply</button>
+		  				}
+		  			</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 		}
-	</tbody>
-</table>
+	</div>
+</div>

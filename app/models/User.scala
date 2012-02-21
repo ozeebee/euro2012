@@ -219,22 +219,21 @@ object Ranking {
 		
 		// create initial user ranking map with one entry for each user found (even if he has no forecast)
 		val rankingMap = Map((for (user <- users) yield (user.name -> UserRanking(user, 0, 0, 0, 0, 0))) : _*)
-
 		forecasts.foldLeft(rankingMap) { (map: Map[String, UserRanking], forecast: Forecast) =>
 			val userRanking = map(forecast.username) // XXX: we should consider the case when one user has entered a forecast then was unregistered (removed) from the application ! (in which case this statement whill yield an exception...)
 			matchMap.get(forecast.matchid).foreach { zmatch =>
 				zmatch.result.foreach { result =>
 					userRanking.forecastedMatches += 1
 					
-					println("forecast.matchid="+forecast.matchid+" forecast.matchOutcome="+forecast.matchOutcome+" result.outcome="+result.outcome)
+					//println("forecast .user="+forecast.username+" .matchid="+forecast.matchid+" forecast.matchOutcome="+forecast.matchOutcome+" result.outcome="+result.outcome)
 					forecast.outcome(result) match {
 						case ForecastOutcome.CORRECT_RESULT => {
-							println("forecast.matchid="+forecast.matchid+" correct result")
+							//println("forecast.matchid="+forecast.matchid+" correct result")
 							userRanking.correctResults += 1
 							userRanking.points += correctResultMap(zmatch.phase)
 						}
 						case ForecastOutcome.CORRECT_SCORE => {
-							println("forecast.matchid="+forecast.matchid+" correct score")
+							//println("forecast.matchid="+forecast.matchid+" correct score")
 							userRanking.correctScores += 1
 							userRanking.points += correctResultMap(zmatch.phase) + correctScoreMap(zmatch.phase)
 						}

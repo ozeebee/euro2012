@@ -116,7 +116,7 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def showUserForecasts(username: String) = Logged("showUserForecasts") {
-		Authenticated { username => implicit request =>
+		Authenticated { authenticatedUsername => implicit request =>
 			val matches = Match.findAll()
 			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 
@@ -180,7 +180,7 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 
 	def showScenarios = Authenticated { username => implicit request =>
-		Ok(views.html.adminpages.scenarios(models.test.Scenarios.getScenarios()))
+		Ok(views.html.adminpages.scenarios(models.test.Scenarios.getScenariosByCategory()))
 	}
 
 	def applyScenario(name: String) = Logged("applyScenario") { 

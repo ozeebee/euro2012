@@ -23,8 +23,14 @@ object Scenarios {
 	def getScenarios(): Seq[Scenario] = {
 		Seq(
 			ResetMatchResults, ResetForecasts, ResetUsers, ResetAll,
-			MD1Results, MD2Results, MD3Results, GroupStageResults, RandomResults
+			MD1Results, MD2Results, MD3Results, GroupStageResults, RandomResults,
+			RandomForecasts,
+			TenMoreUsers
 		)
+	}
+	
+	def getScenariosByCategory(): Map[String, Seq[Scenario]] = {
+		getScenarios().groupBy(_.category)
 	}
 	
 	def getScenario(name: String): Option[Scenario] = {
@@ -68,6 +74,33 @@ object ResetAll extends CleanScenario {
 		ResetMatchResults.apply()
 		ResetForecasts.apply()
 		ResetUsers.apply()
+	}
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~ User Scenarios ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+protected trait UserScenario extends UndoableScenario {
+	val category = "User"
+} 
+object TenMoreUsers extends UserScenario {
+	val description = "Create ten more users (totoXXX)"
+	def apply() = {
+		val startIndex = findHigherTotoIndex + 1
+		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1")))
+	}
+	def unapply() = {
+		val startIndex = findHigherTotoIndex
+		(startIndex until startIndex-10 by -1).foreach(i => User.remove("toto"+i))
+	}
+	def findHigherTotoIndex = {
+		val regex = """toto(\d+)""".r
+		// find higher toto user index
+		User.findAll().foldLeft(0) { (index: Int, user:User) =>
+			regex.findFirstMatchIn(user.name).map { m =>
+				val userIndex = m.group(1).toInt
+				if (userIndex > index) userIndex else index
+			}.getOrElse(index)
+		}
 	}
 }
 

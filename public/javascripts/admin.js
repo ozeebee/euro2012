@@ -191,6 +191,21 @@ function deleteForecast(username, matchId, url) {
 
 //===================== Scenarios =============================================
 
+function showScenarioCategory(event, category) {
+	var link = $(event.target);
+	var categoryTable = $("table#cat_"+category);
+	
+	var activeLink = $("ul.nav-list li.active");
+	activeLink.removeClass("active");
+	link.parent().addClass("active");
+	
+	$("#scenario_content table.show").removeClass("show").addClass("hide");
+	categoryTable.addClass("show");
+	
+	event.preventDefault();
+	return false;
+}
+
 function applyScenario(event, url) {
 	console.log("applyScenario url=" + url);
 	var btn = $(event.target);

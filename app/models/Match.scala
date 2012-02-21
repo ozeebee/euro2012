@@ -315,7 +315,7 @@ println("standingsMap = " + standingsMap)
 	
 	def generateRandomScore(): Int = {
 		val randInt = util.Random.nextInt(randomScoreRanges.last.end)
-println("  randInt = " + randInt)
+		//println("  randInt = " + randInt)
 		val index = randomScoreRanges.indexWhere(_.contains(randInt))
 		// index is the score
 		index
