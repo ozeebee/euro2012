@@ -1,23 +1,18 @@
-@(matchesByPhase: Map[String, Seq[Match]], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
+@(user: String, phases: Seq[models.Phase.Value], matchesByPhase: Map[String, Seq[Match]], forecastsByMatch: collection.mutable.Map[anorm.Pk[Long], Forecast])(implicit request: play.api.mvc.RequestHeader)
 
 @headContent = {
 	<script src="@routes.Assets.at("javascripts/forecasts.js")" type="text/javascript"></script>
 }
 
-@layout.main("Forecasts", head = headContent, activeNav = "game") {
+@layout.main("Forecasts for " + user, head = headContent, activeNav = "game") {
     
     <header class="jumbotron subhead">
     	<a name="top"></a>
-    	<h1>Forecasts
-    		<small>Think you're a king ? Prove it !</small>
-    		
-    		<span style="font-size:12px; font-weight:normal; margin-left:30px;">
-    			<input type="checkbox" onclick="showModifiableForecasts(event)"> show only modifiable forecast
-    		</span>
+    	<h1>Forecasts for user @user
     	</h1>
 	    <div class="subnav">
 	    	<ul class="nav nav-pills">
-			    @models.Phase.values.toSeq.map { phase => 
+			    @phases.map { phase => 
 		    		<li><a href="#@phase">@Messages("phase." + phase)</a></li>
 		    	}
 	    	</ul>
@@ -25,7 +20,7 @@
     </header>
     
     <div class="row">
-    @models.Phase.values.toSeq.map { phase => 
+    @phases.map { phase => 
     	<a id="@phase" name="@phase" style="position: relative; top: -60px;">&nbsp;</a>
     	<h2 class="center underline color:">@Messages("phase." + phase)
     		<a href="#top" style="float:right;"><img src="@routes.Assets.at("images/topArrow.gif")"></a>

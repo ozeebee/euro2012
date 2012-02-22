@@ -23,6 +23,7 @@ GET		/standings					controllers.Application.showStandings()
 GET		/group/:id					controllers.Application.showGroup(id: String)
 
 GET		/forecasts					controllers.Application.showForecasts()
+GET		/forecasts/:user			controllers.Application.showForecastsForUser(user: String)
 POST	/forecasts					controllers.Application.saveForecast()
 GET		/ranking					controllers.Application.showRanking()
 

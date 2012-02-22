@@ -7,7 +7,7 @@
     	<ul style="list-style: none;">
 	    	@groupTeams.map { team =>
     			<li>
-    				<img style="float: left; margin-right: 5px;" src="@routes.Assets.at("images/" + Messages("country.icon.32." + team.id))">
+    				<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + team.id))">
     				@team.name
     			</li>
 			}	

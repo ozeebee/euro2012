@@ -75,6 +75,20 @@ object Application extends Controller with Secured with Debuggable {
 		Ok(views.html.forecasts(matchesByPhase, forecastsByMatch))
 	}
 	
+	def showForecastsForUser(user: String) = Authenticated { username => implicit request =>
+		// show only forecasts of other players for played matches
+		val matches = Match.findAll().filter(_.played)
+		val matchesByPhase = matches groupBy { zmatch =>
+			zmatch.phase.toString()
+		}
+		
+		val forecastsByMatch = Forecast.getForecastsByMatch(user)
+
+		// show only played phases
+		val phases = Phase.values.toSeq.filter(phase => matchesByPhase.contains(phase.toString))
+		Ok(views.html.forecastsForUser(user, phases, matchesByPhase, forecastsByMatch))
+	}
+
 	val forecastForm = Form(
 		tuple(
 			"matchId" -> longNumber,

@@ -10,33 +10,49 @@
     
     <div class="row">
 
-	@for(i <- rankings.indices; ranking = rankings(i)) {
-		<div class="ranking">
-			@if(ranking.user.name == controllers.Security.username.get) {
-				<div class="you">
-					YOU &gt;
+		<div class="span6" style="margin-left: auto; margin-right: auto; float: none;">
+		@for(i <- rankings.indices; ranking = rankings(i)) {
+			<div class="ranking" data-user="@ranking.user.name">
+				@if(ranking.user.name == controllers.Security.username.get) {
+					<div class="you">
+						YOU &gt;
+					</div>
+				}
+				<div class="pos">
+					<span class="label label-info">@(i+1)</span>
 				</div>
-			}
-			<div class="pos">
-				<span class="label label-info">@(i+1)</span>
-			</div>
-			<div class="userinfo">
-				<img src="@models.User.gravatarUrl(ranking.user.email)" />
-				<strong>@ranking.user.name</strong>
-				<div class="secline">
-					<div class="total">@ranking.forecastedMatches <small>forecasts</small></div> 
- 					<div class="ok">@ranking.correctScores <small>correct scores</small></div>
-					<div class="warn">@ranking.correctResults <small>correct results</small></div>
-					<div class="error">@ranking.badForecasts <small>wrong forecasts</small></div>
+				<div class="userinfo">
+					<img src="@models.User.gravatarUrl(ranking.user.email)" />
+					<strong>@ranking.user.name</strong>
+					<div class="secline">
+						<div class="total">@ranking.forecastedMatches <small>forecasts</small></div> 
+	 					<div class="ok">@ranking.correctScores <small>correct scores</small></div>
+						<div class="warn">@ranking.correctResults <small>correct results</small></div>
+						<div class="error">@ranking.badForecasts <small>wrong forecasts</small></div>
+					</div>
+				</div>
+				<div class="pts">
+					<strong>@ranking.points</strong>
+					Pts
 				</div>
 			</div>
-			<div class="pts">
-				<strong>@ranking.points</strong>
-				Pts
-			</div>
+		}
 		</div>
-	}
-    
+		
     </div>
     
+    <script>
+    	function showForecasts(user) {
+    		var url = "@routes.Application.showForecastsForUser(":user")".replace(/:user/, user);
+    		//console.log("url = " + url);
+    		window.location = url; 
+    	}
+    
+    	$("div.ranking").click(function () {
+    		//console.log("ranking clicked : ", $(this));
+    		//console.log("  show user forecasts : " + $(this).data("user"));
+    		var user = $(this).data("user");
+    		showForecasts(user);
+    	});
+    </script>
 }

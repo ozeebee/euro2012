@@ -16,9 +16,14 @@ I would be surprised if this app ends up in a production environment for real us
 	- Play Bug with batch updates : the call to addBatch() must be done after settings parameters
 	- Test MongoDB ! (get rid of the relational model)
 
-## Pages
+## Home Pages
 
-- ? add statistics to home page ? (change homepage to dashboard like concept)
+- Dashboard, to display :
+	- upcoming matches (filter) (see calendar)
+	- rankings (top 5/10) + current player position and points
+	- calendar ?
+	- connected players ? (with chat functionality)
+	- twitter notifs ?
 	
 ## Competition
 
@@ -30,17 +35,21 @@ I would be surprised if this app ends up in a production environment for real us
 - forecasts
 	- add saveall button to forecasts page (at bottom)
 - rankings
+	- link to other user forecasts (ONLY for matches already played)
 	- stats à la vimeo.com (ex: http://vimeo.com/29763331)
 - banner for live matches (with live score) : ah the bottom of the page (fixed pos) [like less site header]
 
 ## Admin
 - stats pages with number of users , number of match with results, number of forecasts and percentages
+- add way to set team names for Quarter/Semi/Final stages once dependent matches results are known (check on date with warning)
 
 ### User management
 - create account
 - ? user picture / gravatar integration
+	==> add tip in register page to create a gravatar
 - ? chat function (with WebSocket impl) ?
 	
 ### Other
 - JS : remove absolute urls in external javascripts
 - Pjax : evaluate integration of pjax for page transitions; see project https://github.com/pvillega/pjax-Forms
+- Mobile version ? with jquery mobile
