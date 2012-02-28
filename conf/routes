@@ -48,4 +48,8 @@ GET		/admin/scenarios			controllers.Admin.showScenarios()
 POST	/admin/scenarios/:name		controllers.Admin.applyScenario(name: String)
 DELETE	/admin/scenarios/:name		controllers.Admin.unapplyScenario(name: String)
 
+GET		/json/teams					controllers.Application.Json.getTeams()
+POST	/admin/matches/teamName		controllers.Admin.setTeamName()
+
+
 GET 	/test						controllers.Application.test()

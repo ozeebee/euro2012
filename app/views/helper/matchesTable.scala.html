@@ -3,11 +3,11 @@
 	<table class="match table table-striped">
   	@matches.map { zmatch =>
   		<tr>
-   		@if(! zmatch.isFormula) {
-  				<td>
+   		@if(zmatch.teamA.isDefined) {
+			<td>
     			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
-  				</td>
-  				<td>@zmatch.teamA</td>
+  			</td>
+  			<td>@zmatch.teamA</td>
    		} else {
    			<td></td>
    			<td>@zmatch.teamAformula</td>
@@ -40,7 +40,7 @@
   			</td>
 		}
 		
- 		@if(! zmatch.isFormula) {
+ 		@if(zmatch.teamB.isDefined) {
    			<td>@zmatch.teamB</td>
    			<td>
     			<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">

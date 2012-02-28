@@ -164,7 +164,8 @@ object Admin extends Controller with Debuggable with Secured {
 				formWithErrors => BadRequest,
 				dataTuple => {
 					logger.debug("saving forecast dataTuple = " + dataTuple)
-					Forecast.saveForecast(Forecast(dataTuple._1, anorm.Id(dataTuple._2), dataTuple._3, dataTuple._4))
+					val (user, matchId, scoreA, scoreB) = dataTuple
+					Forecast.saveForecast(Forecast(user, anorm.Id(matchId), scoreA, scoreB))
 					Ok
 				} 
 			)
@@ -186,8 +187,14 @@ object Admin extends Controller with Debuggable with Secured {
 	def applyScenario(name: String) = Logged("applyScenario") { 
 		Authenticated { authenticatedUsername => implicit request =>
 			Scenarios.getScenario(name).map { scenario =>
-				scenario.apply()
-				Ok
+				try {
+					scenario.apply()
+					Ok
+				}
+				catch {
+					case e: AssertionError => BadRequest(e.getMessage())
+					case t: Throwable => { t.printStackTrace(); BadRequest(t.toString()) }
+				}
 			}.getOrElse {
 				BadRequest("Scenario " + name + " not found")
 			}
@@ -198,7 +205,16 @@ object Admin extends Controller with Debuggable with Secured {
 		Authenticated { authenticatedUsername => implicit request =>
 			Scenarios.getScenario(name).map { scenario =>
 				scenario match {
-					case undoableScenario: UndoableScenario => undoableScenario.unapply(); Ok
+					case undoableScenario: UndoableScenario => {
+						try {
+							undoableScenario.unapply(); 
+							Ok
+						}
+						catch {
+							case e: AssertionError => BadRequest(e.getMessage())
+							case _ => BadRequest
+						}
+					}
 					case _ => BadRequest("Scenario " + name + " cannt be unapplied because it is not undoable")
 				}
 			}.getOrElse {
@@ -222,4 +238,27 @@ object Admin extends Controller with Debuggable with Secured {
 		}
 	}
 	
+	def setTeamName() = Logged("setTeamName") {
+		Authenticated { authenticatedUsername => implicit request =>
+			val form = Form(
+				tuple(
+					"matchId" -> longNumber,
+					"team" -> text,
+					"isTeamA" -> boolean
+				)
+			)
+			
+			form.bindFromRequest().fold(
+				formWithErrors => BadRequest,
+				dataTuple => {
+					logger.debug("setTeamName dataTuple=" + dataTuple)
+					val (matchId, team, isTeamA) = dataTuple
+					// check wether it's a realm team or the formula
+					val teamValue: String = if (Match.isFormula(team)) null else team
+					Match.setTeamName(matchId, teamValue, isTeamA)
+					Ok("")
+				}
+			)
+		}
+	}
 }

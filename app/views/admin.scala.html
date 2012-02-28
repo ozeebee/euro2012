@@ -20,7 +20,10 @@
 	<script src="@routes.Assets.at("javascripts/admin.js")" type="text/javascript"></script>
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/themes/cupertino/jquery.ui.all.css")">
 	<script type="text/javascript">
+		// define urls used in javascript code to call back-end
 		var userForecastsUrl = "@routes.Admin.showUserForecasts(":username")";
+		var jsonGetTeamsUrl = "@routes.Application.Json.getTeams()";
+		var setTeamNameUrl = "@routes.Admin.setTeamName()";
 	</script>
 }
 
@@ -37,7 +40,7 @@
 	    		<li class="active"><a href="#about" onclick="showTab(event);">About</a></li>
 	    		<li><a href="#users" onclick="showTab(event, '@routes.Admin.showUsers()');">Users</a></li>
 	    		<li><a href="#matches"  onclick="showTab(event, '@routes.Admin.showMatches()');">Matches</a></li>
-	    		<li><a href="#teams" onclick="showTab(event, '@routes.Admin.showUsers()');">Teams</a></li>
+	    		<li><a href="#teams" onclick="showTab(event);">Teams</a></li>
 	    		<li><a href="#scenarios" onclick="showTab(event, '@routes.Admin.showScenarios()');">Scenarios</a></li>
 	    	</ul>
 	    	

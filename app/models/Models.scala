@@ -9,6 +9,8 @@ object Phase extends Enumeration {
 	val QUARTERFINALS = Value // Quarter Finals
 	val SEMIFINALS = Value // Semi Finals
 	val FINAL = Value // Final
+	
+	val GROUPSTAGE = Seq(MD1, MD2, MD3)
 }
 
 object MatchOutcome extends Enumeration {

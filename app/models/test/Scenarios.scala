@@ -22,10 +22,12 @@ trait UndoableScenario extends Scenario {
 object Scenarios {
 	def getScenarios(): Seq[Scenario] = {
 		Seq(
-			ResetMatchResults, ResetForecasts, ResetUsers, ResetAll,
-			MD1Results, MD2Results, MD3Results, GroupStageResults, RandomResults,
+			ResetMatchResults, ResetTeamNames, ResetForecasts, ResetUsers, ResetAll,
+			MD1Results, MD2Results, MD3Results, GroupStageResults, RandomGroupStageResults, 
+				RandomQFResults, RandomSFResults, RandomFinalResult, RandomResults,
 			RandomForecasts,
-			TenMoreUsers
+			TenMoreUsers,
+			ResolveQFTeamNames, ResolveSFTeamNames, ResolveFinalTeamNames
 		)
 	}
 	
@@ -59,6 +61,17 @@ object ResetMatchResults extends CleanScenario {
 	}
 }
 
+object ResetTeamNames extends CleanScenario {
+	val description = "Reset team names AS WELL AS RESULTS for non-group stage matches"
+	def apply() = {
+		Match.findAll().filterNot(m => Phase.GROUPSTAGE.contains(m.phase))
+			.foreach { m =>
+				Match.clearResult(m.id.get)
+				Match.setTeamNames(m.id.get, null, null)
+			}
+	}
+}
+
 object ResetUsers extends CleanScenario {
 	val description = "Reset user list"
 	def apply() = {
@@ -69,9 +82,10 @@ object ResetUsers extends CleanScenario {
 }
 
 object ResetAll extends CleanScenario {
-	val description = "Reset all DB changes (match results, forecasts, users)"
+	val description = "Reset all DB changes (match results, team names, forecasts, users)"
 	def apply() = {
 		ResetMatchResults.apply()
+		ResetTeamNames.apply()
 		ResetForecasts.apply()
 		ResetUsers.apply()
 	}
@@ -174,6 +188,46 @@ object GroupStageResults extends MatchResultScenario {
 	}
 }
 
+object RandomGroupStageResults extends MatchResultScenario {
+	val description = "Set random match results for group stages (MD1, MD2, MD3)"
+	def apply() = {
+		(1 to 24).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+	}
+	def unapply() = {
+		(1 to 24).foreach(Match.clearResult(_))
+	}
+}
+
+object RandomQFResults extends MatchResultScenario {
+	val description = "Set random match results for Quarter Finals"
+	def apply() = {
+		(25 to 28).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+	}
+	def unapply() = {
+		(25 to 28).foreach(Match.clearResult(_))
+	}
+}
+
+object RandomSFResults extends MatchResultScenario {
+	val description = "Set random match results for Semi Finals"
+	def apply() = {
+		(29 to 30).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+	}
+	def unapply() = {
+		(29 to 30).foreach(Match.clearResult(_))
+	}
+}
+
+object RandomFinalResult extends MatchResultScenario {
+	val description = "Set random match result for the Final"
+	def apply() = {
+		Match.updateResult(31, Match.generateRandomScore(), Match.generateRandomScore())
+	}
+	def unapply() = {
+		Match.clearResult(31)
+	}
+}
+
 object RandomResults extends MatchResultScenario {
 	val description = "Set random results for *ALL* matches"
 	def apply() = {
@@ -201,5 +255,80 @@ object RandomForecasts extends ForecastScenario {
 	}
 	def unapply() = {
 		ResetForecasts.apply()
+	}
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~ Tool Scenarios ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+trait ToolScenario extends Scenario {
+	val category = "Tool"
+}
+
+trait ResolveTeamNames extends ToolScenario with UndoableScenario {
+	val phase: Phase.Phase
+
+	/** subclasses must return None if ok or the reason why the precondition is not met */
+	def precondition(matches: Seq[Match]): Option[String]
+	
+	def apply() = {
+		val matches = Match.findAll()
+		matches.filter(_.phase == phase).foreach { zmatch =>
+			assert(zmatch.teamAformula.isDefined, "teamAformula is not defined !")
+			assert(zmatch.teamBformula.isDefined, "teamBformula is not defined !")
+			val rslt = precondition(matches)
+			assert(rslt == None, rslt.get)
+			val teamAOpt = Match.formulaTeamLookup(zmatch.teamAformula.get, matches)
+			val teamBOpt = Match.formulaTeamLookup(zmatch.teamBformula.get, matches)
+			teamAOpt match {
+				case Some(teamA) => teamBOpt match {
+					case Some(teamB) => Match.setTeamNames(zmatch.id.get, teamA, teamB)
+					case None => println("could not determine teamB from formula " + zmatch.teamBformula.get)
+				}
+				case None => println("could not determine teamA from formula " + zmatch.teamAformula.get)
+			}
+				
+		}
+	}
+	def unapply() = {
+		val matches = Match.findAll()
+		matches.filter(_.phase == phase).foreach { zmatch =>
+			Match.setTeamNames(zmatch.id.get, null, null)
+		}
+	}
+}
+
+object ResolveQFTeamNames extends ResolveTeamNames {
+	val description = "Resolve team names for Quarter finals based on group results"
+	val phase = Phase.QUARTERFINALS
+	def precondition(matches: Seq[Match]): Option[String] = {
+		// check that ALL group stage matches have been played
+		if (matches.filter(m => Phase.GROUPSTAGE.contains(m.phase)).forall(_.played))
+			None
+		else
+			Some("Not all group stage matches have been played")
+	}
+}
+
+object ResolveSFTeamNames extends ResolveTeamNames {
+	val description = "Resolve team names for Semi finals based QF matches results"
+	val phase = Phase.SEMIFINALS
+	def precondition(matches: Seq[Match]): Option[String] = {
+		// check that all Quarter finals have been played
+		if (matches.filter(_.phase == Phase.QUARTERFINALS).forall(_.played))
+			None
+		else
+			Some("Not all Quarter Finals matches have been played")
+	}
+}
+
+object ResolveFinalTeamNames extends ResolveTeamNames {
+	val description = "Resolve team names for the Final based SF matches results"
+	val phase = Phase.FINAL
+	def precondition(matches: Seq[Match]): Option[String] = {
+		// check that all Semi finals have been played
+		if (matches.filter(_.phase == Phase.SEMIFINALS).forall(_.played))
+			None
+		else
+			Some("Not all Semi Finals matches have been played")
 	}
 }

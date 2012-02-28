@@ -113,16 +113,12 @@
 	@matches.map { zmatch =>
 		<div class="forecast-item">
 			<div class="flag">
-				@if(! zmatch.isFormula) {
-		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamA.get))">
+				@zmatch.teamA.map { teamA =>
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
 		  		}
 			</div>
 			<div class="teamA">
-		  		@if(! zmatch.isFormula) {
-		  			@zmatch.teamA
-		   		} else {
-		   			@zmatch.teamAformula
-		   		}
+	  			@zmatch.teamAorFormula
 			</div>
 
 			@if(zmatch.played) {
@@ -138,15 +134,11 @@
 			}
 				
 			<div class="teamB">
-		 		@if(! zmatch.isFormula) {
-		   			@zmatch.teamB
-		   		} else {
-		   			@zmatch.teamBformula
-		   		}
+	  			@zmatch.teamBorFormula
 			</div>
 			<div class="flag">
-		 		@if(! zmatch.isFormula) {
-		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + zmatch.teamB.get))">
+				@zmatch.teamB.map { teamB =>
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
 	    		}
 			</div>
 			<div class="forecast-result">

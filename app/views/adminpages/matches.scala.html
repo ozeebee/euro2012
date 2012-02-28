@@ -12,6 +12,16 @@
 	}
 }
 
+@teamSel(isTeamA:Boolean, zmatch: Match) = {
+	@defining(if (isTeamA) zmatch.teamAformula.get else zmatch.teamBformula.get) { formula => 
+		<a href="#" class="teamsel" 
+			onclick="selectTeam(event, '@formula', @zmatch.id.get, @isTeamA)">
+				@if(isTeamA) { @zmatch.teamAorFormula } else { @zmatch.teamBorFormula }
+		</a>
+		(@if(isTeamA) { @zmatch.teamAformula.get } else { @zmatch.teamBformula.get })
+	}
+}
+
 @scoreBox(zmatch: Match) = {
 	<div id="score_@zmatch.id">
 		<input type="text" value="@zmatch.result.map(_.scoreA).getOrElse("")" style="width: 40px; text-align: center;" />
@@ -42,11 +52,12 @@
 		@matches.map { zmatch =>
 		 	<tr>
 		 		<td>@zmatch.id</td>
-		 		<td>@winnerInBold(zmatch.teamAorFormula, zmatch)</td>
+		 		<td>@if(models.Phase.GROUPSTAGE.contains(zmatch.phase)) { @zmatch.teamA.get } else { @teamSel(true, zmatch) }</td>
 		 		<td style="text-align: center;">
 		  			@scoreBox(zmatch)				    		
 		  		</td>
-		  		<td>@winnerInBold(zmatch.teamBorFormula, zmatch)</td>
+ 		@*<td>@zmatch.teamB.getOrElse(formula(false, zmatch))</td>*@
+		 		<td>@if(models.Phase.GROUPSTAGE.contains(zmatch.phase)) { @zmatch.teamB.get } else { @teamSel(false, zmatch) }</td>
 		  		<td>
 		  			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
 		  		</td>

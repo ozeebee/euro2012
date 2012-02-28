@@ -21,7 +21,6 @@ case class Match(
 	result: Option[Result]
 ) {
 	val played: Boolean = result.isDefined
-	val isFormula: Boolean = teamAformula.isDefined
 
 	/**
 	 * @return the group for which this match is played if this is a group match
@@ -98,7 +97,9 @@ case class Result(
 }
 
 object Match {
-	
+	val GroupFormula = """(WIN|SEC)#GROUP#(.*)""".r
+	val MatchFormula = """WIN#(\d+)""".r
+
 	// Parser
 	val simple = {
 		get[Pk[Long]]("match.id") ~
@@ -173,12 +174,50 @@ object Match {
 				'id -> id,
 				'teamA -> zmatch.teamA,
 				'teamB -> zmatch.teamB,
-// XXX : NO TIMESTAMP SUPPORT !!! ==> this should have been fixed in play2.0, to be re-tested
 				'kickoff -> new java.sql.Timestamp(zmatch.kickoff.getTime()),
 				'phase -> zmatch.phase.toString()
 			).executeUpdate()
 			
 			zmatch.copy(id = Id(id))
+		}
+	}
+
+	/**
+	 * Set team names for a match (to be used for matches whose team names are not yet known (non-group stage matches))
+	 */
+	def setTeamNames(matchId: Long, teamA: String, teamB: String): Int = {
+		DB.withConnection { implicit connection =>
+			SQL("""
+				update match set
+					teamA = {teamA},
+					teamB = {teamB}
+				where id = {id} and phase not in ('MD1', 'MD2', 'MD3')
+			""").on('id -> matchId, 'teamA -> teamA, 'teamB -> teamB)
+			.executeUpdate()
+		}
+	}
+	
+	def setTeamName(matchId: Long, team: String, isTeamA: Boolean): Int = {
+		DB.withConnection { implicit connection =>
+			val teamCol = if (isTeamA) "teamA" else "teamB"
+			SQL("update match set " + teamCol + " = {team} where id = {id} and phase not in ('MD1', 'MD2', 'MD3')")
+				.on('id -> matchId, 'team -> team)
+			.executeUpdate()
+		}
+	}
+
+	/**
+	 * Set team formulas for given match (check is made against phase)
+	 */
+	def setTeamFormulas(matchId: Long, teamAformula: String, teamBformula: String): Int = {
+		DB.withConnection { implicit connection =>
+			SQL("""
+				update match set
+					teamAformula = {teamAformula},
+					teamBformula = {teamBformula}
+				where id = {id} and phase not in ('MD1', 'MD2', 'MD3')
+			""").on('id -> matchId, 'teamAformula -> teamAformula, 'teamBformula -> teamBformula)
+			.executeUpdate()
 		}
 	}
 	
@@ -323,6 +362,26 @@ println("standingsMap = " + standingsMap)
 	
 	def generateRandomResult(): (Int, Int) = {
 		(generateRandomScore(), generateRandomScore())
+	}
+	
+	def isFormula(str: String): Boolean = {
+		str match {
+			case GroupFormula(_) => true
+			case MatchFormula(_) => true
+			case _ => false
+		}
+	}
+	
+	// try to resolve a team name for a given formula and for the given matches results
+	def formulaTeamLookup(formula: String, matches: Seq[Match]): Option[String] = {
+		formula match {
+			case GroupFormula(pos, group) => {
+				val standings = computeStandings(group, matches)
+				if (pos == "WIN") Some(standings(0).team) else Some(standings(1).team)
+			}
+			case MatchFormula(matchId) => matches.find(_.id.get == matchId.toLong).flatMap(_.winner)
+			case _ => None
+		}
 	}
 	
 	// inner function

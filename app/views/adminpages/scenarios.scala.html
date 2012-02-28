@@ -2,9 +2,8 @@
 
 <h3>Scenarios</h3>
 
-<div class="alert alert-block">
-  <h4 class="alert-heading">Warning!</h4>
-  Use these with caution since these scenarios directly modify the database
+<div class="alert">
+	<strong>Warning!</strong> Use these with caution since these scenarios directly modify the database
 </div>
 
 <div class="row">
@@ -20,8 +19,11 @@
 	</div>
 	
 	<div id="scenario_content" class="span9">
+		<div id="scenario_notif" class="alert hide">
+		</div>
+	
 		@scenariosByCategory.keys.map { category =>
-		<table id="cat_@category" class="table table-condensed table-striped hide">
+		<table id="cat_@category" class="scenarios table table-condensed table-striped hide">
 			<thead>
 				<tr>
 					<th>Name</th>

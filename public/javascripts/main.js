@@ -27,24 +27,29 @@ function showTab(event, url, reload) {
 	var liContainer = $("ul.nav-tabs");
 	var divContainer = $("div.tab-content");
 	
-	// check if the div is already (loaded) into the dom
-	if (tabDiv.length == 0) {
-		// tab div not created yet, create one switch to it and load content
-		tabDiv = $('<div class="tab-pane"><img src="'+assetsRoot+'images/loading.gif" /></div>')
-					.prop("id", divId.replace(/^#/, ""))
-					.appendTo(divContainer);
+	// check if it's a dynamic or static tab
+	if (url != undefined) { // dynamic tab
+		if (tabDiv.length == 0) {
+			// tab div not created yet, create one switch to it and load content
+			tabDiv = $('<div class="tab-pane"><img src="'+assetsRoot+'images/loading.gif" /></div>')
+						.prop("id", divId.replace(/^#/, ""))
+						.appendTo(divContainer);
+			reload = true;
+		}
 		
 		activate(li, liContainer); // set active tab 
 		activate(tabDiv, divContainer); // set active tab content
 
-		// load its content
-		$.get(url, function (data) {
-			console.log("received data"); //console.debug(data);
-			// replace loading anim with actual content
-			tabDiv.html(data);
-		});
+		if (reload == true) {
+			// load its content
+			$.get(url, function (data) {
+				console.log("received data"); //console.debug(data);
+				// replace loading anim with actual content
+				tabDiv.html(data);
+			});
+		}
 	}
-	else {
+	else { 	// static tab
 		// tab div exists, switch to it
 		activate(li, liContainer); // set active tab 
 		activate(tabDiv, divContainer); // set active tab content

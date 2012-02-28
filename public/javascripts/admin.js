@@ -88,6 +88,85 @@ function clearScore(matchId, url) {
 	});
 }
 
+/**
+ * Used for selecting a team or formula in non-group stage matches
+ * (require jsonGetTeamsUrl and setTeamNameUrl variables to be set)
+ */
+function selectTeam(event, formula, matchId, isTeamA) {
+	event.preventDefault();
+	var $elem = $(event.target);
+	
+	$.getJSON(jsonGetTeamsUrl, function (data) {
+		var teams = data;
+		//console.log("teams = ", teams);
+		
+		var $content = $('<p><select autofocus required><option value="'+formula+'" selected>'+formula+'</option></select></p>');
+		var $select = $("select", $content);
+		$.each(teams, function (i, team) {
+			$('<option/>').val(team).text(team).appendTo($select);
+		});
+		
+		var okfunc = function(event) {
+			var $dialog = event.data.dialog; // passed as data event to the handler
+			var selectedTeam = $("select", $dialog).val();
+			//console.log("selectedTeam = " + selectedTeam, $dialog);
+			data = {
+				matchId: matchId,
+				team: selectedTeam,
+				isTeamA: isTeamA
+			};
+			
+			$.post(setTeamNameUrl,
+					data,
+					function(data) {
+						console.log("Ok ! data received " + data);
+						// set new team name
+						$elem.text(selectedTeam);
+					}
+			).fail(function(jqXHR) { // Error function
+				console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+			}).complete(function() {
+				$dialog.remove();
+			});
+		};
+		
+		////////////////////////////////////
+		// popover creation 
+		
+		// remove any existing popover before
+		$("div.popover").remove();
+		
+		var title = "Choose Team";
+		var dialogContent = $content.html();
+		dialogContent += '<p style="text-align: right;"><button id="btn-ok" class="btn btn-small btn-primary">Ok</button>&nbsp;<button id="btn-cancel" class="btn btn-small">Cancel</button></p>';
+		
+		var $dialog = $('<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>');
+		$dialog.appendTo(document.body);
+		$dialog.addClass("right");
+		$dialog.find("h3").text(title);
+		$dialog.find("div.popover-content").html(dialogContent);
+		$dialog.find("button#btn-ok").click({dialog:$dialog}, okfunc);
+		$dialog.find("button#btn-cancel").click(function() {
+			$dialog.remove();
+		});
+		/*$dialog.bind('mouseleave', function() {
+			$dialog.fadeOut('fast', function() {
+				console.log("removing popover...");
+				$dialog.remove();
+			});
+		});*/
+	
+		var x = $elem.offset().left + $elem[0].offsetWidth;
+		//console.log("elem.top=" + $elem.offset().top + ", elem.offsetHeight=" + $elem[0].offsetHeight + ", dialog.offsetHeight=" + $dialog.outerHeight());
+		var y = $elem.offset().top + ($elem[0].offsetHeight/2) - ($dialog.outerHeight()/2); // we use outerHeight instead of offsetHeight because offsetHeight is reported as zero during popover costruction
+		
+		$dialog.css({ top: y, left: x, display: 'block' });
+	})
+	.error(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
 // ===================== User Forecasts =======================================
 
 function showUserForecasts(username) {
@@ -210,6 +289,7 @@ function applyScenario(event, url) {
 	console.log("applyScenario url=" + url);
 	var btn = $(event.target);
 	btn.button('loading');
+	cleanScenarioNotif();
 	$.post(url, 
 			function(data) { // Success function
 				btn.button('reset');
@@ -217,6 +297,7 @@ function applyScenario(event, url) {
 	).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
 		btn.button('reset');
+		notifyScenario("Scenario apply error", jqXHR.responseText, true);
 	});
 }
 
@@ -224,6 +305,7 @@ function unapplyScenario(event, url) {
 	console.log("unapplyScenario url=" + url);
 	var btn = $(event.target);
 	btn.button('loading');
+	cleanScenarioNotif();
 	$.ajax({
 		type: 'DELETE',
 		url: url, 
@@ -233,7 +315,18 @@ function unapplyScenario(event, url) {
 	}).fail(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
 		btn.button('reset');
+		notifyScenario("Scenario apply error", jqXHR.responseText, true);
 	});
+}
+
+function cleanScenarioNotif() {
+	$("#scenario_notif").attr("class", "hide");
+}
+function notifyScenario(title, message, isError) {
+	var classes = "alert alert-block " + (isError ? "alert-error" : "alert-success");
+	var notif = $("#scenario_notif");
+	notif.html("<h4 class=\"alert-heading\">" + title + "</h4> " + message);
+	notif.attr("class", classes);
 }
 
 //===================== Initializations =======================================
@@ -263,5 +356,5 @@ $(function() {
 			$("#datepicker").prop("value", dateText + " " + hour);
 			return false;
 		}*/
-	});
+	});	
 });

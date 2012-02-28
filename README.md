@@ -29,6 +29,7 @@ I would be surprised if this app ends up in a production environment for real us
 
 - view teams/groups/schedules/standings
 - ? calendar
+!! - store winner name somewhere (since draws are possible results even in direct confrontation games)
 
 ## Game
 
@@ -53,3 +54,6 @@ I would be surprised if this app ends up in a production environment for real us
 - JS : remove absolute urls in external javascripts
 - Pjax : evaluate integration of pjax for page transitions; see project https://github.com/pvillega/pjax-Forms
 - Mobile version ? with jquery mobile
+- integrate with google analytics
+- Caching of commonly accessed resources (teams, etc) (including in json requests)
+?- captcha ?
