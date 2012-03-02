@@ -47,8 +47,12 @@ object Admin extends Controller with Debuggable with Secured {
 	val resultForm = Form(
 		tuple(
 			"scoreA" -> number,
-			"scoreB" -> number
-		)
+			"scoreB" -> number,
+			"penaltyScoreA" -> optional(number),
+			"penaltyScoreB" -> optional(number)
+		) verifying ("Either both penalty scores must be set or none", data => {
+			(data._3.isDefined && data._4.isDefined) || (data._3.isEmpty && data._4.isEmpty)
+		})
 	)
 
 	def showAdmin = Authenticated { username => implicit request =>
@@ -90,10 +94,9 @@ object Admin extends Controller with Debuggable with Secured {
 				},
 				data => {
 					logger.debug("OK, data = " + data)
-					val scoreA = filledForm.get._1.toInt
-					val scoreB = filledForm.get._2.toInt
-					
-					Match.updateResult(matchId, scoreA, scoreB).map { zmatch =>
+					val (scoreA, scoreB, penaltyScoreA, penaltyScoreB) = data
+					val penaltiesScore = if (penaltyScoreA.isDefined) { Some(penaltyScoreA.get, penaltyScoreB.get) } else { None }
+					Match.updateResult(matchId, scoreA, scoreB, penaltiesScore).map { zmatch =>
 						Ok("ok")
 					}.getOrElse {
 						BadRequest("could not update match result")

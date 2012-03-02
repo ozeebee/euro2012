@@ -24,12 +24,38 @@ function updateScore(matchId, url) {
 		scoreB: scoreBinput.val()
 	};
 	
+	// penalties ?
+	var pendiv = $("#penscore_" + matchId);
+	if (pendiv.length > 0) {
+		var penScoreAinput = $("input:eq(0)", pendiv);
+		var penScoreBinput = $("input:eq(1)", pendiv);
+		var penScoreA = penScoreAinput.val();
+		var penScoreB = penScoreBinput.val();
+		//console.log("penScoreA=["+penScoreA+"] penScoreB=["+penScoreB+"]");
+		if (penScoreA.length == 0 && penScoreB.length == 0) {
+			// no penalty
+		} else if (penScoreA.length != 0 && penScoreB.length == 0) {
+			// only one of the penalty score is set ! error
+			penScoreBinput.addClass("error");
+			penScoreBinput.select();
+			penScoreBinput.focus();
+			return;
+		} else if (penScoreA.length == 0 && penScoreB.length != 0) { 
+			// only one of the penalty score is set ! error 
+			penScoreAinput.addClass("error");
+			penScoreAinput.select();
+			penScoreAinput.focus();
+			return;
+		} else {
+			// penalties provided
+			data.penaltyScoreA = penScoreA;
+			data.penaltyScoreB = penScoreB;
+		}
+	}
+	
 	$.post("/admin/matches/"+matchId+"/result", 
 			data,
 			function(data) { // Success function
-				// remove error markers (if any)
-				scoreAinput.removeClass("error");
-				scoreBinput.removeClass("error");
 				// show ok notif icon
 				$("img", div).prop("src", assetsRoot + "images/button_ok.png").removeClass("invisible");
 			}
@@ -38,9 +64,6 @@ function updateScore(matchId, url) {
 			var jsonStr = jqXHR.responseText;
 			var errorFields = $.parseJSON(jsonStr);
 			var fieldToFocus = null;
-			// remove error markers (if any)
-			scoreAinput.removeClass("error");
-			scoreBinput.removeClass("error");
 			// add error markers
 			for (var i=0; i<errorFields.length; i++) {
 				var field = errorFields[i];
@@ -61,6 +84,12 @@ function updateScore(matchId, url) {
 		else {
 			console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
 		}
+	}).complete(function () {
+		// remove error markers (if any)
+		scoreAinput.removeClass("error");
+		scoreBinput.removeClass("error");
+		penScoreAinput.removeClass("error");
+		penScoreBinput.removeClass("error");
 	});
 }
 
@@ -69,6 +98,9 @@ function clearScore(matchId, url) {
 	var div = $("#score_" + matchId);
 	var scoreAinput = $("input:eq(0)", div);
 	var scoreBinput = $("input:eq(1)", div);
+	var pendiv = $("#penscore_" + matchId);
+	var penScoreAinput = $("input:eq(0)", pendiv);
+	var penScoreBinput = $("input:eq(1)", pendiv);
 
 	var data = {};
 	$.ajax({
@@ -79,7 +111,9 @@ function clearScore(matchId, url) {
 			console.log("clear success. data=" + data);
 			// empty fields
 			scoreAinput.val("");
-			scoreBinput.val("");
+			scoreBinput.val("")
+			penScoreAinput.val("");
+			penScoreBinput.val("");
 		}
 	}).fail(function(jqXHR) { // Error function
 		console.log("Clear error !!!");

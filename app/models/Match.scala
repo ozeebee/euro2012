@@ -57,26 +57,43 @@ case class Match(
 	
 	/**
 	 * @return the winner (team id) or None it's a draw OR if no result yet
+	 * NOTE: this does *NOT* take into account possible penalties scores 
 	 */
-	def winner: Option[String] = {
-		if (result.isEmpty)
-			Option(null)
-		else
-			result.get.winner
+	def winner: Option[String] = result.map(_.winner).getOrElse(None)
+	
+	/**
+	 * @return the winning team taking into account penalties (if any)
+	 */
+	def finalWinner: Option[String] = {
+		result match {
+			case Some(r) => {
+				r.winner
+					.map(Some(_)) // return either the winner (as an Option[String])
+					.getOrElse { // or the winner after penalties (in case of draw)
+						r.penaltiesScore match {
+							case Some((penScoreA: Int, penScoreB: Int)) if (penScoreA > penScoreB) => teamA
+							case Some((penScoreA: Int, penScoreB: Int)) if (penScoreA < penScoreB) => teamB
+							case Some((penScoreA: Int, penScoreB: Int)) if (penScoreA == penScoreB) => throw new IllegalArgumentException("penalty scores shout not be equal !!!!")
+							case None => None
+						}
+					}
+			}
+			case None => None
+		}
 	}
 	
 	/**
 	 * @return true if team A is the winner, false if the result is a draw of if the match has not yet been played
 	 */
 	def isTeamAWinner: Boolean = {
-		result.map(_.outcome == MatchOutcome.TEAM_A).getOrElse(false)
+		finalWinner.map(_ == teamA.get).getOrElse(false)
 	}
 	
 	/**
 	 * @return true if team B is the winner, false if the result is a draw of if the match has not yet been played
 	 */
 	def isTeamBWinner: Boolean = {
-		result.map(_.outcome == MatchOutcome.TEAM_B).getOrElse(false)
+		finalWinner.map(_ == teamB.get).getOrElse(false)
 	}
 
 	/**
@@ -85,13 +102,24 @@ case class Match(
 	def concernTeams(teamX: String, teamY: String): Boolean = {
 		(teamA == teamX && teamB == teamY) || (teamA == teamY && teamB == teamX)
 	}
+	
+	def isGroupStageMatch(): Boolean = {
+		Phase.GROUPSTAGE.contains(phase)
+	}
 }
 
+/**
+ * Match Result.
+ * This model is tailored for our forecasting system, not for storing real match results with all details.
+ * In this regard, the penaltiesScore has been added so that it is possible to determine a winning team
+ * for direct elimination matches (non group-stage matches).
+ */
 case class Result(
 	outcome: MatchOutcome,
 	winner: Option[String],
 	scoreA: Int,
-	scoreB: Int
+	scoreB: Int,
+	penaltiesScore: Option[Tuple2[Int, Int]]	// the optional score for penalties
 ) {
 	val score = (scoreA, scoreB)
 }
@@ -111,15 +139,21 @@ object Match {
 		get[String]("match.phase") ~
 		get[Option[String]]("match.result") ~
 		get[Option[Int]]("match.scoreA") ~
-		get[Option[Int]]("match.scoreB") map {
-			case id~teamA~teamAformula~teamB~teamBformula~kickoff~phase~result~scoreA~scoreB => {
+		get[Option[Int]]("match.scoreB") ~
+		get[Option[Int]]("match.penaltyScoreA") ~
+		get[Option[Int]]("match.penaltyScoreB") map {
+			case id~teamA~teamAformula~teamB~teamBformula~kickoff~phase~result~scoreA~scoreB~penaltyScoreA~penaltyScoreB => {
 				result.map { result => // Match with Result
 					assert(scoreA.isDefined && scoreB.isDefined, "if there is a result, scores must exist")
 					Match(id, teamA, teamAformula, teamB, teamBformula, kickoff, Phase.withName(phase), result match {
-						case "DRAW" => Some(Result(MatchOutcome.DRAW, None, scoreA.get, scoreB.get)) 
+						case "DRAW" => {
+							// in case of draw, penalties score determine the winner (for non-group stage matches)
+							Some(Result(MatchOutcome.DRAW, None, scoreA.get, scoreB.get, 
+									if (penaltyScoreA.isDefined && penaltyScoreB.isDefined) Some(penaltyScoreA.get, penaltyScoreB.get) else None))	
+						} 
 						case _ => {
-							if (result == teamA.get) Some(Result(MatchOutcome.TEAM_A, Some(result), scoreA.get, scoreB.get))
-							else if (result == teamB.get) Some(Result(MatchOutcome.TEAM_B, Some(result), scoreA.get, scoreB.get))
+							if (result == teamA.get) Some(Result(MatchOutcome.TEAM_A, Some(result), scoreA.get, scoreB.get, None))
+							else if (result == teamB.get) Some(Result(MatchOutcome.TEAM_B, Some(result), scoreA.get, scoreB.get, None))
 							else throw new IllegalArgumentException("result for matchId "+id+" does not match concerned team !")
 						}
 					}) 
@@ -220,8 +254,8 @@ object Match {
 			.executeUpdate()
 		}
 	}
-	
-	def updateResult(matchId: Long, scoreA: Int, scoreB: Int): Option[Match] = {
+
+	def updateResult(matchId: Long, scoreA: Int, scoreB: Int, penaltiesScore: Option[Tuple2[Int, Int]]): Option[Match] = {
 		findById(matchId).map { zmatch =>
 			assert(zmatch.teamA.isDefined && zmatch.teamB.isDefined, "at this step the teams should be known (computed) !")
 			val result = (scoreA, scoreB) match {
@@ -233,21 +267,24 @@ object Match {
 			DB.withConnection { implicit connection =>
 				SQL("""
 					update match 
-					set result = {result}, scoreA = {scoreA}, scoreB = {scoreB}
+					set result = {result}, scoreA = {scoreA}, scoreB = {scoreB}, 
+						penaltyScoreA = {penaltyScoreA}, penaltyScoreB = {penaltyScoreB} 
 					where id = {id}
 				""").on(
 					'id -> matchId,
 					'result -> result,
 					'scoreA -> scoreA,
-					'scoreB -> scoreB
+					'scoreB -> scoreB,
+					'penaltyScoreA -> penaltiesScore.map(_._1).getOrElse(null),
+					'penaltyScoreB -> penaltiesScore.map(_._2).getOrElse(null)
 				).executeUpdate()
 			}
 			
 			// set result in match
 			val newResult = result match {
-				case "DRAW" => Some(Result(MatchOutcome.DRAW, None, scoreA, scoreB))
-				case teamId if (teamId == zmatch.teamA.get) => Some(Result(MatchOutcome.TEAM_A, Some(teamId), scoreA, scoreB))
-				case teamId if (teamId == zmatch.teamB.get) => Some(Result(MatchOutcome.TEAM_B, Some(teamId), scoreA, scoreB))
+				case "DRAW" => Some(Result(MatchOutcome.DRAW, None, scoreA, scoreB, penaltiesScore))
+				case teamId if (teamId == zmatch.teamA.get) => Some(Result(MatchOutcome.TEAM_A, Some(teamId), scoreA, scoreB, penaltiesScore))
+				case teamId if (teamId == zmatch.teamB.get) => Some(Result(MatchOutcome.TEAM_B, Some(teamId), scoreA, scoreB, penaltiesScore))
 			}
 			zmatch.copy(result = newResult)
 		}
@@ -257,7 +294,7 @@ object Match {
 		DB.withConnection { implicit connection =>
 			SQL("""
 				update match 
-				set result = null, scoreA = null, scoreB = null
+				set result = null, scoreA = null, scoreB = null, penaltyScoreA = null, penaltyScoreB = null
 				where id = {id}
 			""").on('id -> matchId).executeUpdate()
 		}
@@ -363,7 +400,16 @@ println("standingsMap = " + standingsMap)
 	def generateRandomResult(): (Int, Int) = {
 		(generateRandomScore(), generateRandomScore())
 	}
-	
+
+	def generateRandomPenalties(): (Int, Int) = {
+		val rslt = (generateRandomScore(), generateRandomScore())
+println("*** Generating penalties : rslt = " + rslt)
+		if (rslt._1 != rslt._2) // cannot accept a draw for penalties...
+			rslt
+		else
+			generateRandomPenalties()	
+	}
+
 	def isFormula(str: String): Boolean = {
 		str match {
 			case GroupFormula(_) => true
@@ -379,7 +425,12 @@ println("standingsMap = " + standingsMap)
 				val standings = computeStandings(group, matches)
 				if (pos == "WIN") Some(standings(0).team) else Some(standings(1).team)
 			}
-			case MatchFormula(matchId) => matches.find(_.id.get == matchId.toLong).flatMap(_.winner)
+			case MatchFormula(matchId) => {
+				val m = matches.find(_.id.get == matchId.toLong)
+println("*** AJO : match is " + m)
+println("          finalWinner = " + m.get.finalWinner)
+				matches.find(_.id.get == matchId.toLong).flatMap(_.finalWinner)
+			}
 			case _ => None
 		}
 	}

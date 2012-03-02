@@ -35,6 +35,8 @@ create table match (
   result					varchar(16), -- either 'DRAW', teamAId or TeamBId
   scoreA					integer,
   scoreB					integer,
+  penaltyScoreA				integer, -- optional penalty score for teamA
+  penaltyScoreB				integer, -- optional penalty score for teamB
   foreign key(teamA)		references team(id) on delete cascade,
   foreign key(teamB)		references team(id) on delete cascade,
 );

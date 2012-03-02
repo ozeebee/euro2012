@@ -64,7 +64,7 @@ object ResetMatchResults extends CleanScenario {
 object ResetTeamNames extends CleanScenario {
 	val description = "Reset team names AS WELL AS RESULTS for non-group stage matches"
 	def apply() = {
-		Match.findAll().filterNot(m => Phase.GROUPSTAGE.contains(m.phase))
+		Match.findAll().filterNot(_.isGroupStageMatch)
 			.foreach { m =>
 				Match.clearResult(m.id.get)
 				Match.setTeamNames(m.id.get, null, null)
@@ -122,18 +122,25 @@ object TenMoreUsers extends UserScenario {
 
 trait MatchResultScenario extends UndoableScenario {
 	val category = "Match"
+
+	/** generate random result (with penalties for draws) */
+	protected def setRandomResult(matchId: Long) {
+		val rslt = Match.generateRandomResult()
+		val penaltiesScore = if (rslt._1 == rslt._2) { Some(Match.generateRandomPenalties()) } else { None }
+		Match.updateResult(matchId, rslt._1, rslt._2, penaltiesScore)
+	}
 }
 object MD1Results extends MatchResultScenario {
 	val description = "Set match results for MD1 phase"
 	def apply() = {
-		Match.updateResult( 1, 1, 0)
-		Match.updateResult( 2, 1, 2)
-		Match.updateResult( 3, 1, 1)
-		Match.updateResult( 4, 3, 1)
-		Match.updateResult( 5, 0, 0)
-		Match.updateResult( 6, 3, 4)
-		Match.updateResult( 7, 2, 1)
-		Match.updateResult( 8, 1, 2)
+		Match.updateResult( 1, 1, 0, None)
+		Match.updateResult( 2, 1, 2, None)
+		Match.updateResult( 3, 1, 1, None)
+		Match.updateResult( 4, 3, 1, None)
+		Match.updateResult( 5, 0, 0, None)
+		Match.updateResult( 6, 3, 4, None)
+		Match.updateResult( 7, 2, 1, None)
+		Match.updateResult( 8, 1, 2, None)
 	}
 	def unapply() = {
 		(1 to 8).foreach(Match.clearResult(_))
@@ -143,14 +150,14 @@ object MD1Results extends MatchResultScenario {
 object MD2Results extends MatchResultScenario {
 	val description = "Set match results for MD2 phase"
 	def apply() = {
-		Match.updateResult( 9, 1, 0)
-		Match.updateResult(10, 1, 2)
-		Match.updateResult(11, 1, 1)
-		Match.updateResult(12, 3, 1)
-		Match.updateResult(13, 0, 0)
-		Match.updateResult(14, 3, 4)
-		Match.updateResult(15, 2, 1)
-		Match.updateResult(16, 1, 2)
+		Match.updateResult( 9, 1, 0, None)
+		Match.updateResult(10, 1, 2, None)
+		Match.updateResult(11, 1, 1, None)
+		Match.updateResult(12, 3, 1, None)
+		Match.updateResult(13, 0, 0, None)
+		Match.updateResult(14, 3, 4, None)
+		Match.updateResult(15, 2, 1, None)
+		Match.updateResult(16, 1, 2, None)
 	}
 	def unapply() = {
 		(9 to 16).foreach(Match.clearResult(_))
@@ -160,14 +167,14 @@ object MD2Results extends MatchResultScenario {
 object MD3Results extends MatchResultScenario {
 	val description = "Set match results for MD3 phase"
 	def apply() = {
-		Match.updateResult(17, 1, 0)
-		Match.updateResult(18, 1, 2)
-		Match.updateResult(19, 1, 1)
-		Match.updateResult(20, 3, 1)
-		Match.updateResult(21, 0, 0)
-		Match.updateResult(22, 3, 4)
-		Match.updateResult(23, 2, 1)
-		Match.updateResult(24, 1, 2)
+		Match.updateResult(17, 1, 0, None)
+		Match.updateResult(18, 1, 2, None)
+		Match.updateResult(19, 1, 1, None)
+		Match.updateResult(20, 3, 1, None)
+		Match.updateResult(21, 0, 0, None)
+		Match.updateResult(22, 3, 4, None)
+		Match.updateResult(23, 2, 1, None)
+		Match.updateResult(24, 1, 2, None)
 	}
 	def unapply() = {
 		(17 to 24).foreach(Match.clearResult(_))
@@ -191,7 +198,7 @@ object GroupStageResults extends MatchResultScenario {
 object RandomGroupStageResults extends MatchResultScenario {
 	val description = "Set random match results for group stages (MD1, MD2, MD3)"
 	def apply() = {
-		(1 to 24).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+		(1 to 24).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore(), None))
 	}
 	def unapply() = {
 		(1 to 24).foreach(Match.clearResult(_))
@@ -201,7 +208,7 @@ object RandomGroupStageResults extends MatchResultScenario {
 object RandomQFResults extends MatchResultScenario {
 	val description = "Set random match results for Quarter Finals"
 	def apply() = {
-		(25 to 28).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+		(25 to 28).foreach(setRandomResult(_))
 	}
 	def unapply() = {
 		(25 to 28).foreach(Match.clearResult(_))
@@ -211,7 +218,7 @@ object RandomQFResults extends MatchResultScenario {
 object RandomSFResults extends MatchResultScenario {
 	val description = "Set random match results for Semi Finals"
 	def apply() = {
-		(29 to 30).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+		(29 to 30).foreach(setRandomResult(_))
 	}
 	def unapply() = {
 		(29 to 30).foreach(Match.clearResult(_))
@@ -221,7 +228,7 @@ object RandomSFResults extends MatchResultScenario {
 object RandomFinalResult extends MatchResultScenario {
 	val description = "Set random match result for the Final"
 	def apply() = {
-		Match.updateResult(31, Match.generateRandomScore(), Match.generateRandomScore())
+		setRandomResult(31)
 	}
 	def unapply() = {
 		Match.clearResult(31)
@@ -231,7 +238,7 @@ object RandomFinalResult extends MatchResultScenario {
 object RandomResults extends MatchResultScenario {
 	val description = "Set random results for *ALL* matches"
 	def apply() = {
-		(1 to 31).foreach(Match.updateResult(_, Match.generateRandomScore(), Match.generateRandomScore()))
+		(1 to 31).foreach(setRandomResult(_))
 	}
 	def unapply() = {
 		(1 to 31).foreach(Match.clearResult(_))
@@ -302,7 +309,7 @@ object ResolveQFTeamNames extends ResolveTeamNames {
 	val phase = Phase.QUARTERFINALS
 	def precondition(matches: Seq[Match]): Option[String] = {
 		// check that ALL group stage matches have been played
-		if (matches.filter(m => Phase.GROUPSTAGE.contains(m.phase)).forall(_.played))
+		if (matches.filter(_.isGroupStageMatch).forall(_.played))
 			None
 		else
 			Some("Not all group stage matches have been played")

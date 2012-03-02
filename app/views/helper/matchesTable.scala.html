@@ -1,5 +1,53 @@
 @(matches: Seq[Match], showDates: Boolean = false)
 
+	<div class="match-day">
+	@matches.map { zmatch =>
+		<div class="match-item">
+			<div class="flag">
+				@zmatch.teamA.map { teamA =>
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
+		  		}
+			</div>
+			<div class="teamA">
+	  			@zmatch.teamAorFormula
+			</div>
+
+			@if(zmatch.played) {
+				@if(showDates) {
+					<div>
+						<span class="koTime">
+							@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy") @zmatch.kickoff.format("HH:mm")
+						</span>
+						<br>
+						@helper.scoreDiv(zmatch)
+		  			</div>
+	  			} else {
+	  				@helper.scoreDiv(zmatch)
+	  			}
+			} else {
+				<div class="kickoff-time">
+					@if(showDates) {
+						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")
+						<br>
+					}
+					@zmatch.kickoff.format("HH:mm")
+				</div>
+			}
+				
+			<div class="teamB">
+	  			@zmatch.teamBorFormula
+			</div>
+			<div class="flag">
+				@zmatch.teamB.map { teamB =>
+		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
+	    		}
+			</div>
+		</div>
+	}
+	</div>
+	
+
+	<!--@* OLD implementation with table
 	<table class="match table table-striped">
   	@matches.map { zmatch =>
   		<tr>
@@ -52,3 +100,4 @@
   		</tr>
   	}
  	</table>
+	*@-->

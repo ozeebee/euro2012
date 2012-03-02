@@ -213,11 +213,11 @@ div.forecastBox {
 	}
 }
 
-div.forecast-day {
+div.match-day {
 	width: 480px;
 	.center();
 	
-	div.forecast-item {
+	div.match-item {
 		@center-div-width: 195px;
 	
 		position: relative;
@@ -471,6 +471,26 @@ div.score {
 		//color: #eee;
 		//text-shadow: 0 1px 1px rgba(0,0,0,.75);
 	}
+	div.penalties {
+		padding: 5px 12px 0px 12px !important;
+		border: 0;
+		text-shadow: none;
+		box-shadow: none;
+		position: relative;
+		
+		div {
+			border: 0;
+			text-shadow: none;
+			box-shadow: none;
+			position: absolute;
+			left: 40px;
+			top: 7px;
+			width: 50px;
+			font-size: 9px;
+			font-style: italic;
+			font-weight: normal;
+		}
+	}
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Groups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -668,6 +688,15 @@ div#matches table td {
 	vertical-align: middle;
 	padding: 8px 5px;
 	input { margin-bottom: 0px; }
+}
+
+div#matches div.penalties-score {
+	padding-top: 3px;
+	
+	input {
+		font-size: 9px;
+		padding: 0px;
+	}
 }
 
 table.scenarios {

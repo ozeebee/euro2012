@@ -2,4 +2,13 @@
 
 <div class="score">
 	<div class="leftscore @if(zmatch.isTeamAWinner){winner}">@zmatch.result.get.scoreA</div><div class="rightscore @if(zmatch.isTeamBWinner){winner}">@zmatch.result.get.scoreB</div>
+	@if(zmatch.result.isDefined) {
+		@zmatch.result.get.penaltiesScore.map { ps =>
+			<br>
+			<div class="penalties">
+				<strong>@ps._1 - @ps._2</strong>
+				<div>on penalties</div>
+			</div>
+		}
+	}
 </div>

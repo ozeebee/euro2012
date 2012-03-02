@@ -32,6 +32,14 @@
  		<a href="javascript:clearScore(@zmatch.id, '@routes.Admin.deleteMatchResult(zmatch.id.get)');" class="btn btn-small" style="padding:3px;">Clear</a>
 
  		<img width="16" height="16" class="invisible" /> @* empty placeholder for image *@
+		@if(! zmatch.isGroupStageMatch) {
+			<div id="penscore_@zmatch.id" class="penalties-score">
+				<input type="text" value="@zmatch.result.map(_.penaltiesScore.map(_._1).getOrElse(null)).getOrElse("")" style="width: 40px; text-align: center;" />
+				 -
+		 		<input type="text" value="@zmatch.result.map(_.penaltiesScore.map(_._2).getOrElse(null)).getOrElse("")" style="width: 40px; text-align: center;"/>
+		 		on penalties
+			</div>
+		}
 	</div>
 }
 
@@ -52,12 +60,12 @@
 		@matches.map { zmatch =>
 		 	<tr>
 		 		<td>@zmatch.id</td>
-		 		<td>@if(models.Phase.GROUPSTAGE.contains(zmatch.phase)) { @zmatch.teamA.get } else { @teamSel(true, zmatch) }</td>
+		 		<td>@if(zmatch.isGroupStageMatch) { @zmatch.teamA.get } else { @teamSel(true, zmatch) }</td>
 		 		<td style="text-align: center;">
-		  			@scoreBox(zmatch)				    		
+		  			@scoreBox(zmatch)
 		  		</td>
  		@*<td>@zmatch.teamB.getOrElse(formula(false, zmatch))</td>*@
-		 		<td>@if(models.Phase.GROUPSTAGE.contains(zmatch.phase)) { @zmatch.teamB.get } else { @teamSel(false, zmatch) }</td>
+		 		<td>@if(zmatch.isGroupStageMatch) { @zmatch.teamB.get } else { @teamSel(false, zmatch) }</td>
 		  		<td>
 		  			<time datetime="@zmatch.kickoff">@zmatch.kickoff.format("dd/MM/yyyy HH:mm")</time>
 		  		</td>

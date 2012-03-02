@@ -15,6 +15,7 @@ I would be surprised if this app ends up in a production environment for real us
 	- i18n
 	- Play Bug with batch updates : the call to addBatch() must be done after settings parameters
 	- Test MongoDB ! (get rid of the relational model)
+	- CSS code cleanup (remove unused classes after refactoring)
 
 ## Home Pages
 
@@ -24,6 +25,7 @@ I would be surprised if this app ends up in a production environment for real us
 	- calendar ?
 	- connected players ? (with chat functionality)
 	- twitter notifs ?
+- show final competition (and forecast) winner once competition is finished
 	
 ## Competition
 

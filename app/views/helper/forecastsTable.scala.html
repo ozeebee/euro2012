@@ -109,9 +109,9 @@
  	</table>
 *@-->
 
-	<div class="forecast-day">
+	<div class="match-day">
 	@matches.map { zmatch =>
-		<div class="forecast-item">
+		<div class="match-item">
 			<div class="flag">
 				@zmatch.teamA.map { teamA =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
