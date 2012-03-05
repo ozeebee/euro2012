@@ -26,10 +26,14 @@ case class Match(
 	 * @return the group for which this match is played if this is a group match
 	 */
 	def group(): Option[String] = {
-		teamA flatMap { teamId =>
-			val team = Team.getTeam(teamId)
-			team.map(_.group)
+		if (isGroupStageMatch()) {
+			teamA flatMap { teamId =>
+				val team = Team.getTeam(teamId)
+				team.map(_.group)
+			}
 		}
+		else
+			None
 	}
 	
 	/**
