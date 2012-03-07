@@ -55,16 +55,16 @@ object Admin extends Controller with Debuggable with Secured {
 		})
 	)
 
-	def showAdmin = Authenticated { username => implicit request =>
+	def showAdmin = IsAdmin { username => implicit request =>
 		Ok(views.html.admin())
 	}
 
-	def showMatches = Authenticated { username => implicit request =>
+	def showMatches = IsAdmin { username => implicit request =>
 		val matches = Match.findAll()
 		Ok(views.html.adminpages.matches(matches, matchForm))
 	}
 	
-	def newMatch = Authenticated { username => implicit request =>
+	def newMatch = IsAdmin { username => implicit request =>
 		logger.debug("newMatch")
 		
 		matchForm.bindFromRequest().fold(
@@ -83,7 +83,7 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def updateMatchResult(matchId: Long) = Logged("updateMatchResult") { 
-		Authenticated { username => implicit request =>
+		IsAdmin { username => implicit request =>
 			val filledForm = resultForm.bindFromRequest() 
 			filledForm.fold(
 				formWithErrors => {
@@ -107,19 +107,19 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def deleteMatchResult(matchId: Long) = Logged("deleteMatchResult") { 
-		Authenticated { username => implicit request =>
+		IsAdmin { username => implicit request =>
 			Match.clearResult(matchId)
 			Ok("ok")
 		}
 	}
 	
-	def showUsers = Authenticated { username => implicit request =>
+	def showUsers = IsAdmin { username => implicit request =>
 		val users = User.findAll()
 		Ok(views.html.adminpages.users(users))
 	}
 	
 	def showUserForecasts(username: String) = Logged("showUserForecasts") {
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			val matches = Match.findAll()
 			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 
@@ -128,14 +128,14 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def deleteUserForecasts(username: String) = Logged("deleteUserForecasts") {
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			Forecast.delete(username)
 			Redirect(routes.Admin.showUserForecasts(username))
 		}
 	}
 	
 	def randomForecasts(username: String) = Logged("randomForecasts") {
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			val matches = Match.findAll()
 			val forecastsByMatch = Forecast.getForecastsByMatch(username)
 			// get matches for which no forecast has been entered yet
@@ -162,7 +162,7 @@ object Admin extends Controller with Debuggable with Secured {
 	)
 	
 	def updateForecast(username: String, matchId: Long) = Logged("updateForecast") { 
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			forecastForm.bindFromRequest().fold(
 				formWithErrors => BadRequest,
 				dataTuple => {
@@ -176,19 +176,19 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def deleteForecast(username: String, matchid: Long) = Logged("deleteForecast") { 
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			logger.debug("deleting forecast with username " + username + " and matchid " + matchid)
 			Forecast.delete(username, matchid)
 			Ok
 		}
 	}
 
-	def showScenarios = Authenticated { username => implicit request =>
+	def showScenarios = IsAdmin { username => implicit request =>
 		Ok(views.html.adminpages.scenarios(models.test.Scenarios.getScenariosByCategory()))
 	}
 
 	def applyScenario(name: String) = Logged("applyScenario") { 
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			Scenarios.getScenario(name).map { scenario =>
 				try {
 					scenario.apply()
@@ -205,7 +205,7 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def unapplyScenario(name: String) = Logged("unapplyScenario") { 
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			Scenarios.getScenario(name).map { scenario =>
 				scenario match {
 					case undoableScenario: UndoableScenario => {
@@ -229,7 +229,7 @@ object Admin extends Controller with Debuggable with Secured {
 	val currentDateTimeForm = Form(single("dateTime" -> date("dd/MM/yyyy HH:mm")))
 	
 	def setCurrentDateTime() = Logged("setCurrentDateTime") {
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			Form("dateTime" -> date("dd/MM/yyyy HH:mm")).bindFromRequest().fold(
 				formWithErrors => BadRequest,
 				date => {
@@ -242,7 +242,7 @@ object Admin extends Controller with Debuggable with Secured {
 	}
 	
 	def setTeamName() = Logged("setTeamName") {
-		Authenticated { authenticatedUsername => implicit request =>
+		IsAdmin { authenticatedUsername => implicit request =>
 			val form = Form(
 				tuple(
 					"matchId" -> longNumber,

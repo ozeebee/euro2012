@@ -9,24 +9,29 @@ import anorm.SqlParser._
 case class User (
 	name: String,
 	email: String,
-	password: String
+	password: String,
+	groups: Option[String]
 )
 
 object User {
+	val AdminGroup = "Admin"
+	val Groups = Seq(AdminGroup)
+	
 	/**
 	 * Parse a User from a ResultSet
 	 */
 	val simple = {
 		get[String]("user.name") ~
 		get[String]("user.email") ~
-		get[String]("user.password") map {
-			case name ~ email ~ password => User(name, email, password)
+		get[String]("user.password") ~
+		get[Option[String]]("user.groups") map {
+			case name ~ email ~ password ~ groups => User(name, email, password, groups)
 		}
 	}
 
 	def authenticate(username: String, password: String): Option[User] = {
 		DB.withConnection { implicit connection =>
-			SQL("select name, email, password from user where name = {username} and password = {password}")
+			SQL("select name, email, password, groups from user where name = {username} and password = {password}")
 				.on('username -> username, 'password -> password)
 				.as(User.simple.singleOpt)
 		}
@@ -36,14 +41,15 @@ object User {
 		DB.withConnection { implicit connection =>
 			SQL(
 			  """
-				insert into user (name, email, password) values (
-					{name}, {email}, {password}
+				insert into user (name, email, password, groups) values (
+					{name}, {email}, {password}, {groups}
 				)
 			  """
 			).on(
 				'email -> user.email,
 				'name -> user.name,
-				'password -> user.password
+				'password -> user.password,
+				'groups -> user.groups
 			).executeUpdate()
 		}
 		
@@ -58,7 +64,7 @@ object User {
 	
 	def findAll(): Seq[User] = {
 		DB.withConnection { implicit connection =>
-			SQL("select name, email, password from user").as(User.simple *)
+			SQL("select name, email, password, groups from user").as(User.simple *)
 		}
 	}
 	
@@ -155,9 +161,6 @@ object Forecast {
 			forecasts.foldLeft(batchSql) { (batchSql, forecast) =>
 				batchSql.addBatch('username.name -> forecast.username, 'matchid.name -> forecast.matchid, 'scoreA.name -> forecast.scoreA, 'scoreB.name -> forecast.scoreB)
 			}.execute()
-				
-//			val forecast = forecasts.head
-//			SQL(sqlstr).asBatch.addBatch('username.name -> forecast.username, 'matchid.name -> forecast.matchid, 'scoreA.name -> forecast.scoreA, 'scoreB.name -> forecast.scoreB).execute()
 		}
 	}
 

@@ -66,8 +66,10 @@
 	              				<b class="caret"></b>
 	              			</a>
 	              			<ul class="dropdown-menu">
-	              				<li><a href="@routes.Admin.showAdmin()">Admin</a></li>
-	              				<li class="divider"></li>
+	              				@helper.Sec.IsAdmin {
+		              				<li><a href="@routes.Admin.showAdmin()">Admin</a></li>
+		              				<li class="divider"></li>
+	              				}
 								<li><a href="@routes.Security.logout">Logout</a></li>
 							</ul>
 						</li>

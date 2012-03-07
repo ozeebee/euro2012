@@ -12,7 +12,8 @@ create table param (
 create table user (
   name                      varchar(255) not null primary key,
   email                     varchar(255) not null unique,
-  password                  varchar(255) not null
+  password                  varchar(255) not null,
+  groups					varchar(255) -- comma separated list of groups (ex: 'Admin')
 );
 
 create unique index on user(name);

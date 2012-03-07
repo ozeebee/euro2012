@@ -100,7 +100,7 @@ object TenMoreUsers extends UserScenario {
 	val description = "Create ten more users (totoXXX)"
 	def apply() = {
 		val startIndex = findHigherTotoIndex + 1
-		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1")))
+		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1", None)))
 	}
 	def unapply() = {
 		val startIndex = findHigherTotoIndex

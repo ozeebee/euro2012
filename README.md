@@ -10,10 +10,8 @@ I would be surprised if this app ends up in a production environment for real us
 	- add responsive (bootstrap) variation to navbar
 	- refactor main.less to use bootstrap mixins
 	- add test for user registration (validation) and for authentication (check secured pages cannot be accessed anonymously)
-	- add user role (for administration pages)
 	- ? twitter integration
 	- i18n
-	- Play Bug with batch updates : the call to addBatch() must be done after settings parameters
 	- Test MongoDB ! (get rid of the relational model)
 	- CSS code cleanup (remove unused classes after refactoring)
 
@@ -29,6 +27,7 @@ I would be surprised if this app ends up in a production environment for real us
 	
 ## Competition
 
+- use real team names for display instead of team Id's
 - view teams/groups/schedules/standings
 - ? calendar
 !! - store winner name somewhere (since draws are possible results even in direct confrontation games)
@@ -47,13 +46,13 @@ I would be surprised if this app ends up in a production environment for real us
 - add way to set team names for Quarter/Semi/Final stages once dependent matches results are known (check on date with warning)
 
 ### User management
-- create account
+- refactor account creation workflow to include 2 steps user creation : with creation request and validation
 - ? user picture / gravatar integration
 	==> add tip in register page to create a gravatar
 - ? chat function (with WebSocket impl) ?
 	
 ### Other
-- JS : remove absolute urls in external javascripts
+- JS : remove absolute urls in external javascripts ===> use JavaScript router instead of passing urls from templates
 - Pjax : evaluate integration of pjax for page transitions; see project https://github.com/pvillega/pjax-Forms
 - Mobile version ? with jquery mobile
 - integrate with google analytics

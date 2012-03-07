@@ -3,9 +3,11 @@
 @layout.main("Home") {
     
     <h2>Main menu</h2>
+    @helper.Sec.IsAdmin {
 	<ul>
 		<li><a href="@routes.Admin.showAdmin()">admin</a></li>
 	</ul>
+    }
     
     <h3>Dashboard</h3>
     <p>

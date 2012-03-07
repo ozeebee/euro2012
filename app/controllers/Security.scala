@@ -12,9 +12,16 @@ object Security extends Controller with Debuggable {
 
 	val USERNAME = "username"
 	val USEREMAIL = "useremail"
+	val USERGROUPS = "usergroups"
 		
 	def username(implicit request: RequestHeader) = request.session.get(USERNAME)
 	def useremail(implicit request: RequestHeader) = request.session.get(USEREMAIL)
+
+	def isAdmin(request: RequestHeader): Boolean = {
+		// comma separated list of user groups
+		val groups = request.session.get(USERGROUPS)
+		groups.exists(_.split(',').contains(User.AdminGroup))
+	}
 	
 	// ~~~~~~~~~~~~~~~~~ Authentication ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
 	
@@ -22,8 +29,9 @@ object Security extends Controller with Debuggable {
 	val loginForm = Form(
 		mapping(
 			"name" -> nonEmptyText,
-			"email" -> ignored(null.asInstanceOf[String]),
-			"password" -> nonEmptyText
+			"email" -> ignored(null:String),
+			"password" -> nonEmptyText,
+			"groups" -> ignored(Option.empty[String])
 		)(User.apply)(User.unapply) 
 		verifying ("Invalid email or password", user => {
 			User.authenticate(user.name, user.password).isDefined
@@ -41,7 +49,7 @@ object Security extends Controller with Debuggable {
 		{ // binding function
 			// here we authenticate user by selecting it from DB. It if exists, the User object will be filled
 			// with all User fields (including email). If it doesn't exist, we create a User object WITHOUT email address
-			(name, password) => User.authenticate(name, password).getOrElse(User(name, null, password))
+			(name, password) => User.authenticate(name, password).getOrElse(User(name, null, password, None))
 		}
 		{ // unbinding function
 			user => Some(user.name, user.password)
@@ -76,7 +84,10 @@ object Security extends Controller with Debuggable {
 					println("! user has to be remembered !")
 				}
 
-				Redirect(routes.Application.index()).withSession(USERNAME -> user.name, USEREMAIL -> user.email) // EXP : add the username to the session (stored in a cookie)
+				Redirect(routes.Application.index()).withSession(
+						USERNAME -> user.name, 
+						USEREMAIL -> user.email,
+						USERGROUPS -> user.groups.getOrElse("")) // EXP : add the username, email and groups to the session (stored in a cookie)
 			}
 		)
 	}
@@ -94,7 +105,8 @@ object Security extends Controller with Debuggable {
 										Constraints.minLength(4), 
 										Constraints.pattern("""[a-zA-Z0-9._]+"""r, "constraint.username", "error.username"))),
 			"password" -> nonEmptyText(minLength = 6),
-			"email" -> email
+			"email" -> email,
+			"groups" -> ignored(Option.empty[String])
 		)(User.apply)(User.unapply)
 			verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
 	)
@@ -148,6 +160,23 @@ object Security extends Controller with Debuggable {
 				play.api.mvc.Security.Authenticated(username, onUnauthorized) { user =>
 					Action(request => f(user)(request))
 		}
+		
+		/**
+		 * Action for Admin users
+		 */
+		def IsAdmin(f: => String => Request[AnyContent] => Result) = Authenticated { username => request =>
+			// comma separated list of user groups
+			val groups = request.session.get(USERGROUPS)
+			//println("*** AJO.isAdmin groups = [" + groups + "]")
+			if (groups.exists(_.split(',').contains(User.AdminGroup))) {
+				f(username)(request)
+			}
+			else {
+				//Results.Forbidden
+				Unauthorized(views.html.defaultpages.unauthorized())
+			}
+		}
+		
 	}
 	
 }
