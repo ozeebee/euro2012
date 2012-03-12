@@ -10,7 +10,9 @@ case class User (
 	name: String,
 	email: String,
 	password: String,
-	groups: Option[String]
+	groups: Option[String],
+	enabled: Boolean,
+	modifDate: java.util.Date
 )
 
 object User {
@@ -24,14 +26,21 @@ object User {
 		get[String]("user.name") ~
 		get[String]("user.email") ~
 		get[String]("user.password") ~
-		get[Option[String]]("user.groups") map {
-			case name ~ email ~ password ~ groups => User(name, email, password, groups)
+		get[Option[String]]("user.groups") ~
+		get[Boolean]("user.enabled") ~
+		get[java.util.Date]("user.modifDate") map {
+			case name ~ email ~ password ~ groups ~ enabled ~ modifDate => User(name, email, password, groups, enabled, modifDate)
 		}
 	}
 
 	def authenticate(username: String, password: String): Option[User] = {
 		DB.withConnection { implicit connection =>
-			SQL("select name, email, password, groups from user where name = {username} and password = {password}")
+			SQL("""
+					select name, email, password, groups, enabled, modifDate 
+					from user 
+					where name = {username} and password = {password}
+					  and enabled = TRUE
+				""")
 				.on('username -> username, 'password -> password)
 				.as(User.simple.singleOpt)
 		}
@@ -41,19 +50,28 @@ object User {
 		DB.withConnection { implicit connection =>
 			SQL(
 			  """
-				insert into user (name, email, password, groups) values (
-					{name}, {email}, {password}, {groups}
+				insert into user (name, email, password, groups, enabled) values (
+					{name}, {email}, {password}, {groups}, {enabled}
 				)
 			  """
 			).on(
 				'email -> user.email,
 				'name -> user.name,
 				'password -> user.password,
-				'groups -> user.groups
+				'groups -> user.groups,
+				'enabled -> user.enabled
 			).executeUpdate()
 		}
 		
 		user
+	}
+	
+	def setState(username: String, enabled: Boolean): Boolean = {
+		DB.withConnection { implicit connection =>
+			SQL("update user set enabled = {enabled} where name = {name}")
+				.on('name -> username, 'enabled -> enabled)
+				.executeUpdate() > 0
+		}
 	}
 	
 	def remove(username: String): Boolean = {
@@ -64,7 +82,13 @@ object User {
 	
 	def findAll(): Seq[User] = {
 		DB.withConnection { implicit connection =>
-			SQL("select name, email, password, groups from user").as(User.simple *)
+			SQL("select name, email, password, groups, enabled, modifDate from user").as(User.simple *)
+		}
+	}
+	
+	def findActive(): Seq[User] = {
+		DB.withConnection { implicit connection =>
+			SQL("select name, email, password, groups, enabled, modifDate from user where enabled = TRUE").as(User.simple *)
 		}
 	}
 	

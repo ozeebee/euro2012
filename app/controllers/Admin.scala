@@ -118,6 +118,20 @@ object Admin extends Controller with Debuggable with Secured {
 		Ok(views.html.adminpages.users(users))
 	}
 	
+	def setUserState(username: String) = Logged("setUserState") {
+		IsAdmin { authenticatedUsername => implicit request =>
+			val form = Form("isEnabled" -> boolean)
+			form.bindFromRequest().fold(
+				formWithErrors => BadRequest,
+				isEnabled => {
+					logger.debug("setUserState isEnabled=" + isEnabled)
+					User.setState(username, isEnabled);
+					Ok("")
+				}
+			)
+		}
+	}
+	
 	def showUserForecasts(username: String) = Logged("showUserForecasts") {
 		IsAdmin { authenticatedUsername => implicit request =>
 			val matches = Match.findAll()

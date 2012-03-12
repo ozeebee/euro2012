@@ -11,7 +11,7 @@ class ModelSpec extends Specification {
 	"User model" should {
 		"return existing users" in {
 			running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-				val user = User("toto1", "toto1@gmail.com", "welcome1", None)
+				val user = User("toto1", "toto1@gmail.com", "welcome1", None, true, null)
 				User.create(user)
 
 				User.exists(user.name, "anything") must beTrue

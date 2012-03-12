@@ -13,7 +13,9 @@ create table user (
   name                      varchar(255) not null primary key,
   email                     varchar(255) not null unique,
   password                  varchar(255) not null,
-  groups					varchar(255) -- comma separated list of groups (ex: 'Admin')
+  groups					varchar(255), -- comma separated list of groups (ex: 'Admin')
+  enabled					boolean not null default false,
+  modifDate					timestamp not null default current_timestamp()
 );
 
 create unique index on user(name);

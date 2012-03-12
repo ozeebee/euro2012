@@ -113,7 +113,7 @@ object Application extends Controller with Secured with Debuggable {
 	}
 	
 	def showRanking = Authenticated { username => implicit request =>
-		val users = User.findAll()
+		val users = User.findActive()
 		val playedMatches = Match.findPlayed()
 		val forecasts = Forecast.findAll()
 		val rankings = Ranking.computeRanking(users, forecasts, playedMatches)

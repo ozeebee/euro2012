@@ -25,18 +25,22 @@ object Security extends Controller with Debuggable {
 	
 	// ~~~~~~~~~~~~~~~~~ Authentication ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
 	
+	/*
 	// EXP: define a Form (mapping request parameters to Model properties)
 	val loginForm = Form(
 		mapping(
 			"name" -> nonEmptyText,
 			"email" -> ignored(null:String),
 			"password" -> nonEmptyText,
-			"groups" -> ignored(Option.empty[String])
+			"groups" -> ignored(Option.empty[String]),
+			"enabled" -> ignored(false),
+			"modifDate" -> ignored(null:java.util.Date)
 		)(User.apply)(User.unapply) 
 		verifying ("Invalid email or password", user => {
 			User.authenticate(user.name, user.password).isDefined
 		}) 
 	)
+	*/
 
 	// a more complicated version of the login form inspired from Signup (play2 scala forms sample) class
 	val loginFormV2 = Form(
@@ -49,7 +53,7 @@ object Security extends Controller with Debuggable {
 		{ // binding function
 			// here we authenticate user by selecting it from DB. It if exists, the User object will be filled
 			// with all User fields (including email). If it doesn't exist, we create a User object WITHOUT email address
-			(name, password) => User.authenticate(name, password).getOrElse(User(name, null, password, None))
+			(name, password) => User.authenticate(name, password).getOrElse(User(name, null, password, None, false, null))
 		}
 		{ // unbinding function
 			user => Some(user.name, user.password)
@@ -106,7 +110,9 @@ object Security extends Controller with Debuggable {
 										Constraints.pattern("""[a-zA-Z0-9._]+"""r, "constraint.username", "error.username"))),
 			"password" -> nonEmptyText(minLength = 6),
 			"email" -> email,
-			"groups" -> ignored(Option.empty[String])
+			"groups" -> ignored(Option.empty[String]),
+			"enabled" -> ignored(false),
+			"modifDate" -> ignored(null:java.util.Date)
 		)(User.apply)(User.unapply)
 			verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
 	)
@@ -133,7 +139,7 @@ object Security extends Controller with Debuggable {
 				User.create(user)
 				
 				//Redirect(routes.Security.login(user))
-				Ok(views.html.login(loginForm.fill(user)))
+				Ok(views.html.login(loginFormV2.fill(user)))
 			}
 		)
 		

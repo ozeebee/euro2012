@@ -14,6 +14,8 @@ function setCurrentDateTime() {
 	});
 }
 
+//===================== Matches ===============================================
+
 function updateScore(matchId, url) {
 	console.log("updateScore() matchId = " + matchId);
 	var div = $("#score_" + matchId);
@@ -199,6 +201,38 @@ function selectTeam(event, formula, matchId, isTeamA) {
 	.error(function(jqXHR) { // Error function
 		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
 	});
+}
+
+// ===================== Users ================================================
+
+function setUserState(event, username, isEnabled) {
+	event.preventDefault();
+	console.log("setUserState username="+username+" isEnabled="+isEnabled);
+	var $cell = $(event.target).closest("td");
+	clearAdminUserNotifs();
+	jsRoutes.controllers.Admin.setUserState(username).ajax({
+		data: {isEnabled: isEnabled},
+		success: function (data) {
+			notifyAdminUserActionResult($cell, false);
+		},
+		error: function (jqXHR) {
+			notifyAdminUserActionResult($cell, true, jqXHR.responseText);
+		}
+	});
+}
+
+function clearAdminUserNotifs() {
+	$(".admin-users .notif").remove();
+}
+
+function notifyAdminUserActionResult($cell, isError, message) {
+	var $div = $("<div>").attr("class", "notif").attr("style", "display: inline-block;");
+	var $img = $("<img>").attr("src", assetsRoot + "images/" + (isError ? "x-red.gif" : "checkmark.gif"));
+	$div.append($img);
+	if (message != undefined) {
+		$div.append(message);
+	}
+	$cell.append($div);
 }
 
 // ===================== User Forecasts =======================================
@@ -391,4 +425,5 @@ $(function() {
 			return false;
 		}*/
 	});	
+	
 });

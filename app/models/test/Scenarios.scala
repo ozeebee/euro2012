@@ -100,7 +100,7 @@ object TenMoreUsers extends UserScenario {
 	val description = "Create ten more users (totoXXX)"
 	def apply() = {
 		val startIndex = findHigherTotoIndex + 1
-		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1", None)))
+		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1", None, true, null)))
 	}
 	def unapply() = {
 		val startIndex = findHigherTotoIndex
@@ -253,7 +253,7 @@ trait ForecastScenario extends UndoableScenario {
 object RandomForecasts extends ForecastScenario {
 	val description = "Create random forecasts for *ALL* users thereby deleting all existing forecasts"
 	def apply() = {
-		User.findAll().foreach { user =>
+		User.findActive().foreach { user =>
 			val forecasts = for (i <- 1 to 31) yield Forecast(user.name, Id(i), Match.generateRandomScore(), Match.generateRandomScore())
 			// first delete any existing forecast for the user to prevent duplicate key excpetions...
 			Forecast.delete(user.name)

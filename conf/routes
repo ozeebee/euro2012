@@ -37,6 +37,7 @@ POST	/admin/matches/:id/result	controllers.Admin.updateMatchResult(id: Long)
 DELETE	/admin/matches/:id/result	controllers.Admin.deleteMatchResult(id: Long)
 
 GET		/admin/users				controllers.Admin.showUsers()
+POST	/admin/users/:id/state		controllers.Admin.setUserState(id: String)
 GET		/admin/users/:id/forecasts	controllers.Admin.showUserForecasts(id: String)
 DELETE	/admin/users/:id/forecasts	controllers.Admin.deleteUserForecasts(id: String)
 GET		/admin/users/:id/forecasts/random	controllers.Admin.randomForecasts(id: String)

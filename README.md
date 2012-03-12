@@ -47,6 +47,7 @@ I would be surprised if this app ends up in a production environment for real us
 
 ### User management
 - refactor account creation workflow to include 2 steps user creation : with creation request and validation
+	- create account page with ability to delete user, change pwd
 - ? user picture / gravatar integration
 	==> add tip in register page to create a gravatar
 - ? chat function (with WebSocket impl) ?

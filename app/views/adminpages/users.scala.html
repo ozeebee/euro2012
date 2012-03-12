@@ -2,18 +2,35 @@
 
 <h3>Users</h3>
 
-<table class="table table-condensed table-striped">
+<div id="admin-users-filter">
+	Show : 
+	<input type="radio" name="users-filter" value="all" checked> All
+	<input type="radio" name="users-filter" value="enabled"> Active
+	<input type="radio" name="users-filter" value="disabled"> Inactive
+</div>
+
+<table class="admin-users table table-condensed table-striped">
 	<thead>
 		<tr>
 			<th>Name</th>
 			<th>Email</th>
+			<th>State</th>
+			<th>Mod. Date</th>
+			<th style="width:40%;">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		@users.map { user =>
-		<tr>
+		<tr class="@if(user.enabled) { active } else { inactive }">
   			<td><a href="#" onclick="event.preventDefault(); showUserForecasts('@user.name');">@user.name</a></td>
   			<td>@user.email</td>
+  			<td>@if(user.enabled) { Active } else { Inactive }</td>
+  			<td>@user.modifDate.format("dd/MM/yyyy HH:mm:ss")</td>
+  			<td>
+  				<a class="state-link" href="#" style="display:none" onclick="setUserState(event, '@user.name', @{!user.enabled})">
+  					@if(user.enabled) { Desactivate } else { Activate }
+  				</a>
+  			</td>
 		</tr>
 		}
 	</tbody>
@@ -22,3 +39,31 @@
 <div id="userForecasts">
 </div>
 
+<script>
+	function usersFilterChanged() {
+		var filter = $(this).val();
+		console.log("filter=" + filter);
+		if (filter == "enabled") { // show only active users
+			$("table.admin-users tr.active").show();
+			$("table.admin-users tr.inactive").hide();
+		} else if (filter == "disabled") { // show only inactive users
+			$("table.admin-users tr.active").hide();
+			$("table.admin-users tr.inactive").show();
+		} else { // show all
+			$("table.admin-users tr").show();
+		}
+	}
+
+	// users table filter
+	$("div#admin-users-filter input[type=radio]").click(usersFilterChanged);
+	
+	// hover actions
+	$("table.admin-users tr").hover(
+		function () {
+			$("a.state-link", this).show();
+		},
+		function () {
+			$("a.state-link", this).hide();
+		}
+	);
+</script>
