@@ -116,3 +116,22 @@ function installSubnavScrollSpy() {
 	}
 }
 
+/**
+ * Post the simulated current date/time
+ * @param dateTimeStr a date that matches the format "dd/MM/yyyy HH:mm"
+ */
+function setCurrentDateTime(dateTimeStr) {
+	// expecting a date with format "dd/MM/yyyy HH:mm"
+	console.log("setCurrentDateTime()");
+	console.log("  posting dateTime " + dateTimeStr);
+	$.post("/admin/currentDateTime",
+			{dateTime: dateTimeStr},
+			function(data) {
+				console.log("Ok ! currentDateTime updated");
+			}
+	).fail(function(jqXHR) { // Error function
+		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
+	});
+}
+
+

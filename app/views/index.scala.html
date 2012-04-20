@@ -1,7 +1,18 @@
 @()(implicit request: play.api.mvc.RequestHeader)
 
-@layout.main("Home") {
+@headContent = {
+<style>
+	a.hlink {
+		font-size: 13px;
+		float: right;
+		font-weight: normal;
+	}	
+</style>
+}
+
+@layout.main("Home", head = headContent) {
     
+    <!--  
     <h2>Main menu</h2>
     @helper.Sec.IsAdmin {
 	<ul>
@@ -29,6 +40,119 @@
         <li><a href="@routes.Application.showForecasts()">forecasts</a></li>
     	<li><a href="@routes.Application.showRanking()">ranking</a></li>
     </ul>	
-    
+    -->
 
+	@defining(controllers.Application.getRankings) { rankings =>
+	<div class="row">
+		<div class="span8">
+			@if(controllers.Application.hasCompetitionStarted) {
+				<h2>Your ranking</h2>
+				
+				<div style="margin-bottom: 20px;">
+				@defining(rankings.find(_.user.name == controllers.Security.username.get).get) { ranking =>
+					<div class="ranking" data-user="@ranking.user.name" style="min-height: 40px; display: inline-block;">
+						<div class="pos" style="margin-top: 10px">
+							<span class="label label-info" style="font-size: 20px;"># @(rankings.indexOf(ranking)+1)</span>
+						</div>
+						<div class="pts2" style="margin-top: 10px; margin-left: 15px;">
+							<strong>@ranking.points</strong>
+							&nbsp;Points
+						</div>
+						<div class="userinfo" style="margin-top: 5px;">
+							<!-- <img src="@models.User.gravatarUrl(ranking.user.email)" /> -->
+							<!-- <strong>@ranking.user.name</strong> -->
+							<div class="secline" style="font-size: 16px;">
+								<div class="total">@ranking.forecastedMatches <small>forecasts</small></div> 
+			 					<div class="ok">@ranking.correctScores <small>correct scores</small></div>
+								<div class="warn">@ranking.correctResults <small>correct results</small></div>
+								<div class="error">@ranking.badForecasts <small>wrong forecasts</small></div>
+							</div>
+						</div>
+					</div>
+				}
+				</div>
+			}
+			
+			@helper.Sec.IsAdmin {
+			<div class="portlet">
+				<h3>Simulated date/time</h3>
+				@helper.dateSlider()
+			</div>
+			}
+			
+			<div class="portlet">
+				<h2>Upcoming matches <a class="hlink" href="@routes.Application.showSchedule()">See all matches</a></h2>
+				@showMatches(controllers.Application.getUpcomingMatches)
+			</div>
+			
+			<div class="portlet">
+				<h2>Recently played <a class="hlink" href="@routes.Application.showSchedule()">See all matches</a></h2>
+				@showMatches(controllers.Application.getRecentlyPlayedMatches)
+			</div>
+		</div>
+		
+		<div class="span4">
+			@topRankings(rankings)
+		</div>
+	</div>
+	}
+
+}
+
+@showMatches(matches: Seq[Match]) = {
+				<!--@* group matches by date so we can display matches played day by day  *@-->
+				@defining(matches.groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
+					@matchesByDate.keys.toSeq.sorted.map { date =>
+						<div class="koDate">@date.format("EEEEE', the' dd 'of' MMMMM yyyy")</div>
+			
+						@helper.matchesTable(matchesByDate(date))
+					}
+				}
+}
+
+@topRankings(rankings: Seq[UserRanking]) = {
+				<div class="ranking" style="min-height: 20px; text-align: center;">
+					<table style="width: 100%;">
+						<tr>
+							<td><img src="@routes.Assets.at("images/podium48.png")"></td>
+							<td style="vertical-align: middle;">
+								<h3 style="line-height: normal;">
+									Top 10 rankings <small><br>out of @rankings.size active players</small>
+								</h3>
+							</td>
+						</tr>
+					</table>
+				</div>
+		
+		@if(controllers.Application.hasCompetitionStarted) {
+			@for(i <- rankings.take(10).indices; ranking = rankings(i)) {
+				<div class="ranking" data-user="@ranking.user.name">
+					@if(ranking.user.name == controllers.Security.username.get) {
+						<div class="you" style="position: absolute; margin-left:0; right: 50px;">
+							&lt; YOU &gt;
+						</div>
+					}
+					<div class="pos">
+						<span class="label label-info">@(i+1)</span>
+					</div>
+					<div class="userinfo">
+						<img src="@models.User.gravatarUrl(ranking.user.email)" />
+						<strong>@ranking.user.name</strong>
+					</div>
+					<div class="pts">
+						<strong>@ranking.points</strong>
+						Pts
+					</div>
+				</div>
+			}
+		} else {
+				<div class="ranking" style="text-align: center; padding-top:20px;">
+					<span style="font-style: italic; color: #888;">
+						Competition has not yet started
+					</span>
+				</div>
+		}
+				<div class="ranking" style="min-height: 20px; text-align: center;">
+					<a href="@routes.Application.showRanking()">See all rankings</a>
+				</div>
 }

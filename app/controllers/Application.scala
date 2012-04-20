@@ -113,11 +113,7 @@ object Application extends Controller with Secured with Debuggable {
 	}
 	
 	def showRanking = Authenticated { username => implicit request =>
-		val users = User.findActive()
-		val playedMatches = Match.findPlayed()
-		val forecasts = Forecast.findAll()
-		val rankings = Ranking.computeRanking(users, forecasts, playedMatches)
-		Ok(views.html.ranking(rankings))
+		Ok(views.html.ranking(getRankings()))
 	}
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,6 +125,27 @@ object Application extends Controller with Secured with Debuggable {
 		val now = Param.getCurrentDateTime()
 		now.before(kickoff)
 	}
+	
+	def getRankings(): Seq[UserRanking] = {
+		val users = User.findActive()
+		val playedMatches = Match.findPlayed()
+		val forecasts = Forecast.findAll()
+		Ranking.computeRanking(users, forecasts, playedMatches)
+	}
+	
+	def getUpcomingMatches(): Seq[Match] = {
+		val now = Param.getCurrentDateTime()
+		val matches = Match.findAll()
+		matches.filter(_.kickoff.after(now)).take(4)
+	}
+	
+	def getRecentlyPlayedMatches(): Seq[Match] = {
+		val now = Param.getCurrentDateTime()
+		val matches = Match.findAll()
+		matches.filter(_.kickoff.before(now)).take(4)
+	}
+	
+	def hasCompetitionStarted: Boolean = Match.findPlayed().size > 0
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		

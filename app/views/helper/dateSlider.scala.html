@@ -1,0 +1,47 @@
+@()
+
+@defining(models.Match.findAll) { matches =>
+
+	<script src="@routes.Assets.at("javascripts/jquery-ui-1.8.18.custom.min.js")"></script>
+	<script>
+	function setDate(indexVal) {
+		// translate slide index value into real date
+		// index 0 is the day before the competition begins, index n is the day after
+		// all other indices represent match kickoff dates
+		var dateArray = new Array();
+		dateArray.push("07/06/2012 18:00");
+		@matches.map { zmatch =>
+		dateArray.push("@zmatch.kickoff.format("dd/MM/yyyy HH:mm")");
+		}
+		dateArray.push("02/07/2012 18:00");
+		
+		$("#simDateInput").val(dateArray[indexVal]);
+	}
+	$(function() {
+		$("#slider").slider({
+			value: 0,
+			min: 0,
+			max: @{matches.size+2-1},
+			step: 1,
+			slide: function(event, ui) {
+				//$("#simDateInput").val(ui.value);
+				setDate(ui.value);
+			}
+		});
+		//setDate($("#slider").slider("value"));
+		$("#simDateInput").val("@models.Param.getCurrentDateTime.format("dd/MM/yyyy HH:mm")");
+	});
+	</script>
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/themes/cupertino/jquery.ui.all.css")">
+	
+	<div style="width: 300px; text-align: center; padding: 10px;">
+		<span style="color: #999;">
+			Simulated Date :
+		</span>
+		<input id="simDateInput" type="text" value="" style="margin-bottom: auto; width:100px; padding:0; font-size: 12px;">
+		<button class="btn btn-mini" style="margin-top: auto;" onclick="setCurrentDateTime($('#simDateInput').val());">Set</button>
+		<div id="slider" style="margin-top: 2px;">
+		</div>
+	</div>
+
+}

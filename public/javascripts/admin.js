@@ -1,18 +1,3 @@
-function setCurrentDateTime() {
-	console.log("setCurrentDateTime()");
-	var dateStr = $("#currentDateChooser").val();
-	var timeStr = $("#currentTime").val();
-	var dateTimeStr = dateStr + " " + timeStr;
-	console.log("  posting dateTime " + dateTimeStr);
-	$.post("/admin/currentDateTime",
-			{dateTime: dateTimeStr},
-			function(data) {
-				console.log("Ok ! currentDateTime updated");
-			}
-	).fail(function(jqXHR) { // Error function
-		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-	});
-}
 
 //===================== Matches ===============================================
 
