@@ -8,7 +8,7 @@
 	    	@groupTeams.map { team =>
     			<li>
     				<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + team.id))">
-    				@team.name
+    				@Messages("team." + team.id)
     			</li>
 			}	
    		</ul>

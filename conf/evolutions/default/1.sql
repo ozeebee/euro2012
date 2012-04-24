@@ -22,7 +22,6 @@ create unique index on user(name);
 
 create table team (
   id                        varchar(16) not null primary key,
-  name                      varchar(255) not null,
   "group"					varchar(255) not null
 );
 

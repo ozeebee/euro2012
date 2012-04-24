@@ -14,9 +14,9 @@
 
 			@if(zmatch.played) {
 				@if(showDates) {
-					<div>
+					<div class="match-result">
 						<span class="koTime">
-							@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy") @zmatch.kickoff.format("HH:mm")
+							@zmatch.kickoff.format("dd MMMMM") @@ @zmatch.kickoff.format("HH:mm")
 						</span>
 						<br>
 						@helper.scoreDiv(zmatch)
@@ -27,7 +27,7 @@
 			} else {
 				<div class="kickoff-time">
 					@if(showDates) {
-						@zmatch.kickoff.format("EEEEE', the' dd 'of' MMMMM yyyy")
+						@zmatch.kickoff.format("dd MMMMM")
 						<br>
 					}
 					@zmatch.kickoff.format("HH:mm")

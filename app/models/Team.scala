@@ -8,7 +8,6 @@ import play.api.cache.Cache
 
 case class Team(
 	id: String,
-	name: String,
 	group: String
 )
 
@@ -17,9 +16,8 @@ object Team {
 	// Parser
 	val simple = {
 		get[String]("team.id") ~
-		get[String]("team.name") ~
 		get[String]("team.group") map {
-			case id~name~group => Team(id, name, group)
+			case id~group => Team(id, group)
 		}
 		
 	}

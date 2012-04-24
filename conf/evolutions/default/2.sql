@@ -7,25 +7,25 @@ insert into param (name, value) values ('currentDateTime', '08/06/2012 17:30'); 
 insert into user (name, email, password, groups, enabled) values ('ozeebee', 'ozeebee@gmail.com', 'welcome1', 'Admin', TRUE);
 insert into user (name, email, password, groups, enabled) values ('toto', 'toto@gmail.com', 'tototo', 'Admin', TRUE);
 
-insert into team (id,name,"group") values ('POL', 'Poland', 'A');
-insert into team (id,name,"group") values ('GRE', 'Greece', 'A');
-insert into team (id,name,"group") values ('RUS', 'Russia', 'A');
-insert into team (id,name,"group") values ('CZE', 'Czech Republic', 'A');
+insert into team (id,"group") values ('POL', 'A');
+insert into team (id,"group") values ('GRE', 'A');
+insert into team (id,"group") values ('RUS', 'A');
+insert into team (id,"group") values ('CZE', 'A');
 
-insert into team (id,name,"group") values ('NED', 'Netherlands', 'B');
-insert into team (id,name,"group") values ('DEN', 'Denmark', 'B');
-insert into team (id,name,"group") values ('GER', 'Germany', 'B');
-insert into team (id,name,"group") values ('POR', 'Portugal', 'B');
+insert into team (id,"group") values ('NED', 'B');
+insert into team (id,"group") values ('DEN', 'B');
+insert into team (id,"group") values ('GER', 'B');
+insert into team (id,"group") values ('POR', 'B');
 
-insert into team (id,name,"group") values ('ESP', 'Spain', 'C');
-insert into team (id,name,"group") values ('ITA', 'Italy', 'C');
-insert into team (id,name,"group") values ('IRL', 'Republic of Ireland', 'C');
-insert into team (id,name,"group") values ('CRO', 'Croatia', 'C');
+insert into team (id,"group") values ('ESP', 'C');
+insert into team (id,"group") values ('ITA', 'C');
+insert into team (id,"group") values ('IRL', 'C');
+insert into team (id,"group") values ('CRO', 'C');
 
-insert into team (id,name,"group") values ('UKR', 'Ukrain', 'D');
-insert into team (id,name,"group") values ('SWE', 'Sweden', 'D');
-insert into team (id,name,"group") values ('FRA', 'France', 'D');
-insert into team (id,name,"group") values ('ENG', 'England', 'D');
+insert into team (id,"group") values ('UKR', 'D');
+insert into team (id,"group") values ('SWE', 'D');
+insert into team (id,"group") values ('FRA', 'D');
+insert into team (id,"group") values ('ENG', 'D');
 
 --insert into team (id,name) values ('WA', 'Winner Group A');
 --insert into team (id,name) values ('SA', 'Second Group A');
