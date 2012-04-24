@@ -129,8 +129,8 @@ case class Result(
 }
 
 object Match {
-	val GroupFormula = """(WIN|SEC)#GROUP#(.*)""".r
-	val MatchFormula = """WIN#(\d+)""".r
+	val GroupFormula = """(WIN|SEC)_GROUP_(.*)""".r
+	val MatchFormula = """WIN_(\d+)""".r
 
 	// Parser
 	val simple = {

@@ -99,6 +99,15 @@
 
 }
 
+@getTrophyImgSrc(position: Int) = @{
+	position match {
+		case 0 => routes.Assets.at("images/trophy.png")
+		case 1 => routes.Assets.at("images/trophy-silver.png") 
+		case 2 => routes.Assets.at("images/trophy-bronze.png") 
+		case _ => ""
+	}
+}
+
 @showMatches(matches: Seq[Match]) = {
 				<!--@* group matches by date so we can display matches played day by day  *@-->
 				@defining(matches.groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
@@ -134,6 +143,10 @@
 					}
 					<div class="pos">
 						<span class="label label-info">@(i+1)</span>
+						@if(i >= 0 && i < 3) {
+							<br><br>
+							<img src="@getTrophyImgSrc(i)">
+						}
 					</div>
 					<div class="userinfo">
 						<img src="@models.User.gravatarUrl(ranking.user.email)" />

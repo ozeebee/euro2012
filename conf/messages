@@ -33,3 +33,39 @@ country.icon.32.UKR = country/32/ua.png
 country.icon.32.SWE = country/32/se.png
 country.icon.32.FRA = country/32/fr.png
 country.icon.32.ENG = country/32/gb.png
+
+# team names
+team.POL = Poland
+team.GRE = Greece 
+team.RUS = Russia
+team.CZE = Czech Rep.
+team.NED = Netherlands
+team.DEN = Denmark
+team.GER = Germany
+team.POR = Portugal
+team.ESP = Spain
+team.ITA = Italy
+team.IRL = Ireland
+team.CRO = Croatia
+team.UKR = Ukraine
+team.SWE = Sweden
+team.FRA = France
+team.ENG = England
+
+team.WIN_GROUP_A = Winner Group A
+team.WIN_GROUP_B = Winner Group B
+team.WIN_GROUP_C = Winner Group C
+team.WIN_GROUP_D = Winner Group D
+team.SEC_GROUP_A = Second Group A
+team.SEC_GROUP_B = Second Group B
+team.SEC_GROUP_C = Second Group C
+team.SEC_GROUP_D = Second Group D
+team.WIN_25 = Winner Match 25
+team.WIN_26 = Winner Match 26
+team.WIN_27 = Winner Match 27
+team.WIN_28 = Winner Match 28
+team.WIN_29 = Winner Match 29
+team.WIN_30 = Winner Match 30
+
+
+

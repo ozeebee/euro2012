@@ -9,7 +9,7 @@
 		  		}
 			</div>
 			<div class="teamA">
-	  			@zmatch.teamAorFormula
+	  			@Messages("team." + zmatch.teamAorFormula)
 			</div>
 
 			@if(zmatch.played) {
@@ -35,7 +35,7 @@
 			}
 				
 			<div class="teamB">
-	  			@zmatch.teamBorFormula
+	  			@Messages("team." + zmatch.teamBorFormula)
 			</div>
 			<div class="flag">
 				@zmatch.teamB.map { teamB =>
