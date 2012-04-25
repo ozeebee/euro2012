@@ -142,7 +142,7 @@ object Application extends Controller with Secured with Debuggable {
 	def getRecentlyPlayedMatches(): Seq[Match] = {
 		val now = Param.getCurrentDateTime()
 		val matches = Match.findAll()
-		matches.filter(_.kickoff.before(now)).take(4)
+		matches.filter(m => m.kickoff.before(now) && ! m.isLive).take(4)
 	}
 	
 	def hasCompetitionStarted: Boolean = Match.findPlayed().size > 0

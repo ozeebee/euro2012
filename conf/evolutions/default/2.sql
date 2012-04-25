@@ -3,6 +3,7 @@
 # --- !Ups
 
 insert into param (name, value) values ('currentDateTime', '08/06/2012 17:30'); -- used to simulate date for forecast input
+insert into param (name, value) values ('liveMatchId', null); -- used to indicate current live match (or null if none)
 
 insert into user (name, email, password, groups, enabled) values ('ozeebee', 'ozeebee@gmail.com', 'welcome1', 'Admin', TRUE);
 insert into user (name, email, password, groups, enabled) values ('toto', 'toto@gmail.com', 'tototo', 'Admin', TRUE);

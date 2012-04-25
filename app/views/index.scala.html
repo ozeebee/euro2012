@@ -6,11 +6,70 @@
 		font-size: 13px;
 		float: right;
 		font-weight: normal;
-	}	
+	}
+	
+	div.live-match-banner div.match-day {
+		width: auto;
+	}
+	div.live-match-banner div.match-item {
+		border: none !important;
+		background-color: transparent !important;
+	}
+	div.live-match-banner div.score {
+		min-width: 80px !important;
+	}
+	div.live-match-banner div.teamA, div.live-match-banner div.teamB {
+		width: auto !important;
+	}
+	div.live-label {
+		font-family: Verdana;
+		font-size: 24px;
+		font-style: italic;
+		text-transform: uppercase;
+		margin: 0px 10px;
+	}
+	
+	@models.Match.getLiveMatch.map { zmatch =>
+		body {
+			padding-top: 110px;
+		}
+	}
 </style>
 }
 
-@layout.main("Home", head = headContent) {
+@navbarSecondLineContent = {
+	@models.Match.getLiveMatch.map { zmatch =>
+		<div class="live-match-banner" style="text-align: center;">
+			<div class="match-day">
+				<div class="match-item">
+					<div class="live-label">Live &gt;</div>
+					<div class="flag">
+						@zmatch.teamA.map { teamA =>
+				    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
+				  		}
+					</div>
+					<div class="teamA">
+			  			@Messages("team." + zmatch.teamAorFormula)
+					</div>
+		
+					@helper.scoreDiv(zmatch)
+			  			
+					<div class="teamB">
+			  			@Messages("team." + zmatch.teamBorFormula)
+					</div>
+					<div class="flag">
+						@zmatch.teamB.map { teamB =>
+				    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
+			    		}
+					</div>
+					<div class="live-label">&lt; Live </div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+@layout.main("Home", head = headContent, navbarSecondLine = navbarSecondLineContent) {
     
     <!--  
     <h2>Main menu</h2>

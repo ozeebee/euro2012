@@ -50,6 +50,7 @@
 		<tr>
 			<th>Id</th>
 			<th>Team A</th>
+			<th></th>
 			<th style="text-align: center;">Score</th>
 			<th>Team B</th>
 			<th>Kick-off time</th>
@@ -61,6 +62,15 @@
 		 	<tr>
 		 		<td>@zmatch.id</td>
 		 		<td>@if(zmatch.isGroupStageMatch) { @zmatch.teamA.get } else { @teamSel(true, zmatch) }</td>
+		 		<td>
+		 			@if(! zmatch.played && ! models.Match.getLiveMatch.isDefined) {
+		 			<button class="btn btn-mini btn-success" onclick="startLiveMatch(@zmatch.id);">start live</button>
+		 			} else {
+		 				@if(zmatch.isLive) {
+		 					<button class="btn btn-mini btn-danger" onclick="stopLiveMatch(@zmatch.id);">stop live</button>
+		 				}
+		 			}
+		 		</td>
 		 		<td style="text-align: center;">
 		  			@scoreBox(zmatch)
 		  		</td>

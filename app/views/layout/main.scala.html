@@ -1,4 +1,4 @@
-@(title: String, head: Html = Html.empty, activeNav: String = "home")(content: Html)(implicit request: play.api.mvc.RequestHeader)
+@(title: String, head: Html = Html.empty, navbarSecondLine: Html = Html.empty, activeNav: String = "home")(content: Html)(implicit request: play.api.mvc.RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +34,9 @@
 					
 					<ul class="nav">
             			<li @if(activeNav=="home"){class="active"}><a href="@routes.Application.index()">Home</a></li>
+	 					@helper.Sec.IsAdmin {
+	 					<li @if(activeNav=="admin"){class="active"}><a href="@routes.Admin.showAdmin()">Admin</a></li>
+	 					}
             			<li @if(activeNav=="about"){class="active"}><a href="@routes.Application.showAbout()">About</a></li>
             			<li class="dropdown @if(activeNav=="competition"){active}">
 	              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Competition <b class="caret"></b></a>
@@ -78,6 +81,7 @@
         			</ul>
  				</div>
     		</div>
+    		@navbarSecondLine
     	</div>
     
 		<div class="container">

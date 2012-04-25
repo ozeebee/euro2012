@@ -147,6 +147,31 @@ div.portlet {
 	padding: 10px;
 }
 
+
+div.live-match {
+	background-color: rgba(41, 102, 163, 0.4);
+}
+
+div.live-match-banner {
+	/*position:fixed;
+	bottom: 0;
+	left: 50px;
+	right: 50px;*/
+
+	//background-color: rgba(41, 102, 163, 0.4);
+	background-color: #D7C8A9;
+	
+	.border-radius(8px);
+	border-top-left-radius: 0px 0px;
+	border-top-right-radius: 0px 0px;
+	
+	margin: 0px 40px;
+	//padding: 5px;
+	
+	  @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
+  	.box-shadow(@shadow);
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~ Forecasts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 a.scoreSaveBtn {
@@ -283,6 +308,7 @@ div.match-day {
 		div.forecast-box {
 			min-width: @center-div-width;
 			padding: 0;
+			margin-bottom: 18px; // leave space below for the subrow div (which is absolutely positioned)
 			
 			div.forecast-input {
 				input {
@@ -293,6 +319,7 @@ div.match-day {
 			}
 			
 			div.subrow {
+				position: absolute;
 				display: block;
 				padding: 0;
 				text-align: left;
@@ -363,6 +390,11 @@ div.match-day {
 			}
 		}
 	}	
+}
+
+div.single-match-item {
+	border: none !important;
+	background-color: transparent !important;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Schedule ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

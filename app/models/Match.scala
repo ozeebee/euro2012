@@ -21,6 +21,8 @@ case class Match(
 	result: Option[Result]
 ) {
 	val played: Boolean = result.isDefined
+	
+	val isLive: Boolean = Param.getLiveMatch().exists(_ == id.get)
 
 	/**
 	 * @return the group for which this match is played if this is a group match
@@ -437,6 +439,25 @@ println("          finalWinner = " + m.get.finalWinner)
 			}
 			case _ => None
 		}
+	}
+	
+	/**
+	 * @return the live (currently played) Match or None if no live match
+	 */
+	def getLiveMatch(): Option[Match] = {
+		Param.getLiveMatch().map(matchId => findById(matchId).getOrElse(throw new IllegalArgumentException("cannot find live match "+matchId+"!!")))
+		/*DB.withConnection { implicit connection =>
+			SQL("select * from match where match.id = (select value from param where name = 'liveMatchId')").as(Match.simple.singleOpt)
+		}*/
+	}
+	
+	def startLiveMatch(matchId: Long) = {
+		Match.updateResult(matchId, 0, 0, None)
+		Param.setLiveMatch(matchId)
+	}
+	
+	def stopLiveMatch() = {
+		Param.clearLiveMatch()
 	}
 	
 	// inner function

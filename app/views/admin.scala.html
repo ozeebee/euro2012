@@ -27,7 +27,7 @@
 	</script>
 }
 
-@layout.main("Admin", head = headContent) {
+@layout.main("Admin", head = headContent, activeNav = "admin") {
     
     <section id="admin">
     	<div class="page-header">
@@ -52,6 +52,8 @@
 	    			</p>
 	    			
 	    			@helper.dateSlider()
+	    			
+	    			<br><br>
 	    		</div>
 	    		<div id="teams" class="tab-pane">
 	    			balblabla teams bla bla

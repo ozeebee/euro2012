@@ -58,6 +58,8 @@ object Param {
 		}
 	}
 	
+	// ----------------- specific params 
+	
 	def getCurrentDateTime(): java.util.Date = {
 		findValueByName("currentDateTime")
 			.map(dateTimeFormat.parse(_))
@@ -69,5 +71,17 @@ object Param {
 	
 	def setCurrentDateTime(dateTime: java.util.Date) = {
 		setValue("currentDateTime", dateTimeFormat.format(dateTime))
+	}
+
+	def getLiveMatch(): Option[Long] = {
+		findValueByName("liveMatchId").map(_.toLong)
+	}
+
+	def setLiveMatch(matchId: Long) = {
+		setValue("liveMatchId", matchId.toString)
+	}
+	
+	def clearLiveMatch() = {
+		setValue("liveMatchId", null)
 	}
 }

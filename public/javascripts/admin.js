@@ -188,6 +188,34 @@ function selectTeam(event, formula, matchId, isTeamA) {
 	});
 }
 
+function startLiveMatch(matchId) {
+	console.log("startLiveMatch matchId="+matchId);
+	jsRoutes.controllers.Admin.startLiveMatch(matchId).ajax({
+		data: {},
+		success: function (data) {
+			console.log("ok");
+			location.reload();
+		},
+		error: function (jqXHR) {
+			console.log("error");
+		}
+	});
+}
+
+function stopLiveMatch(matchId) {
+	console.log("stopLiveMatch matchId="+matchId);
+	jsRoutes.controllers.Admin.stopLiveMatch(matchId).ajax({
+		data: {},
+		success: function (data) {
+			console.log("ok");
+			location.reload();
+		},
+		error: function (jqXHR) {
+			console.log("error");
+		}
+	});
+}
+
 // ===================== Users ================================================
 
 function setUserState(event, username, isEnabled) {

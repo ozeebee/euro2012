@@ -27,8 +27,8 @@ I would be surprised if this app ends up in a production environment for real us
 	
 ## Competition
 
-- use real team names for display instead of team Id's
-- view teams/groups/schedules/standings
+- add Next/Previous buttons on Group pages
+- team details (useful ?)
 - ? calendar
 !! - store winner name somewhere (since draws are possible results even in direct confrontation games)
 
@@ -53,6 +53,7 @@ I would be surprised if this app ends up in a production environment for real us
 - ? chat function (with WebSocket impl) ?
 	
 ### Other
+- add license page with all applicable license infos (icons, libs, etc)
 - JS : remove absolute urls in external javascripts ===> use JavaScript router instead of passing urls from templates
 - Pjax : evaluate integration of pjax for page transitions; see project https://github.com/pvillega/pjax-Forms
 - Mobile version ? with jquery mobile

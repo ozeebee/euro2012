@@ -273,9 +273,24 @@ object Admin extends Controller with Debuggable with Secured {
 					// check wether it's a realm team or the formula
 					val teamValue: String = if (Match.isFormula(team)) null else team
 					Match.setTeamName(matchId, teamValue, isTeamA)
-					Ok("")
+					Ok
 				}
 			)
 		}
 	}
+	
+	def startLiveMatch(matchId: Long) = Logged("startLiveMatch") { 
+		IsAdmin { authenticatedUsername => implicit request =>
+			Match.startLiveMatch(matchId)
+			Ok
+		}
+	}
+	
+	def stopLiveMatch(matchId: Long) = Logged("stopLiveMatch") { 
+		IsAdmin { authenticatedUsername => implicit request =>
+			Match.stopLiveMatch()
+			Ok
+		}
+	}
+
 }
