@@ -27,6 +27,9 @@ GET		/forecasts/:user			controllers.Application.showForecastsForUser(user: Strin
 POST	/forecasts					controllers.Application.saveForecast()
 GET		/ranking					controllers.Application.showRanking()
 
+# Server-Sent Events
+GET		/eventSource				controllers.Application.eventSource()
+
 #############
 # Admin tools
 GET		/admin						controllers.Admin.showAdmin()

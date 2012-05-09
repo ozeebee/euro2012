@@ -35,11 +35,122 @@
 		}
 	}
 </style>
+
+<script>
+	// the server-sent events EventSource object
+	var sseSource = null;
+
+	function sseConnectionOpen(isOpened) {
+		var $sseToggleBtn = $("#sse-toggle-btn");
+		var isActive = $sseToggleBtn.hasClass("active");
+		console.log("sseConnectionOpen isOpened=" + isOpened + " isActive=" + isActive);
+		if ((isOpened && ! isActive) || (! isOpened && isActive)) {
+			$sseToggleBtn.toggleClass("active");
+		}
+	}
+	
+	function liveMatchStarted(e) {
+		console.log("liveMatchStarted : " + e.data);
+	}
+
+	function liveMatchFinished(e) {
+		console.log("liveMatchFinished : " + e.data);
+		liveMatchNotif("<strong>Match Finished !</strong>");
+		var $livebanner = $("#live-match-banner");
+		// remove live label
+		$(".live-label", $livebanner).text("");		
+		// remove live match score colors
+		$("div.leftscore", $livebanner).removeClass("live");
+		$("div.rightscore", $livebanner).removeClass("live");
+	}
+	
+	function liveMatchUpdate(e) {
+		console.log("liveMatchUpdate : " + e.data);
+		var jsonObj = JSON.parse(e.data);
+		console.log("  jsonObj:", jsonObj);
+		
+		// update scores
+		var $livebanner = $("#live-match-banner");
+		$("div.leftscore", $livebanner).text(jsonObj.scoreA);
+		$("div.rightscore", $livebanner).text(jsonObj.scoreB);
+		liveMatchNotif("<strong>Score changed !</strong>");
+	}
+	
+	function liveMatchNotif(msg) {
+		var $livenotif = $("div.live-notif");
+		$livenotif.html(msg);
+		$livenotif.fadeIn(400, function() {
+			// hide after 3 secs
+			setTimeout(function() {
+				$livenotif.fadeOut();
+			}, 5000);
+		});
+	}
+	
+	function connectSSE() {
+		console.log("testSSE()");
+		
+		var url = jsRoutes.controllers.Application.eventSource().url;
+		console.log("  url = " + url);
+		
+		if (!!window.EventSource) {
+			console.log("Server-Sent Events supported by browser");
+			sseSource = new EventSource(url);
+			sseSource.onopen = function(e) {
+				// Connection was opened.
+				console.log("[SSE] CONNECTION OPENED");
+				sseConnectionOpen(true);
+			};
+			sseSource.onerror = function(e) {
+				if (e.readyState == EventSource.CLOSED) {
+					// Connection was closed.
+					console.log("[SSE] CONNECTION CLOSED");
+				}
+				else {
+					console.log("[SSE] ERROR !", e);
+				}
+				sseConnectionOpen(false);
+			};
+			sseSource.addEventListener('message', function(e) {
+				console.log("[SSE] " + e.data);
+			}, false);
+			
+			sseSource.addEventListener('live-match-started',  liveMatchStarted, false);
+			sseSource.addEventListener('live-match-finished', liveMatchFinished, false);
+			sseSource.addEventListener('live-match-update', liveMatchUpdate, false);
+			console.log("sse readyState = " + sseSource.readyState);
+			if (sseSource.readyState == 0 || sseSource.readyState == 1)
+				sseConnectionOpen(true);
+		}
+		else {
+			console.log("Server-Sent Events NOT SUPPORTED !");
+		}
+	}
+	
+	function disconnectSSE() {
+		console.log("closing SSE...");
+		sseSource.close();
+		sseConnectionOpen(false);
+	}
+	
+	//===================== Initializations =======================================
+	$(function() {
+		setTimeout(function() { connectSSE(); }, 1000);
+		window.onbeforeunload = function() { disconnectSSE(); };
+		$("#sse-toggle-btn").click(function() {
+			console.log("sse readyState = " + sseSource.readyState);
+			if (sseSource == null || sseSource.readyState == 2)
+				connectSSE();
+			else
+				disconnectSSE();
+		});
+	});
+</script>
 }
 
 @navbarSecondLineContent = {
 	@models.Match.getLiveMatch.map { zmatch =>
-		<div class="live-match-banner" style="text-align: center;">
+		<div id="live-match-banner" class="live-match-banner" style="text-align: center;">
 			<div class="match-day">
 				<div class="match-item">
 					<div class="live-label">Live &gt;</div>
@@ -62,7 +173,11 @@
 				    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
 			    		}
 					</div>
-					<div class="live-label">&lt; Live </div>
+					<div style="width:150px; height: 20px;">
+						<div style="display: none;" class="live-notif alert alert-info">
+							<strong>Score changed !</strong>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -132,6 +247,14 @@
 				</div>
 			}
 			
+			<!--@*  
+			<div class="portlet">
+				<h3>Test Server-Sent Events</h3>
+				<button class="btn" onclick="connectSSE();">Open</button>
+				<button class="btn" onclick="disconnectSSE();">Close</button>
+			</div>
+			*@-->
+			
 			@helper.Sec.IsAdmin {
 			<div class="portlet">
 				<h3>Simulated date/time</h3>
@@ -141,12 +264,12 @@
 			
 			<div class="portlet">
 				<h2>Upcoming matches <a class="hlink" href="@routes.Application.showSchedule()">See all matches</a></h2>
-				@showMatches(controllers.Application.getUpcomingMatches)
+				@showMatches(controllers.Application.getUpcomingMatches, "")
 			</div>
 			
 			<div class="portlet">
 				<h2>Recently played <a class="hlink" href="@routes.Application.showSchedule()">See all matches</a></h2>
-				@showMatches(controllers.Application.getRecentlyPlayedMatches)
+				@showMatches(controllers.Application.getRecentlyPlayedMatches, "None yet")
 			</div>
 		</div>
 		
@@ -167,7 +290,10 @@
 	}
 }
 
-@showMatches(matches: Seq[Match]) = {
+@showMatches(matches: Seq[Match], emptyMsg: String) = {
+			@if(matches.isEmpty) {
+				@emptyMsg
+			} else {
 				<!--@* group matches by date so we can display matches played day by day  *@-->
 				@defining(matches.groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
 					@matchesByDate.keys.toSeq.sorted.map { date =>
@@ -176,6 +302,7 @@
 						@helper.matchesTable(matchesByDate(date))
 					}
 				}
+			}
 }
 
 @topRankings(rankings: Seq[UserRanking]) = {

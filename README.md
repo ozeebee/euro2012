@@ -17,6 +17,8 @@ I would be surprised if this app ends up in a production environment for real us
 
 ## Home Pages
 
+- colors:
+	body bg color and portlet colors like akka doc and code blocks + portlet shadow boxes
 - Dashboard, to display :
 	- upcoming matches (filter) (see calendar)
 	- rankings (top 5/10) + current player position and points

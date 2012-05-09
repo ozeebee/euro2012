@@ -3,6 +3,10 @@
 	<div class="match-day">
 	@matches.map { zmatch =>
 		<div class="match-item">
+	  			@if(zmatch.isLive) {
+	  				<div><span class="label label-important" style="font-size: 16px; font-style: italic;">Live !</span></div>
+  					<br>
+	  			}
 			<div class="flag">
 				@zmatch.teamA.map { teamA =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
@@ -13,6 +17,7 @@
 			</div>
 
 			@if(zmatch.played) {
+				@*<!--  
 				@if(showDates) {
 					<div class="match-result">
 						<span class="koTime">
@@ -24,6 +29,8 @@
 	  			} else {
 	  				@helper.scoreDiv(zmatch)
 	  			}
+	  			-->*@
+	  			@helper.scoreDiv(zmatch)
 			} else {
 				<div class="kickoff-time">
 					@if(showDates) {

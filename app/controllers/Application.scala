@@ -62,7 +62,7 @@ object Application extends Controller with Secured with Debuggable {
 	def test() = Authenticated { username => implicit request =>
 		val values = Set("Value1", "Value2", "Value3")
 		Ok(views.html.test(values))
-	} 
+	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -147,8 +147,61 @@ object Application extends Controller with Secured with Debuggable {
 	
 	def hasCompetitionStarted: Boolean = Match.findPlayed().size > 0
 	
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~~~~~~~~~~~~~~~~ Server-Sent Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		
+	// Server-Sent Events resources
+	//  sources : https://groups.google.com/d/topic/play-framework/KmbjwlJUe50/discussion
+	//            https://groups.google.com/d/topic/play-framework/dNsGZpfFQTc/discussion
+	//            http://www.html5rocks.com/en/tutorials/eventsource/basics/
+	
+	def eventSource = Action { request =>
+		import play.api.libs.iteratee._
+		import play.api.libs.iteratee.Enumerator._
+		import play.api.libs.concurrent._
+		import java.util.concurrent.TimeUnit
+		
+		// simple event stream that sends data every 2 seconds (not very useful huh ? except for testing SSE...)
+		val eventStream = Enumerator.fromCallback[String] (
+			retriever = { () =>
+				Promise.timeout(Some("data:right" + (new java.util.Date) + "\n\n"), 2000, TimeUnit.MILLISECONDS)
+			}, 
+			onComplete = { () => println("eventSource complete") },
+			onError = { (s: String, i: Input[String]) => println("eventSource error" + s) }
+		)
+		
+		val uuid = request.session.get(Security.UUID).getOrElse(throw new IllegalStateException("Cannot find UUID in session, make sure you are logged"))
+		
+		def eventStream2 = {
+			/**
+			 * XXX: this system does not detect connections closed ... (maybe in next Play version?)
+			 * consequence: when one client quits, the reference to its pushee will still be in member list (see EventBus)
+			 * 	   and when a new message will be pushed, the onComplete function will be called with the effect of removing that member reference
+			 */
+			Enumerator.pushee[String] (
+				onStart = { (pushee: Pushee[String]) => EventBus.addEventSource(uuid, pushee) },
+				onComplete = { println("[SSE] completed"); EventBus.closeEventSource(uuid) },
+				onError = { (s: String, i: Input[String]) => println("[SSE] ERROR !"); EventBus.closeEventSource(uuid) }
+			)
+		}
+		
+		SimpleResult(
+			header = ResponseHeader(OK, Map(
+						CONTENT_LENGTH -> "-1",
+						CONTENT_TYPE -> "text/event-stream"
+					)),
+			body = eventStream2
+		)
+	}
+	
+	def testActor() = {
+		import akka.actor._
+
+		logger.debug("testActor()")
+		EventBus.default ! EventBus.Hello
+	}
+	
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	object Json extends Controller with Secured with Debuggable {
 		val logger = Logger(this.getClass())
 		

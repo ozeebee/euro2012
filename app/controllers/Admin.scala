@@ -97,6 +97,9 @@ object Admin extends Controller with Debuggable with Secured {
 					val (scoreA, scoreB, penaltyScoreA, penaltyScoreB) = data
 					val penaltiesScore = if (penaltyScoreA.isDefined) { Some(penaltyScoreA.get, penaltyScoreB.get) } else { None }
 					Match.updateResult(matchId, scoreA, scoreB, penaltiesScore).map { zmatch =>
+						if (zmatch.isLive) {
+							EventBus.publishRaw(event = "live-match-update", utils.SSE.formatResultScore(scoreA, scoreB, penaltiesScore))
+						}
 						Ok("ok")
 					}.getOrElse {
 						BadRequest("could not update match result")
@@ -281,7 +284,26 @@ object Admin extends Controller with Debuggable with Secured {
 	
 	def startLiveMatch(matchId: Long) = Logged("startLiveMatch") { 
 		IsAdmin { authenticatedUsername => implicit request =>
-			Match.startLiveMatch(matchId)
+			val zmatch = Match.startLiveMatch(matchId)
+			/*val result = zmatch.result.get
+			val jsonObj = Json.toJson(
+				Map(
+					"teamA" -> Map(
+								"name" -> toJson(zmatch.teamAorFormula),
+								"score" -> toJson(result.scoreA)
+							),
+					"teamB" -> Map(
+								"name" -> toJson(zmatch.teamBorFormula),
+								"score" -> toJson(result.scoreB)
+							)
+				)
+			)
+			val jsonStr = Json.stringify(jsonObj)
+			logger.debug("jsonStr = " + jsonStr)
+			val data = jsonStr.split("\n").map("data: " + _ + "\n").mkString + "\n"
+			logger.debug("data = " + data)
+			EventBus.publishRaw(event = "live-match-started")*/
+			EventBus.publish(event = "live-match-started")
 			Ok
 		}
 	}
@@ -289,6 +311,7 @@ object Admin extends Controller with Debuggable with Secured {
 	def stopLiveMatch(matchId: Long) = Logged("stopLiveMatch") { 
 		IsAdmin { authenticatedUsername => implicit request =>
 			Match.stopLiveMatch()
+			EventBus.publish(event = "live-match-finished")
 			Ok
 		}
 	}

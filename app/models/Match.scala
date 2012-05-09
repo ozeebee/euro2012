@@ -451,9 +451,10 @@ println("          finalWinner = " + m.get.finalWinner)
 		}*/
 	}
 	
-	def startLiveMatch(matchId: Long) = {
-		Match.updateResult(matchId, 0, 0, None)
+	def startLiveMatch(matchId: Long): Match = {
+		val zmatch = Match.updateResult(matchId, 0, 0, None)
 		Param.setLiveMatch(matchId)
+		zmatch.get
 	}
 	
 	def stopLiveMatch() = {

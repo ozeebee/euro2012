@@ -13,6 +13,7 @@ object Security extends Controller with Debuggable {
 	val USERNAME = "username"
 	val USEREMAIL = "useremail"
 	val USERGROUPS = "usergroups"
+	val UUID = "uuid"
 		
 	def username(implicit request: RequestHeader) = request.session.get(USERNAME)
 	def useremail(implicit request: RequestHeader) = request.session.get(USEREMAIL)
@@ -91,7 +92,9 @@ object Security extends Controller with Debuggable {
 				Redirect(routes.Application.index()).withSession(
 						USERNAME -> user.name, 
 						USEREMAIL -> user.email,
-						USERGROUPS -> user.groups.getOrElse("")) // EXP : add the username, email and groups to the session (stored in a cookie)
+						USERGROUPS -> user.groups.getOrElse(""),
+						UUID -> java.util.UUID.randomUUID().getMostSignificantBits().toString() // unique 'session id'
+					) // EXP : add the username, email and groups to the session (stored in a cookie)
 			}
 		)
 	}
