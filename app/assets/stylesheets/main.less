@@ -106,6 +106,23 @@
           box-shadow: @shadow;
 }
 
+.rotate-text() {
+	/* Safari */
+	-webkit-transform: rotate(-90deg);
+
+	/* Firefox */
+	-moz-transform: rotate(-90deg);
+	
+	/* IE */
+	-ms-transform: rotate(-90deg);
+	
+	/* Opera */
+	-o-transform: rotate(-90deg);
+	
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 body {
@@ -173,6 +190,12 @@ div.live-match-banner {
 	
 	  @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
   	.box-shadow(@shadow);
+}
+
+div.placeholder-32-32 {
+	width:32px;
+	height:32px;
+	padding: 0 !important;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Forecasts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,7 +274,7 @@ div.forecastBox {
 }
 
 div.match-day {
-	width: 480px;
+	width: 450px;
 	.center();
 	
 	div.match-item {
@@ -274,6 +297,46 @@ div.match-day {
 			display: inline-block;
 			vertical-align: middle;
 			padding: 0px 5px;
+		}
+
+		div.date-box {
+			margin-left: -60px;
+			padding: 6px 0px 6px 8px;
+			.border-radius(4px);
+			background-color: #E8E8E8;
+			color: #999;
+			
+			div.left {
+				padding: 0;
+			}
+			
+			div.right {
+				padding: 0;
+				margin-left: -10px;
+				margin-right: -5px;
+				font-size: 10px;
+				.rotate-text();
+			}
+			
+			span {
+				line-height: 1.3;
+				display: block;
+				text-align: center;
+				text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+				
+				&.month {
+					font-size: 11px;
+				}
+				
+				&.day {
+					font-weight: bold;
+					color: #777;
+				}
+				
+				&.time {
+					.rotate-text();
+				}
+			}
 		}
 
 		div.flag {

@@ -30,7 +30,9 @@
 		@defining(matchesByPhase(phase.toString).groupBy(zmatch => zmatch.kickoffDay)) { matchesByDate =>
 			@matchesByDate.keys.toSeq.sorted.map { date =>
 				<div class="dateBlock">
-					<div class="koDate">@date.format("EEEEE', the' dd 'of' MMMMM yyyy")</div>
+					
+					<!-- <div class="koDate">@date.format("EEEEE', the' dd 'of' MMMMM yyyy")</div> -->
+					<br>
 		
 					@helper.forecastsTable(matchesByDate(date), forecastsByMatch)
 				</div>

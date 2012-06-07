@@ -112,10 +112,20 @@
 	<div class="match-day">
 	@matches.map { zmatch =>
 		<div class="match-item">
+			<div class="date-box">
+	  			<div class="left">
+	  				<span class="month">@zmatch.kickoff.format("MMM")</span>
+	  				<span class="day">@zmatch.kickoff.format("dd")</span>
+	  			</div>
+	  			<div class="right">
+	  				@zmatch.kickoff.format("HH'h'mm")
+	  			</div>
+	  		</div>
+		
 			<div class="flag">
 				@zmatch.teamA.map { teamA =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
-		  		}
+		  		}.getOrElse { <div class="placeholder-32-32"></div> }
 			</div>
 			<div class="teamA">
 	  			@Messages("team." + zmatch.teamAorFormula)
@@ -139,7 +149,7 @@
 			<div class="flag">
 				@zmatch.teamB.map { teamB =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
-	    		}
+	    		}.getOrElse { <div class="placeholder-32-32"></div> }
 			</div>
 			<div class="forecast-result">
 			@if(zmatch.played) {

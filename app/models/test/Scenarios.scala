@@ -26,7 +26,7 @@ object Scenarios {
 			MD1Results, MD2Results, MD3Results, GroupStageResults, RandomGroupStageResults, 
 				RandomQFResults, RandomSFResults, RandomFinalResult, RandomResults,
 			RandomForecasts,
-			TenMoreUsers,
+			TenMoreUsers,HundrerMoreUsers,
 			ResolveQFTeamNames, ResolveSFTeamNames, ResolveFinalTeamNames
 		)
 	}
@@ -95,17 +95,17 @@ object ResetAll extends CleanScenario {
 
 protected trait UserScenario extends UndoableScenario {
 	val category = "User"
-} 
-object TenMoreUsers extends UserScenario {
-	val description = "Create ten more users (totoXXX)"
-	def apply() = {
+
+	def createUsers(count: Int) = {
 		val startIndex = findHigherTotoIndex + 1
-		(startIndex until startIndex+10).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1", None, true, null)))
+		(startIndex until startIndex+count).foreach(i => User.create(User("toto"+i, "toto"+i+"@gmail.com", "welcome1", None, true, null)))
 	}
-	def unapply() = {
+	
+	def deleteUsers(count: Int) = {
 		val startIndex = findHigherTotoIndex
-		(startIndex until startIndex-10 by -1).foreach(i => User.remove("toto"+i))
+		(startIndex until startIndex-count by -1).foreach(i => User.remove("toto"+i))
 	}
+	
 	def findHigherTotoIndex = {
 		val regex = """toto(\d+)""".r
 		// find higher toto user index
@@ -116,6 +116,16 @@ object TenMoreUsers extends UserScenario {
 			}.getOrElse(index)
 		}
 	}
+} 
+object TenMoreUsers extends UserScenario {
+	val description = "Create ten more users (totoXXX)"
+	def apply() = createUsers(10)
+	def unapply() = deleteUsers(10)
+}
+object HundrerMoreUsers extends UserScenario {
+	val description = "Create ten more users (totoXXX)"
+	def apply() = createUsers(100)
+	def unapply() = deleteUsers(100)
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~ Match Scenarios ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

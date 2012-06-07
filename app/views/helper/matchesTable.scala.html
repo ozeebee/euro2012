@@ -7,10 +7,19 @@
 	  				<div><span class="label label-important" style="font-size: 16px; font-style: italic;">Live !</span></div>
   					<br>
 	  			}
+	  		<div class="date-box">
+	  			<div class="left">
+	  				<span class="month">@zmatch.kickoff.format("MMM")</span>
+	  				<span class="day">@zmatch.kickoff.format("dd")</span>
+	  			</div>
+	  			<div class="right">
+	  				@zmatch.kickoff.format("HH'h'mm")
+	  			</div>
+	  		</div>
 			<div class="flag">
 				@zmatch.teamA.map { teamA =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamA))">
-		  		}
+		  		}.getOrElse { <div class="placeholder-32-32"></div> }
 			</div>
 			<div class="teamA">
 	  			@Messages("team." + zmatch.teamAorFormula)
@@ -47,7 +56,7 @@
 			<div class="flag">
 				@zmatch.teamB.map { teamB =>
 		    		<img src="@routes.Assets.at("images/" + Messages("country.icon.32." + teamB))">
-	    		}
+	    		}.getOrElse { <div class="placeholder-32-32"></div> }
 			</div>
 		</div>
 	}

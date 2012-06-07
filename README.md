@@ -39,6 +39,7 @@ I would be surprised if this app ends up in a production environment for real us
 - forecasts
 	- add saveall button to forecasts page (at bottom)
 - rankings
+	- revampt with amen-style score chart (getamen.com)
 	- link to other user forecasts (ONLY for matches already played)
 	- stats à la vimeo.com (ex: http://vimeo.com/29763331)
 - banner for live matches (with live score) : ah the bottom of the page (fixed pos) [like less site header]

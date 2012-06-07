@@ -2,10 +2,10 @@
 
 @layout.main("Register") {
 	<div class="modal" style="position: relative; top: auto; left: auto; margin: 0pt auto; z-index: 1;">
-		<div class="modal-header">
+<!-- 		<div class="modal-header">
 			<h3>Registration form</h3>
 		</div>
-		
+ -->		
 		<div class="modal-body">
 			@if(registerForm.hasGlobalErrors) {
 				<div class="alert alert-error">
@@ -17,7 +17,7 @@
 			
 			<form id="registerForm" method="post" action="@routes.Security.registerSubmit()" class="form-horizontal">
 				<fieldset>
-					<legend>Register your user</legend>
+					<legend>Create new user</legend>
 					@registerForm.forField("name") { field =>
 						<div class="control-group @if(! field.errors.isEmpty) { error }">
 							<label class="control-label" for="name">Username :</label>
@@ -41,6 +41,12 @@
 										@field.errors.map(err => Messages(err.message)).mkString(",")
 									</span>
 								}
+								<p class="help-block">
+									<div class="alert alert-info" style="font-size: 11px;">
+									Your email will be used to lookup your picture from the <strong><a href="http://gravatar.com">gravatar.com</a></strong> site.
+									If you haven't yet created an account on gravatar.com, I highly recommend you to do so (it's free) ! 
+									</div>
+								</p>
 							</div>
 						</div>
 					}
