@@ -1,8 +1,10 @@
-# messages
-
-error.required = required field
-error.minLength = not enough characters
-error.email = not a valid email
+# override default error messages
+# !! NOTE !! they are not available if placed in default message file (conf/messages), 
+# so you need to place'em in message file for selected language(s)) 
+#
+#error.required = required field
+#error.minLength = not enough characters
+#error.email = not a valid email
 
 # phases
 

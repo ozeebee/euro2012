@@ -112,12 +112,17 @@ object Security extends Controller with Debuggable {
 										Constraints.minLength(4), 
 										Constraints.pattern("""[a-zA-Z0-9._]+"""r, "constraint.username", "error.username"))),
 			"password" -> nonEmptyText(minLength = 6),
+			"confirm" -> nonEmptyText(minLength = 6),
 			"email" -> email,
 			"groups" -> ignored(Option.empty[String]),
 			"enabled" -> ignored(false),
 			"modifDate" -> ignored(null:java.util.Date)
-		)(User.apply)(User.unapply)
-			verifying ("A user with the same name or email already exists", user => ! User.exists(user.name, user.email))
+		)((name, password, confirm, email, groups, enabled, modifDate) => (User(name, email, password, groups, enabled, modifDate), confirm))
+		 (tuple => tuple match { 
+			 case (user, confirm) => Some(user.name, user.password, confirm, user.email, user.groups, user.enabled, user.modifDate) } 
+		)
+			verifying ("Password confirmation fails", t => t match { case (user, confirm) => confirm == user.password } )
+			verifying ("A user with the same name or email already exists", t => ! User.exists(t._1.name, t._1.email))
 	)
 	
 	def register = Logged() {
@@ -134,7 +139,7 @@ object Security extends Controller with Debuggable {
 				println("register form has errors ! : " + formWithErrors)
 				BadRequest(views.html.register(formWithErrors))
 			},
-			user => {
+			t => t match { case (user, _) => {
 				println("register form is ok ! value is = " + user)
 
 				logger.info("user " + user + " created")
@@ -143,7 +148,7 @@ object Security extends Controller with Debuggable {
 				
 				//Redirect(routes.Security.login(user))
 				Ok(views.html.login(loginFormV2.fill(user)))
-			}
+			}}
 		)
 		
 	}

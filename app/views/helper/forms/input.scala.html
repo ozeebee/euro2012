@@ -1,0 +1,15 @@
+@(ftype: String, field: play.api.data.Field, label: String, focus: Boolean = false, autocomplete: Boolean = false)(f: => Html = Html.empty)
+
+<div class="control-group @if(! field.errors.isEmpty) { error }">
+	<label class="control-label" for="name">@label :</label>
+	<div class="controls">
+		<input id="@field.name" name="@field.name" type="@ftype" value="@field.value" @if(autocomplete){autocomplete="on"} @if(focus){autofocus} />
+		@if(! field.errors.isEmpty) {
+			<span class="help-inline">
+				@field.errors.map(err => Messages(err.message, err.args: _*)).mkString(",")
+			</span>
+		}
+		@f
+	</div>
+</div>
+
