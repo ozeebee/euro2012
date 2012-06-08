@@ -42,11 +42,14 @@
 	  			@helper.scoreDiv(zmatch)
 			} else {
 				<div class="kickoff-time">
+				@*
 					@if(showDates) {
 						@zmatch.kickoff.format("dd MMMMM")
 						<br>
 					}
 					@zmatch.kickoff.format("HH:mm")
+				*@
+					VS
 				</div>
 			}
 				

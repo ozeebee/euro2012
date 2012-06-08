@@ -10,9 +10,11 @@
 			<input type="text" value="@forecastOpt.map(_.scoreB).getOrElse("")" />
 		</div>
  		<div class="subrow">
+ 			@*
 			<span class="kickoff-time">
 	  			@zmatch.kickoff.format("HH:mm")
 	  		</span>
+	  		*@
  			<a onclick="randomForecast(@zmatch.id)">
  				<img src="@routes.Assets.at("images/calculator.gif")">
  				<span>generate</span>
@@ -138,7 +140,10 @@
 					@forecastBox(zmatch, forecastsByMatch.get(zmatch.id))
 				} else {
 					<div class="kickoff-time">
+					@*
   						@zmatch.kickoff.format("HH:mm")
+  					*@
+  						VS
 					</div>
 				}
 			}
