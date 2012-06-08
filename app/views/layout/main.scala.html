@@ -27,11 +27,14 @@
 		@head
     </head>
     <body data-spy="scroll" data-target=".subnav" data-offset="50">
+    	<div class="logo">
+    		<img src="@routes.Assets.at("images/eu2012_logo.png")" style="height: 43px;">
+    	</div>
     	<div class="navbar navbar-fixed-top">
     		<div class="navbar-inner">
         		<div class="container">
-          			<a class="brand" href="#">Eu12</a>
-					
+					<!-- <a class="brand" href="#">Eu12</a> -->
+					<div style="float: left; width: 130px;">&nbsp;<!-- some room for the logo --></div>
 					<ul class="nav">
             			<li @if(activeNav=="home"){class="active"}><a href="@routes.Application.index()">Home</a></li>
 	 					@helper.Sec.IsAdmin {
