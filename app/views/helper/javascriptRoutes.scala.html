@@ -1,7 +1,12 @@
+@()(implicit request: play.api.mvc.RequestHeader)
+
 @helper.javascriptRouter("jsRoutes")(
 	routes.javascript.Application.index,
 	routes.javascript.Admin.setUserState,
 	routes.javascript.Admin.startLiveMatch,
 	routes.javascript.Admin.stopLiveMatch,
-	routes.javascript.Application.eventSource
+	routes.javascript.Application.eventSource,
+	routes.javascript.Application.deleteAccount,
+	routes.javascript.DataAccess.getTableMetaDataList,
+	routes.javascript.DataAccess.getTableData
 )

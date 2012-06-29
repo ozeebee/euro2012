@@ -64,6 +64,29 @@ object Application extends Controller with Secured with Debuggable {
 		Ok(views.html.test(values))
 	}
 
+	// ~~~~~~~~~~~~~~~~~ Account ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+	val accountForm = Form(
+		mapping(
+			"name" -> text,
+			"email" -> text
+		)((name, email) => (name, email))
+		 (tuple => Some(tuple._1, tuple._2))
+	)
+	
+	def showAccount = Authenticated { username => implicit request =>
+		val form = accountForm.fill((username, Security.useremail.get))
+		Ok(views.html.account(form))
+	}
+
+	def deleteAccount = Authenticated { username => implicit request =>
+		val user = User.findByName(username).get
+		if (user.isInGroup(User.AdminGroup))
+			BadRequest("Cannot delete an admin account")
+		else
+			Ok
+	}
+	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	def showForecasts = Authenticated { username => implicit request =>
@@ -159,7 +182,8 @@ object Application extends Controller with Secured with Debuggable {
 		import play.api.libs.iteratee.Enumerator._
 		import play.api.libs.concurrent._
 		import java.util.concurrent.TimeUnit
-		
+
+/* Implementation must be changed to accomodate changes in Play 2.1
 		// simple event stream that sends data every 2 seconds (not very useful huh ? except for testing SSE...)
 		val eventStream = Enumerator.fromCallback[String] (
 			retriever = { () =>
@@ -179,7 +203,7 @@ object Application extends Controller with Secured with Debuggable {
 			 */
 			Enumerator.pushee[String] (
 				onStart = { (pushee: Pushee[String]) => EventBus.addEventSource(uuid, pushee) },
-				onComplete = { println("[SSE] completed"); EventBus.closeEventSource(uuid) },
+				onComplete = { () => println("[SSE] completed"); EventBus.closeEventSource(uuid) },
 				onError = { (s: String, i: Input[String]) => println("[SSE] ERROR !"); EventBus.closeEventSource(uuid) }
 			)
 		}
@@ -191,6 +215,8 @@ object Application extends Controller with Secured with Debuggable {
 					)),
 			body = eventStream2
 		)
+*/
+Ok("")
 	}
 	
 	def testActor() = {

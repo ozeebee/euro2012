@@ -102,10 +102,6 @@ function clearScore(matchId, url) {
 			penScoreAinput.val("");
 			penScoreBinput.val("");
 		}
-	}).fail(function(jqXHR) { // Error function
-		console.log("Clear error !!!");
-		console.log("  status = " + jqXHR.status);
-		console.log("  response = " + jqXHR.responseText);
 	});
 }
 
@@ -144,9 +140,7 @@ function selectTeam(event, formula, matchId, isTeamA) {
 						// set new team name
 						$elem.text(selectedTeam);
 					}
-			).fail(function(jqXHR) { // Error function
-				console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-			}).complete(function() {
+			).complete(function() {
 				$dialog.remove();
 			});
 		};
@@ -182,9 +176,6 @@ function selectTeam(event, formula, matchId, isTeamA) {
 		var y = $elem.offset().top + ($elem[0].offsetHeight/2) - ($dialog.outerHeight()/2); // we use outerHeight instead of offsetHeight because offsetHeight is reported as zero during popover costruction
 		
 		$dialog.css({ top: y, left: x, display: 'block' });
-	})
-	.error(function(jqXHR) { // Error function
-		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
 	});
 }
 
@@ -195,9 +186,6 @@ function startLiveMatch(matchId) {
 		success: function (data) {
 			console.log("ok");
 			location.reload();
-		},
-		error: function (jqXHR) {
-			console.log("error");
 		}
 	});
 }
@@ -209,9 +197,6 @@ function stopLiveMatch(matchId) {
 		success: function (data) {
 			console.log("ok");
 			location.reload();
-		},
-		error: function (jqXHR) {
-			console.log("error");
 		}
 	});
 }
@@ -260,9 +245,7 @@ function showUserForecasts(username) {
 				console.log("Ok ! got data");
 				$("#userForecasts").html(data);
 			}
-	).fail(function(jqXHR) { // Error function
-		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-	});
+	);
 }
 
 function deleteUserForecasts(event, url) {

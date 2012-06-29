@@ -129,9 +129,15 @@ function setCurrentDateTime(dateTimeStr) {
 			function(data) {
 				console.log("Ok ! currentDateTime updated");
 			}
-	).fail(function(jqXHR) { // Error function
-		console.log("AJAX Post error !! " + jqXHR.status + " " + jqXHR.responseText);
-	});
+	);
 }
 
+$(function() {
+	// setup default ajax error handler function
+	$.ajaxSetup({
+		error: function (jqXHR) {
+			console.log("Ajax error ! status = ["+jqXHR.status+"] response = ["+jqXHR.responseText+"]");
+		}
+	});
+});
 

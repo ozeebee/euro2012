@@ -13,7 +13,11 @@ case class User (
 	groups: Option[String],
 	enabled: Boolean,
 	modifDate: java.util.Date
-)
+) {
+	def isInGroup(group: String): Boolean = {
+		groups.exists(_.split(',').contains(group))
+	}
+}
 
 object User {
 	val AdminGroup = "Admin"
@@ -33,6 +37,18 @@ object User {
 		}
 	}
 
+	def findByName(username: String): Option[User] = {
+		DB.withConnection { implicit connection =>
+			SQL("""
+					select name, email, password, groups, enabled, modifDate 
+					from user 
+					where name = {username}
+				""")
+				.on('username -> username)
+				.as(User.simple.singleOpt)
+		}
+	}
+	
 	def authenticate(username: String, password: String): Option[User] = {
 		DB.withConnection { implicit connection =>
 			SQL("""

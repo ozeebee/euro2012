@@ -9,13 +9,14 @@ I would be surprised if this app ends up in a production environment for real us
 	- ! Unit test for ranking system (as well as for group standings)
 	- add responsive (bootstrap) variation to navbar
 	- refactor main.less to use bootstrap mixins
-	- add test for user registration (validation) and for authentication (check secured pages cannot be accessed anonymously)
 	- ? twitter integration
 	- i18n
 	- Test MongoDB ! (get rid of the relational model)
 	- CSS code cleanup (remove unused classes after refactoring)
 
-## Home Pages
+## Features
+
+### Home Pages
 
 - colors:
 	body bg color and portlet colors like akka doc and code blocks + portlet shadow boxes
@@ -27,14 +28,14 @@ I would be surprised if this app ends up in a production environment for real us
 	- twitter notifs ?
 - show final competition (and forecast) winner once competition is finished
 	
-## Competition
+### Competition
 
 - add Next/Previous buttons on Group pages
 - team details (useful ?)
 - ? calendar
 !! - store winner name somewhere (since draws are possible results even in direct confrontation games)
 
-## Game
+### Game
 
 - forecasts
 	- add saveall button to forecasts page (at bottom)
@@ -44,16 +45,15 @@ I would be surprised if this app ends up in a production environment for real us
 	- stats à la vimeo.com (ex: http://vimeo.com/29763331)
 - banner for live matches (with live score) : ah the bottom of the page (fixed pos) [like less site header]
 
-## Admin
+### Admin
 - stats pages with number of users , number of match with results, number of forecasts and percentages
 - add way to set team names for Quarter/Semi/Final stages once dependent matches results are known (check on date with warning)
 
 ### User management
 - refactor account creation workflow to include 2 steps user creation : with creation request and validation
 	- create account page with ability to delete user, change pwd
-- ? user picture / gravatar integration
-	==> add tip in register page to create a gravatar
 - ? chat function (with WebSocket impl) ?
+- add account page
 	
 ### Other
 - add license page with all applicable license infos (icons, libs, etc)
